@@ -1,12 +1,85 @@
 # Verify the same conversation on Mac and iPhone
 
+The durable verification queue changes native controls and transport paths.
+Fresh host observations for this milestone found no available physical iPhone.
+Its changed native journey is NOT VERIFIED. Use the exact-revision queue
+handoff below before extending any native acceptance claim. Native OS Large
+Text and VoiceOver remain DEFERRED / NOT VERIFIED.
+
 The local owner exercised functional device journeys at
 5d333cda03a6b385b669f6025b248d4ba4272071. [Current acceptance](evidence/acceptance.md)
-records the results and limits. Native OS Large Text/VoiceOver are DEFERRED /
-NOT VERIFIED. The procedure below remains for repeat or broader acceptance.
-The Linux owner cannot control the Mac or phone through this SSH session. The local Codex owner executes this handoff and
-returns attributable evidence through Beans. Use the exact branch and full
+records those historical results and limits. That revision does not contain the
+new queue controls. The original conversation procedure below remains for
+repeat or broader acceptance.
+The native verification owner executes this handoff locally and returns
+attributable evidence through the authorized project handoff. Use the exact branch and full
 commit in the private Beans handoff. Do not test a moving branch tip.
+
+## Verify the queue at its final revision
+
+The reviewed and exercised implementation commit is
+`b448af803b62a178e463918e7080ebfa6f087219`. The later delivery commit changes only
+documentation and evidence binding. Test this immutable implementation revision,
+not a moving branch tip.
+
+```sh
+BIRBFORGE_REVISION=b448af803b62a178e463918e7080ebfa6f087219
+git fetch origin integration/durable-verification-queue-recovery
+git worktree add --detach "$BIRBFORGE_MAC_CHECKOUT" "$BIRBFORGE_REVISION"
+cd "$BIRBFORGE_MAC_CHECKOUT"
+git rev-parse HEAD
+npm ci
+npx expo install --check
+npm run check
+```
+
+Use the existing Mac Node and native toolchain. Follow the prerequisite and
+signed Release-build steps below. A historical binary, Darwin version probe,
+or Linux native-bundle export cannot verify this commit.
+
+Create a second checkout at the same revision for the Linux runtime. Keep its
+Linux `node_modules` and `.local` tools separate from the native build checkout.
+Prepare the existing Linux guest with `scripts/guest-setup` as documented in
+`docs/host-execution.md`. Start the queue runtime instead of `scripts/dev`.
+
+```sh
+git worktree add --detach "$BIRBFORGE_RUNTIME_CHECKOUT" "$BIRBFORGE_REVISION"
+cd "$BIRBFORGE_RUNTIME_CHECKOUT"
+scripts/guest-setup --root "$BIRBFORGE_PRIVATE_RUNTIME_ROOT"
+scripts/guest -- scripts/npm run export:web
+scripts/guest -- scripts/verification-dev
+```
+
+Use the launcher's selected loopback port and private
+`.local/verification-session.json`. Transfer its credentials with the private
+procedure in `docs/development.md`. Both clients must reach that same runtime
+through an existing authorized route. The fixed port and `.local/session.json`
+examples in the original conversation procedure below apply to `scripts/dev`.
+They do not select the new queue runtime. If the existing phone route cannot
+reach the new runtime, record the gate without changing network configuration.
+
+Exercise the changed `app/App.tsx`, `app/src/controller.ts`, and
+`app/src/verification.ts` paths through the native app. Those paths consume the
+new shared verification contract and gateway observation and action boundary.
+Retain the original conversation journeys, then capture these queue transitions.
+
+| Journey | Required observation |
+| --- | --- |
+| Shared request | Admit on iPhone. Mac shows the same request and idempotency identities, acquired attempt or null, phase, outcome, eligibility, and environment state |
+| Cancellation | Cancel from one client. Both distinguish requested cancellation from acknowledged stop or a too-late result |
+| Reconnect | Background and foreground the phone and interrupt the existing observation route. Restore the same request without new admission or cancellation |
+| Unavailable acknowledgement | Preserve the original pending action and reconcile with refresh and the same command identity. Do not report success from a timeout |
+| Historical result | After the trusted host recovery procedure, show the unchanged original manifest and the separate recovery receipt alongside current environment state |
+| Evidence gate | Show a passed historical outcome with a now-ineligible reason when the controlled fixture invalidates required artifacts or candidate freshness |
+
+Record the exact tested commit, native build provenance, device and OS,
+browser, timestamps, and sanitized identities. Keep native logs, private route
+details, credentials, screenshots, and the continuation handoff outside Git.
+Run `scripts/guest -- scripts/verification-dev --stop` when finished. Return explicit NOT VERIFIED
+or INCONCLUSIVE statuses for blocked checks. Keep Large Text and VoiceOver
+deferred unless the owner separately authorizes and completes those checks.
+Review the new verification permissions before merge. The previously resolved
+generic authentication gate remains resolved. No merge is authorized here.
 
 ## Inspect prerequisites locally
 

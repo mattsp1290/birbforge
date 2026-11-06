@@ -1,0 +1,127 @@
+{
+  "checked_at": "2026-11-06T20:37:18.322245+00:00",
+  "target": "Mac-hosted Linux ARM64; fresh synthetic conversation fixture",
+  "passed": 6,
+  "failed": 0,
+  "tests": [
+    "tests/runtime.test.ts",
+    "tests/private-access.test.ts"
+  ],
+  "reports": {
+    "private-access-checks.json": {
+      "checkedAt": "2026-11-06T20:36:39.082Z",
+      "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+      "nodeVersion": "v22.23.3",
+      "target": "Linux TLS proxy fixture and actual pinned disposable producer; not live NetBird or native iPhone",
+      "tlsVerification": "Fixture CA trusted only by this test client; untrusted chain and hostname rejected",
+      "conversationId": "5e55b21c-b2ec-42b0-b8ca-35aa3b069b4a",
+      "requestId": "5e55b21c-b2ec-42b0-b8ca-35aa3b069b4a/53205262-48a1-4cc2-ab70-2abcb2831f6d/next-step",
+      "version": 1,
+      "inputPosts": 1,
+      "decisions": 1,
+      "disconnectedStreams": 1,
+      "sseObserverFinalPhase": "idle",
+      "checks": [
+        "exact Host and HTTPS Origin",
+        "socket source checked; forwarded identity ignored",
+        "401 invalid auth and 404 stranger",
+        "one accepted raced decision and explicit 409 conflict",
+        "disconnect preserves durable wait; reconnect converges authoritative state"
+      ],
+      "liveNetBird": "NOT VERIFIED",
+      "nativePhone": "NOT VERIFIED",
+      "macBrowserOnNewRevision": "NOT VERIFIED"
+    },
+    "transport-checks.json": {
+      "checkedAt": "2026-11-06T20:36:43.832Z",
+      "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+      "nodeVersion": "v22.23.3",
+      "target": "Linux Node official AG-UI client with injected stream interruption and one failed GET",
+      "conversationId": "ed434fdc-47dc-44db-9936-4cdb4bb54453",
+      "observationRequests": 2,
+      "inputPostRequests": 1,
+      "failedReconnectGets": 1,
+      "nativePhone": "NOT VERIFIED",
+      "macBrowser": "NOT VERIFIED",
+      "result": "same authoritative pending input after automatic retry; no prompt resubmission"
+    },
+    "runtime-checks.json": {
+      "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+      "checkedAt": "2026-11-06T20:36:38.118Z",
+      "nodeVersion": "v22.23.3",
+      "producerVersions": {
+        "python": "3.13.12",
+        "pydantic-ai-slim": "2.66.0",
+        "pydantic": "2.14.3",
+        "ag-ui-protocol": "1.0.0",
+        "temporalio": "1.35.0",
+        "psycopg": "3.3.8",
+        "fastapi": "0.162.0",
+        "uvicorn": "0.54.0",
+        "opentelemetry-sdk": "1.45.2",
+        "httpx-sse": "0.4.3",
+        "temporal": "temporal version 1.10.0 (Server 1.32.2, UI 2.56.1)",
+        "postgres": "postgres (PostgreSQL) 17.6",
+        "bn": "bn v0.3.0"
+      },
+      "mode": "deterministic fixture",
+      "target": "Linux ARM64 Node official AG-UI clients",
+      "nativePhone": "NOT VERIFIED",
+      "macBrowser": "NOT VERIFIED",
+      "conversationId": "e37adced-1581-4612-bf45-2b87a6a015ae",
+      "requestId": "e37adced-1581-4612-bf45-2b87a6a015ae/95e16850-0b91-4c2c-90dc-c79ebe71251d/next-step",
+      "version": 1,
+      "decisions": 1,
+      "inputs": 1,
+      "messageIds": [
+        "cb56af1b-4db3-5109-8732-6ba2b9c16e11",
+        "84962429-839f-5ca9-a412-afd99cc9d062",
+        "19ddbe22-3bed-57fd-92f2-5b2a243f9ca8",
+        "5b65be4c-266e-51ca-84b6-240e6add9023",
+        "310f0733-11f2-5ace-b8ec-16f6634a29b2"
+      ],
+      "transitions": [
+        "client A received durable pending input over AG-UI",
+        "client B attached to the same authoritative conversation",
+        "stranger reads and decisions rejected; forged actor rejected",
+        "racing answers produced exactly one acknowledgement and one HTTP 409",
+        "disconnect and reconnect preserved one input, one decision and finalized messages"
+      ]
+    },
+    "command-checks.json": {
+      "checkedAt": "2026-11-06T20:36:40.191Z",
+      "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+      "nodeVersion": "v22.23.3",
+      "mode": "deterministic runtime with client transport fault injection",
+      "conversationId": "186756bf-379e-4251-85c7-946c39bd9cf7",
+      "inputs": 1,
+      "decisions": 1,
+      "finalPhase": "cancelled",
+      "checks": [
+        "lost accepted-input acknowledgement retained original request identity",
+        "accepted input followed by failed GET remained accepted",
+        "accepted decision followed by failed GET remained accepted",
+        "explicit cancellation reached persisted cancelled phase",
+        "definitively rejected goal released the pending editor"
+      ]
+    }
+  },
+  "notes": [
+    "Initial run with absent session failed before runtime; an early integrated launcher cached the producer interruption flag and timed out. Fixed launcher restarts its scoped producer gateway as well as worker; this report is the successful fresh rerun.",
+    "Expected injected observation aborts are test stimuli, not failed tests.",
+    "A later invocation set session variables outside the guest boundary and failed before loading its fixture. Corrected invocation uses guest env; final six-test run passed."
+  ],
+  "source_sha256": {
+    "tests/runtime.test.ts": "3305535a5f940e8d66a90c874f6f2b81ea3b78ab9361b10b37b678529c0f5fe3",
+    "tests/private-access.test.ts": "3412397653c8014f9788b8c3956505596535286617eb986a7d0b042e2437a4ad",
+    "app/src/controller.ts": "1253aca4d0386fe521fd29affc8411d361e160af4651457d91c6fdf88d705bf6",
+    "scripts/verification_runtime.py": "f189507f3d16c49a14b71d513644e2737a29f85b68dd3c618a37be43014bde24"
+  },
+  "private_report_sha256": {
+    "private-access-checks.json": "d56e7e28d2daaaee1bf829f46e973b214e204bf9406d4e8d9f43e857d5244cb4",
+    "transport-checks.json": "10a0fcfecf191c769eef4c914bd67b5263132ddf1902bd7e0de60f2e8da5c67a",
+    "runtime-checks.json": "3ef490111a6eb5d390f517b021a8f7f73671357f2a742a6d7003ee212ae681b6",
+    "command-checks.json": "cf46a5e551473091b03ce2c2443ce50fbaa8a4001a750d0d525f46465b5f1496"
+  },
+  "private_stdout_sha256": "3ce72c6d1852bbf74da8f03cbc60ba446ccd5bef1108178a246e56d67e9dd96f"
+}

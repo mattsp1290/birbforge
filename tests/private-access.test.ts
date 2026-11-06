@@ -105,7 +105,7 @@ test('private proxy configuration rejects public, wildcard, ambiguous and readab
 });
 
 test('trusted HTTPS proxy preserves authorization, action identity and AG-UI convergence', async () => {
-  const session = JSON.parse(readFileSync('.local/session.json','utf8'));
+  const session = JSON.parse(readFileSync(process.env.BIRBFORGE_SESSION_FILE ?? '.local/session.json','utf8'));
   const producer = GatewayConfig.parse(JSON.parse(readFileSync(join(session.fixture_root,'clients.json'),'utf8')));
   const root = mkdtempSync(join(tmpdir(), 'birbforge-private-proxy-'));
   const tls = certificate(root);
@@ -191,7 +191,7 @@ test('trusted HTTPS proxy preserves authorization, action identity and AG-UI con
     assert.equal(a.getSnapshot().conversation?.decisions.length,1);
     assert.equal(inputPosts,1);
     assert.deepEqual(observer.messages.map(message => message.id), a.getSnapshot().conversation?.messages.map(message => message.id));
-    writeFileSync('docs/evidence/private-access-checks.json', JSON.stringify({
+    writeFileSync(`${process.env.BIRBFORGE_EVIDENCE_DIR ?? 'docs/evidence'}/private-access-checks.json`, JSON.stringify({
       checkedAt:new Date().toISOString(), dependencyRevision, nodeVersion:process.version,
       target:'Linux TLS proxy fixture and actual pinned disposable producer; not live NetBird or native iPhone',
       tlsVerification:'Fixture CA trusted only by this test client; untrusted chain and hostname rejected',
@@ -208,7 +208,7 @@ test('trusted HTTPS proxy preserves authorization, action identity and AG-UI con
 
 
 test('launcher starts both policies only after validated private configuration', async () => {
-  const session = JSON.parse(readFileSync('.local/session.json','utf8'));
+  const session = JSON.parse(readFileSync(process.env.BIRBFORGE_SESSION_FILE ?? '.local/session.json','utf8'));
   const root = mkdtempSync(join(tmpdir(), 'birbforge-private-startup-'));
   const reserveA = httpServer(); const reserveB = httpServer();
   const loopbackPort = await listen(reserveA); const proxyPort = await listen(reserveB);

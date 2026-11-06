@@ -1,0 +1,88 @@
+{
+  "checked_at": "2026-11-06T20:31:45.661377+00:00",
+  "mode": "real HTTP deterministic isolated fixture",
+  "namespace": "bfq-5b5d991f41ce4cf3a309dcf8013c1288",
+  "checks": [
+    {
+      "check": "authenticated_owned_conversation_and_strict_command_boundary"
+    },
+    {
+      "check": "official_agui_reconnect_is_observation_only",
+      "observations": 2
+    },
+    {
+      "check": "request_projection_and_cancellation_are_bound_to_owned_conversation",
+      "request_id": "bc50b75d-4d14-4494-9c05-4f85582269fe"
+    },
+    {
+      "check": "unread_http_acknowledgement_retry_and_gateway_restart_preserve_one_request_one_effect",
+      "request_id": "bc50b75d-4d14-4494-9c05-4f85582269fe",
+      "attempt_id": "bc50b75d-4d14-4494-9c05-4f85582269fe-598d9f28ba73073f",
+      "effects": 1
+    },
+    {
+      "check": "real_target_lost_operation_reply_is_reconciled",
+      "request_id": "bc50b75d-4d14-4494-9c05-4f85582269fe"
+    },
+    {
+      "check": "current_candidate_approval_policy_and_artifact_freshness_invalidate_gate_without_rewriting_manifest",
+      "request_id": "bc50b75d-4d14-4494-9c05-4f85582269fe",
+      "invalidations": 6
+    },
+    {
+      "check": "terminal_cancel_is_too_late_and_preserves_passed_manifest",
+      "request_id": "bc50b75d-4d14-4494-9c05-4f85582269fe"
+    },
+    {
+      "check": "queued_cancel_never_dispatches_and_running_cancel_waits_for_real_cleanup",
+      "request_id": "d8ae0e41-870f-48f1-a7e7-102ad025963e",
+      "attempt_id": "d8ae0e41-870f-48f1-a7e7-102ad025963e-b4ff9ff0b75bbe17",
+      "queued_request_id": "4157b49e-9b76-4bdc-a99d-4b14933ac59a",
+      "race_statuses": [
+        200,
+        409
+      ]
+    },
+    {
+      "check": "real_synthetic_assertion_failure_preserves_failed_outcome",
+      "request_id": "d297decf-bc09-4355-b1af-be681892294d",
+      "attempt_id": "d297decf-bc09-4355-b1af-be681892294d-92ce8c2f578275b5",
+      "outcome": "failed"
+    }
+  ],
+  "source_sha256": {
+    "verification/__init__.py": "e79851bd0d281b0264c9abc02fb5dd15d832acfb6e23ada6cf701bcd7aa46b6b",
+    "verification/__main__.py": "db1ac0e9e6d3874b178f1f0a212bb531a2e98e69760fc03988caf458bbf11bcb",
+    "verification/adapter.py": "38b867fb1449dd03c6170c39a04c3a5b5f7fd3ca2ac02b26e93d124a12d57b2e",
+    "verification/diagnostics.py": "e354e76f607a5969da9e294b36302457e769a29b7fdeb86ece44928b8089dba9",
+    "verification/model.py": "2b4d491a3c5657576942356b9f96b23fd17b1b939ecad80dd56a93937780f89f",
+    "verification/producer.py": "9170d038ab7f361944955af50af00a0b9914af26a730a1d543b88ac9644b53ca",
+    "verification/supervisor.py": "0b290c141e8111fa6642d21e7458353edbd22df4237dda35109bf1ef149ee2d7",
+    "verification/workflow.py": "18f1f51eae9653a30f0e3febf7515687d751094967b53617f6e23555cf636685",
+    "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+    "server/verification.ts": "fe7d02f2cab4fa114f662f32d2db062162c07d91b71dabde6fd83f6d90be38cd",
+    "server/verification-contract.ts": "78c1e1d9487facc5458aa9638176ad7e971d30b2327850295e5162adcae03060",
+    "app/src/verification-contract.ts": "a3991052d55eedfb19186c3901b17ef823c7138fac2b8d6a1729b9839c2210be",
+    "scripts/verification_runtime.py": "f189507f3d16c49a14b71d513644e2737a29f85b68dd3c618a37be43014bde24",
+    "scripts/verification_http_proof.py": "0a18534b77199f05c2d89b2882e9ad932bc9eb6e91a077bcede2f9bcaae5d48b"
+  },
+  "result": "passed",
+  "cleanup": true,
+  "versions": {
+    "python": "3.13.12",
+    "pydantic-ai-slim": "2.66.0",
+    "pydantic": "2.14.3",
+    "ag-ui-protocol": "1.0.0",
+    "temporalio": "1.35.0",
+    "psycopg": "3.3.8",
+    "fastapi": "0.162.0",
+    "uvicorn": "0.54.0",
+    "opentelemetry-sdk": "1.45.2",
+    "httpx-sse": "0.4.3",
+    "temporal": "temporal version 1.10.0 (Server 1.32.2, UI 2.56.1)",
+    "postgres": "postgres (PostgreSQL) 17.6",
+    "bn": "bn v0.3.0"
+  },
+  "observation_count": 72,
+  "private_report_sha256": "0d91733d97ea9620744192b749473f50ad78e9c3a68f6281f63aa6cc7aa407d1"
+}

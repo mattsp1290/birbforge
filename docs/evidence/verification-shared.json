@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-11-06T20:37:18.322245+00:00",
+  "shared_and_contract_tests": {
+    "passed": 14,
+    "failed": 0,
+    "files": [
+      "tests/verification-client.test.ts",
+      "tests/verification-contract.test.ts"
+    ],
+    "private_stdout_sha256": "2e9ab04a3a2f6bf0b82559f15af6f59c9e992f9f54ffb9b3424f2169f32fa4d2"
+  },
+  "typecheck": "passed",
+  "native_export": {
+    "target": "Linux ARM64 Expo iOS/Android JavaScript, no native device execution",
+    "status": "passed",
+    "bundle_sha256": {
+      "_expo/static/js/ios/index-53fb479b7f5cf871826ce7039e84c1a3.js": "1637fbe6e16da20e3a6add6c9d6f1028cc85ac9de1fc35d70e6a063f150ee19b",
+      "_expo/static/js/android/index-85b321429c5b22423c085c475293b094.js": "c5f03f76bf0c5546d6428d7df9127f34599900fd6c51cdd3b5a20e5e17e538e5"
+    }
+  },
+  "source_sha256": {
+    "app/App.tsx": "0ad301eaa0269317ffd409db5495d47823fa915e125c2ca90d95d0fa4783fdc1",
+    "app/src/controller.ts": "1253aca4d0386fe521fd29affc8411d361e160af4651457d91c6fdf88d705bf6",
+    "app/src/verification.ts": "3479dfbfdd58bc24564fd49f84c4cf65a49dfcf91ae1d728fc1abd380467bb34",
+    "app/src/verification-contract.ts": "a3991052d55eedfb19186c3901b17ef823c7138fac2b8d6a1729b9839c2210be",
+    "tests/verification-client.test.ts": "402b78f9d4b1b98d567708a2816325e4da576e7e64e6457b3bc97549a335165d",
+    "tests/verification-contract.test.ts": "f372ed00518ac139479790cee6620796d698d9a2791d7ca555891a222fa0b807"
+  },
+  "physical_iphone": "NOT VERIFIED",
+  "large_text_voiceover": "DEFERRED as previously authorized",
+  "web_export_before_runtime": "Completed in the same successful command chain before the source-bound runtime was launched."
+}

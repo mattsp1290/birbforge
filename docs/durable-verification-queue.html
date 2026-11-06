@@ -1,0 +1,248 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The pinned fixture queue, immutable results, recovery, and evidence gates."><title>04 · Durable verification · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link selected" aria-current="page" href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Durable queue evidence pending.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>04 · Durable verification</h1><p class="lead">The pinned fixture queue, immutable results, recovery, and evidence gates.</p></div><article><p>Status on November 6, 2026. This milestone adds Birbforge&#39;s first durable
+environment queue and shared verification view. The local execution checks and independent source review passed.
+Changed physical iPhone journeys remain pending. The earlier native acceptance
+record covers the first UI milestone only.</p>
+<p>This is an isolated, synthetic Linux Docker fixture. It grants no staging,
+production, PR, or merge authority. The broader
+<a href="verification-contract.html">verification contract</a> remains a proposal wherever
+it exceeds the concrete pinned producer behavior below.</p>
+<h2 id="pinned-producer-and-queue-ownership">Pinned producer and queue ownership<a class="anchor" href="#pinned-producer-and-queue-ownership" aria-label="Link to Pinned producer and queue ownership">#</a></h2><p>Birbforge consumes Birbcrew commit
+<code>88b219c18adeb352d2f291f099ede990a3190a58</code> and Birbverify commit
+<code>a70315a276837ffdde32049fdb77670a3468e151</code> without source overlays.
+Birbverify supplies its real <code>Activities.verify</code> activity, target fencing,
+immutable request/result contract, artifact reader, and fixture procedures.
+Birbforge supplies <code>verification.workflow.EnvironmentQueue</code>.
+Birbverify&#39;s <code>FixtureWorkflow</code> is not the environment queue.</p>
+<p>Each admitted producer request has one attempt budget and one immutable
+terminal result. An identical terminal request returns its original result.
+Neither reconnect nor supervisor recovery reruns that request. Automatic
+execution retries and replacement terminal manifests are outside this milestone.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Authority</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Authenticated gateway</td>
+<td>Checks existing Birbcrew conversation ownership and accepts only admission, cancellation, and observation payloads</td>
+</tr>
+<tr>
+<td>Installation policy</td>
+<td>Binds the exact candidate, approved plan, policy, permitted operations, deadline, and fixture capabilities</td>
+</tr>
+<tr>
+<td>Birbforge Temporal workflow</td>
+<td>Owns admission order, immutable bindings, idempotency receipts, request revisions, and dispatch</td>
+</tr>
+<tr>
+<td>Birbverify activity and target</td>
+<td>Execute the pinned procedure, own acquired attempt identity, fence effects, and record the producer result</td>
+</tr>
+<tr>
+<td>Separate supervisor CLI</td>
+<td>Confirms worker and container stop, reconciles the owned attempt through target operations, and records a separate recovery receipt</td>
+</tr>
+<tr>
+<td>Shared phone and browser client</td>
+<td>Displays authoritative observations and submits bounded commands. It cannot upload verdicts or release quarantine</td>
+</tr>
+</tbody></table></div>
+<p>The fixture trusts processes under the same host user. A worktree is not a
+native execution sandbox. The Python adapter runs as a bounded subprocess of
+the existing gateway. Its interpreter and private configuration paths come
+from launcher configuration. Clients cannot choose executables or paths.
+There is no separate API listener or application queue database.</p>
+<h2 id="immutable-admission-and-command-replay">Immutable admission and command replay<a class="anchor" href="#immutable-admission-and-command-replay" aria-label="Link to Immutable admission and command replay">#</a></h2><p>The gateway accepts these strict snake_case bodies.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Client fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Admit</td>
+<td><code>request_id</code>, <code>idempotency_key</code>, <code>candidate_commit</code>, <code>approved_plan_sha256</code></td>
+</tr>
+<tr>
+<td>Cancel</td>
+<td><code>request_id</code>, <code>command_id</code>, <code>expected_revision</code></td>
+</tr>
+<tr>
+<td>Observe</td>
+<td>Empty body for a snapshot, or the bounded AG-UI observation envelope</td>
+</tr>
+</tbody></table></div>
+<p>Request, idempotency, command, and conversation identities are UUIDs. Candidate
+commits are full 40-character hashes. Plan digests are 64-character SHA-256
+values. The gateway derives the principal and owned conversation. The
+conversation identity becomes the producer goal identity. Extra body fields,
+including caller-supplied authority or verdict fields, are rejected.</p>
+<p>The workflow compares normalized original intent before binding a new request
+to installation policy. Repeating a key with identical intent preserves its
+original binding and deadline after policy changes. Changed intent under that
+key conflicts. A request ID also remains unique across different keys.
+Temporal Update IDs include the normalized intent digest. Cancellation command
+replay compares the complete original payload, including the expected revision.</p>
+<p>Installation starts the stable queue workflow with <code>REJECT_DUPLICATE</code>.
+Admission never starts a missing or closed workflow. The workflow carries its
+registry, revisions, queued requests, and command receipts through
+Continue-As-New after handlers drain and no activity is active. This finite
+fixture admits at most 128 lifetime requests. It is not an unbounded queue.</p>
+<h2 id="dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution<a class="anchor" href="#dispatch-cancellation-and-uncertain-execution" aria-label="Link to Dispatch, cancellation, and uncertain execution">#</a></h2><p>The queue dispatches requests in admission order when the target reports free.
+<code>dispatching</code> means the Temporal activity has been scheduled. <code>running</code> means
+the target has supplied an acquired attempt. <code>attempt_id</code> remains null before
+acquisition. A queued deadline can expire without an attempt or manifest.</p>
+<p>A queued cancellation marks the request before dispatch and acknowledges it
+as <code>cancelled_before_dispatch</code>. After scheduling, cancellation uses
+<code>WAIT_CANCELLATION_COMPLETED</code> and producer reconciliation. A cancellation
+receipt alone does not prove execution stopped. Terminal cancellation can be
+too late. Client disconnect only ends observation.</p>
+<p>Workflow-worker restart replays the existing activity identity. Activity-worker
+loss does not release target ownership. Activity timeout or an unknown dispatch
+result blocks the queue until producer observations establish the result.
+A confirmed Temporal cancellation or producer non-retryable rejection, combined
+with a target observation of no acquired attempt, records <code>not_acquired</code>. It
+does not invent a manifest or retry execution. A timeout with no acquired
+attempt stays <code>uncertain</code> and blocks dispatch. There is no supervisor command
+to clear that case in this revision. Preserve its workflow history and private
+fixture for a bounded follow-up on worker stop and target fencing. No-attempt
+and free-target observations alone do not justify redispatch or recovery.</p>
+<h2 id="recovery-and-immutable-history">Recovery and immutable history<a class="anchor" href="#recovery-and-immutable-history" aria-label="Link to Recovery and immutable history">#</a></h2><p>The supervisor requires the original attempt context and separate supervisor
+key. It checks Linux process identity, including boot and start identity, and
+confirms the exact attempt container is absent. A PID alone is insufficient.
+Missing context or an unconfirmed stop leaves quarantine in place. A lost
+reservation reply can leave an acquired attempt without its context file.
+That case also has no recovery command in this revision. The bounded producer
+follow-up must cover both never-acquired uncertainty and acquired attempts
+without context, with target-owned fencing and immutable closure evidence.
+The key separates the supervisor operation from ordinary target commands. It
+is not an isolation boundary between trusted processes running as the same user.</p>
+<p>For unknown termination, the supervisor first preserves an inconclusive
+producer manifest with unknown termination and quarantined release status.
+It then inspects target state between recovery, cleanup, and release operations.
+Repeated commands inspect already committed transitions rather than blindly
+repeating them after a lost reply.</p>
+<p>A completed recovery produces a separate immutable receipt bound to the
+request, attempt, and original manifest digest. The original manifest remains
+unchanged after the environment becomes free. Recovery cannot turn unknown
+termination into a passed verification result. The gateway exposes no recovery
+or quarantine-release action.</p>
+<h2 id="evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations<a class="anchor" href="#evidence-eligibility-and-shared-observations" aria-label="Link to Evidence eligibility and shared observations">#</a></h2><p>Every snapshot carries installed candidate, plan, policy, workflow revision,
+request rows, current environment state, and separate recovery records.
+Request rows retain request and idempotency identities, acquired attempt or
+null, phase, cancellation state, producer outcome, manifest, and current gate
+eligibility. The environment can be free while an older manifest still records
+quarantine. Both observations are meaningful.</p>
+<p>A passed result becomes ineligible when the current synthetic candidate,
+approval, or policy changes. Those changes do not rewrite its historical
+outcome. The producer artifact reader checks required artifact bytes against
+their recorded size and digest on observation. Missing, changed, or unreadable
+required artifacts fail closed as <code>evidence_unavailable_or_invalid</code>.</p>
+<p>The gateway sends standard AG-UI <code>RUN_STARTED</code>, <code>STATE_SNAPSHOT</code>, and
+<code>RUN_FINISHED</code> events. The observer run ID is distinct from the producer attempt
+ID. Phone and browser use one shared client that accepts each snapshot
+atomically. Serialized observations and connection generations reject stale
+responses while allowing fresh artifact eligibility at the same workflow revision.
+The random <code>observation_id</code> correlates an observation; it is not an ordering clock.</p>
+<p>An unavailable acknowledgement leaves the original command pending in the
+current client session. Refresh and retry use its original identities and
+payload. Pending client state is not a durable outbox across application reload.
+An unavailable observation retains the last snapshot as historical information.
+The client cannot infer a successful command or cancel verification on reconnect.</p>
+<h2 id="reproduce-the-local-checks">Reproduce the local checks<a class="anchor" href="#reproduce-the-local-checks" aria-label="Link to Reproduce the local checks">#</a></h2><p>After guest setup, select the validated producer interpreter from the private
+setup record. These commands do not print credentials.</p>
+<div class="code-block"><pre><code>BIRBVERIFY_PYTHON=$(python3 -c 'import json,pathlib; p=pathlib.Path(&quot;.local/guest-setup-path&quot;).read_text().strip(); print(json.load(open(p))[&quot;exports&quot;][&quot;birbverify&quot;]+&quot;/.venv/bin/python&quot;)')
+scripts/guest -- &quot;$BIRBVERIFY_PYTHON&quot; -m pytest tests/verification_python -q
+scripts/guest -- scripts/npm run check
+scripts/guest -- scripts/npm exec tsx -- --tsconfig tsconfig.node.json --test tests/verification-client.test.ts tests/verification-contract.test.ts
+scripts/guest -- scripts/npm run export:native -- --output-dir .local/verification-native-build
+scripts/guest -- scripts/npm run export:web
+scripts/guest --producer birbcrew -- .venv/bin/python -I &quot;$PWD/scripts/verification_http_proof.py&quot; &quot;$PWD&quot;</code></pre><button class="copy-code" type="button">Copy</button></div><p>The HTTP proof owns and cleans a fresh runtime. After it exits, start
+<code>scripts/guest -- scripts/verification-dev</code>. In a second Mac terminal, run
+<code>BIRBFORGE_CHROMIUM=&#39;/Applications/Google Chrome.app/Contents/MacOS/Google Chrome&#39; node scripts/verification-browser.mjs</code>
+with compatible native Node 22 and the existing browser. Then stop with
+<code>scripts/guest -- scripts/verification-dev --stop</code>.</p>
+<p>The interactive launcher cleans its fixture if a child process exits. The
+interruption proof uses the <code>VerificationRuntime</code> coordinator directly so it
+can keep Temporal, target and gateway alive while restarting workers. Do not
+treat killing the interactive launcher as the queue-worker recovery test.</p>
+<p>For an acquired interrupted attempt, a trusted host coordinator invokes
+<code>python -m verification.supervisor QUEUE_CONFIG ATTEMPT_ID RECOVERY_UUID fence</code>
+using the validated producer interpreter. After checking quarantine, invoke the
+same command without <code>fence</code>. The coordinator first confirms its exact activity
+worker has stopped. The supervisor verifies that independently and reuses
+Birbverify&#39;s stop, cleanup and release operations. It rejects recovery of a
+normally released attempt and a different recovery identity for an already
+recovered attempt. It never runs through the client action API.</p>
+<p>One installation subprocess was observed hanging after Temporal had accepted
+the workflow. Its failed fixture and report were retained privately. Subsequent
+fresh installations passed. The launcher bounds startup calls and cleans its
+owned fixture on timeout; the shutdown cause is not established. This is a
+known local startup limitation, not evidence of a repaired SDK.</p>
+<p>Diagnostics remain local. Queue transitions and supervisor cleanup emit
+allowlisted JSON log envelopes; request and attempt identities are attributes,
+not metric labels. Artifact failures are deduplicated per request and capped at
+64 KiB per fixture. The cap may omit later diagnostics; authoritative state and
+eligibility do not depend on these logs. No exporter is enabled.</p>
+<h2 id="acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone<a class="anchor" href="#acceptance-evidence-for-this-milestone" aria-label="Link to Acceptance evidence for this milestone">#</a></h2><p>The following statuses apply to this milestone&#39;s final revision. Historical
+<a href="first-milestone.html">first UI milestone</a> evidence does not satisfy these checks.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Proof</th>
+<th>Current status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Unchanged pinned producers and Linux guest runtime</td>
+<td><a href="evidence/verification-portability.json">Portability and 14 producer tests passed</a></td>
+</tr>
+<tr>
+<td>FIFO, admission conflicts, immutable replay, and Continue-As-New retention</td>
+<td><a href="evidence/verification-queue.json">30 queue and boundary tests passed</a></td>
+</tr>
+<tr>
+<td>Real activity, workflow restart, cancellation, and worker-loss quarantine</td>
+<td><a href="evidence/verification-queue.json">Real Temporal and target proof passed</a></td>
+</tr>
+<tr>
+<td>Separate supervisor recovery and unchanged original manifest</td>
+<td><a href="evidence/verification-queue.json">Target-confirmed recovery passed</a></td>
+</tr>
+<tr>
+<td>Artifact invalidation and candidate, approval, and policy freshness</td>
+<td><a href="evidence/verification-http.json">Nine HTTP scenarios passed</a></td>
+</tr>
+<tr>
+<td>Gateway rejection, AG-UI observations, and shared browser behavior</td>
+<td><a href="evidence/verification-browser.json">Mac browser passed</a>; <a href="evidence/verification-shared.json">14 shared tests and native JS exports passed</a>; <a href="evidence/verification-regression.json">six conversation regression tests passed</a></td>
+</tr>
+<tr>
+<td>Independent source review and fixes</td>
+<td><a href="evidence/verification-review.json">Claude Opus 5.5 review and closure</a>, supplied-source review with no independent execution</td>
+</tr>
+<tr>
+<td>Changed native verification controls and transport on physical iPhone</td>
+<td>NOT VERIFIED. Fresh host observations found no available physical phone</td>
+</tr>
+<tr>
+<td>Native OS Large Text and VoiceOver</td>
+<td>DEFERRED / NOT VERIFIED under the existing owner deferral</td>
+</tr>
+</tbody></table></div>
+<p>Mac-hosted Linux execution is distinct from native macOS execution. Darwin
+tool-version probes and exported native JavaScript bundles do not establish an
+iPhone journey. <code>docs/mac-iphone-verification.md</code> defines the exact-revision
+native handoff. It pins the exercised implementation commit. The <a href="evidence/verification-binding.json">delivery binding</a>
+records source, report, and dependency hashes.</p>
+<p>Setup and cleanup commands are in <code>docs/host-execution.md</code> and
+<code>docs/development.md</code>. Keep fixture credentials, host configuration, logs,
+screenshots, raw artifact bytes, and continuation handoffs private and outside
+Git. Public reports contain sanitized identities, digests, observations, and
+the precise revision exercised. No live model, private notes hub, external
+telemetry exporter, network reconfiguration, or production access belongs to
+this fixture.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a></nav></aside></body></html>
