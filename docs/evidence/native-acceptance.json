@@ -1,0 +1,156 @@
+{
+  "testedAt": "2026-11-06T15:19:34.709592+00:00",
+  "testedRevision": "5d333cda03a6b385b669f6025b248d4ba4272071",
+  "producerRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+  "executionOwner": "Local Mac verification owner, reported via birbforge-h-5mbs",
+  "targets": {
+    "mac": "macOS 26.6.2 ARM64; Google Chrome 156.0.8078.80; real window and headless harness",
+    "phone": "Physical iPhone 16 Pro; iOS 26.6.1; device-signed native Release build; operated with iPhone Mirroring",
+    "bundle": "dev.birbforge.proof 0.1.0 (1)",
+    "nativeBundleSha256": "153a9b04e87819dace65424fc0fd87022e380f07008a25a921f9f4644ef2dc1f",
+    "nativeBundleSha256Provenance": "Supplied by the local verification owner; native bundle bytes were not delivered for independent recomputation."
+  },
+  "sourceHashesReportedBeforeAndAfter": 30,
+  "journeys": {
+    "phoneToMac": "VERIFIED: native-created conversation and goal, matching request ID/version and rendered messages on Mac",
+    "bidirectionalResolution": "VERIFIED: Mac inbox resolved phone goal; separate Mac-created conversation resolved by native phone",
+    "race": "VERIFIED at decision API with both devices observing: one 200, one 409, both converge; concurrent requests originated on Mac, not simultaneous physical taps",
+    "recovery": "VERIFIED transitions: actual bridge stopped/restored, both offline then automatically connected with same pending ID/version and one accepted input; native background/foreground recovered. No Send action during recovery; native HTTP POST attempts were not independently instrumented. Browser harness counted exactly one input POST.",
+    "unauthorized": "VERIFIED: native invalid and stranger credentials cannot open owner conversation; direct decision API returns 401/404, actor injection 400 and stale version 409, owner snapshot unchanged",
+    "accessibility": "Mac keyboard harness passed. Native OS Large Text and VoiceOver DEFERRED by explicit owner decision; not verified and not an acceptance blocker for owner use."
+  },
+  "ownerDecisionsReported": [
+    "Enrolled NetBird peers are trusted. Proxy-only bridge isolation and firewall mutation declined; app bearer authentication, exact interface bind and HTTPS preserved.",
+    "Native OS Large Text and VoiceOver may be tested later upon request if external users need them."
+  ],
+  "firstConversation": {
+    "id": "642fcf33-bbd1-4c94-b04d-ae9e69a36cfc",
+    "revision": 5,
+    "inputs": 1,
+    "decisions": 1,
+    "messageIds": [
+      "5f860181-884b-5549-b4e7-73783b95f976",
+      "24d556ce-c50b-5127-90be-92f77a748ad8",
+      "d3234f75-6b3d-597c-887e-69b33e73c0c6",
+      "2ea5537b-6372-5bc2-82e2-fbd4286db428",
+      "e582ec03-7213-5874-abec-0a4a87b82b87"
+    ],
+    "context": {
+      "project": "birbcrew",
+      "commit": "f8c18ad0967043cac0402117f8aad36526f97f1f",
+      "notes": [
+        {
+          "key": "milestone",
+          "content_sha256": "1a515fa5dadf1817f240b21a1e368b2c3d0ef240100ab687582ffc43f4edafd0"
+        },
+        {
+          "key": "verification",
+          "content_sha256": "0952e23cdbe08ff9b571cd9597a4a0bd9877955d372f3ddff8e45453a3f55657"
+        }
+      ]
+    }
+  },
+  "race": {
+    "checkedAt": "2026-11-06T15:16:36.438Z",
+    "conversationId": "d4859472-0a69-4a23-9bdd-bb86391ab86c",
+    "requestId": "d4859472-0a69-4a23-9bdd-bb86391ab86c/14df52a9-035c-4675-b1d9-d92a33e8eafc/next-step",
+    "version": 1,
+    "target": "Concurrent direct Mac requests through the Birbforge decision endpoint; both real device UIs observed before and after",
+    "results": [
+      {
+        "choice": "inspect",
+        "status": 409
+      },
+      {
+        "choice": "test",
+        "status": 200
+      }
+    ],
+    "inputs": 2,
+    "decisions": 2,
+    "revision": 9,
+    "winner": "test",
+    "messageIds": [
+      "db91aaea-d483-5ab1-b6dc-6708b4831348",
+      "c59c3f87-fe45-57f8-83d1-1fba4e8857f9",
+      "dbffdadd-8bdb-5524-b548-e9677be96139",
+      "ea99238e-c05c-5510-af43-010aa86e805d",
+      "881018cb-7df4-522f-93c0-4a6131faf1bc",
+      "b06e1f08-367b-5caf-96c9-37a07c44ceb9",
+      "c5170107-24f5-5777-ba8c-c425e9dcc53b",
+      "62d9b5e0-bbbc-507c-af33-25658ea60097",
+      "e004dd61-4e81-57ea-b7ee-b7d1a45ae69b",
+      "426adc68-d42e-525a-b366-cc031aed3ede"
+    ],
+    "context": {
+      "project": "birbcrew",
+      "commit": "f8c18ad0967043cac0402117f8aad36526f97f1f",
+      "notes": [
+        {
+          "key": "milestone",
+          "content_sha256": "1a515fa5dadf1817f240b21a1e368b2c3d0ef240100ab687582ffc43f4edafd0"
+        },
+        {
+          "key": "verification",
+          "content_sha256": "0952e23cdbe08ff9b571cd9597a4a0bd9877955d372f3ddff8e45453a3f55657"
+        }
+      ]
+    }
+  },
+  "rejections": {
+    "checkedAt": "2026-11-06T15:15:25.103Z",
+    "conversationId": "d4859472-0a69-4a23-9bdd-bb86391ab86c",
+    "requestId": "d4859472-0a69-4a23-9bdd-bb86391ab86c/fa5c2748-403d-47cb-a3d9-3a20978ffc4d/next-step",
+    "version": 1,
+    "target": "Mac direct HTTP requests through SSH to the same runtime; not native UI rejection",
+    "results": [
+      {
+        "label": "invalid credential",
+        "status": 401,
+        "code": "authentication_required"
+      },
+      {
+        "label": "stranger",
+        "status": 404
+      },
+      {
+        "label": "forged actor",
+        "status": 400,
+        "code": "invalid_command"
+      },
+      {
+        "label": "stale version",
+        "status": 409
+      }
+    ],
+    "ownerStateUnchanged": true
+  },
+  "macBrowserHarness": {
+    "target": "macOS 26.6.2 ARM64, installed Google Chrome headless; native phone not exercised by this harness",
+    "browserVersion": "156.0.8078.80",
+    "inputPostRequests": 1,
+    "keyboardTabsToDecision": 5,
+    "observationsBeforeNetworkLoss": 2,
+    "observationsAfterNetworkRecovery": 3,
+    "checkedAt": "2026-11-06T15:04:17.609Z",
+    "nodeVersion": "v26.6.0",
+    "conversationId": "22d7b96c-704c-4ecc-b77e-01dc847fb688",
+    "transitions": [
+      "lost create acknowledgement retried with the same conversation identity",
+      "browser A submitted goal and received durable input",
+      "keyboard activation in browser B inbox resolved browser A conversation",
+      "explicit observation disconnect and reconnect retained resolution",
+      "network loss and automatic reconnect preserved one input without prompt resubmission"
+    ],
+    "pageErrors": []
+  },
+  "privateRoute": "Local owner reports active private HTTPS service with normally trusted certificate, exact peer interface-address bind and an existing SSH bridge. Mac browser uses loopback SSH because target-peer access to its own proxied origin returned 421.",
+  "publicPathDiagnostic": 403,
+  "proxyOnlyIsolation": "Owner declined proxy-only segregation among friendly enrolled peers; NOT VERIFIED, not passed.",
+  "nativePostAttempts": "Not separately instrumented. Observed native recovery, unchanged accepted input and no Send action; exact POST count is browser-harness evidence only.",
+  "nativeAccessibility": "DEFERRED / NOT VERIFIED by reported owner decision; Mac keyboard checks passed",
+  "mergeReview": "Human authentication and permission review required; no merge approval",
+  "revisionBinding": "These device results belong to the tested revision above. Later documentation-only commits do not represent another native execution.",
+  "unconfirmedResidualRisk": "LAN/other-overlay reachability is unverified. If such a caller reaches the SSH bridge it can spoof Host and bearer auth is its only per-person action gate. The handoff does not establish acceptance of that residual risk; human authentication/permission review remains required before merge.",
+  "observedBidirectionalResolution": "Local owner reports Mac inbox selected inspect, native conversation showed the recorded inspect and completed goal with one accepted decision. In a separate Mac-created conversation native selected test and Mac inbox cleared. The implementation owner inspected the supplied native inspect-result screenshot."
+}

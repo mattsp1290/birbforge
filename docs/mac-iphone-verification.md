@@ -1,7 +1,10 @@
 # Verify the same conversation on Mac and iPhone
 
-Device acceptance is NOT VERIFIED. The Linux owner cannot control the Mac or
-phone through this SSH session. The local Codex owner executes this handoff and
+The local owner exercised functional device journeys at
+5d333cda03a6b385b669f6025b248d4ba4272071. [Current acceptance](evidence/acceptance.md)
+records the results and limits. Native OS Large Text/VoiceOver are DEFERRED /
+NOT VERIFIED. The procedure below remains for repeat or broader acceptance.
+The Linux owner cannot control the Mac or phone through this SSH session. The local Codex owner executes this handoff and
 returns attributable evidence through Beans. Use the exact branch and full
 commit in the private Beans handoff. Do not test a moving branch tip.
 
@@ -17,8 +20,11 @@ without the owner's authorization. Preserve unrelated work in a separate worktre
 
 An existing authorized SSH connection to the Linux machine is needed for the
 Mac browser. The iPhone also needs the reviewed [private HTTPS and SSH bridge route](private-phone-access.md)
-to the same Linux loopback runtime. Inspect both the route and bridge-port
-isolation before spending time building the app.
+to the same Linux loopback runtime. Inspect the route and the applicable trust
+profile before a new build. Any new or re-created bridge must still establish LAN and
+other non-NetBird ingress denial or wait for explicit human permissions review
+before owner tokens are sent. The recorded owner-use run declined proxy-only peer
+isolation; it did not establish LAN/other-ingress denial or acceptance of that risk.
 
 ## Check out the exact revision on Mac
 
@@ -131,7 +137,8 @@ The iPhone app's `127.0.0.1` is the phone, not the Mac or Linux machine.
 The default Linux gateway accepts only Host `127.0.0.1` with an optional port. It binds
 only to Linux loopback. The optional [private proxy adapter](private-phone-access.md)
 adds an exact-authority loopback backend for the existing private HTTPS service
-and an already authorized enrolled-peer SSH bridge. Do not enter a raw Mac LAN or NetBird IP and claim that
+and an already authorized enrolled-peer SSH bridge. The reported owner-use
+profile trusts enrolled peers and does not claim proxy-only bridge isolation. Do not enter a raw Mac LAN or NetBird IP and claim that
 it should work.
 
 An existing authorized on-device SSH forward can provide a phone-local loopback
@@ -139,8 +146,10 @@ endpoint through encrypted SSH to Linux, if that already installed client
 supports forwarding while Birbforge is foregrounded. The preferred route uses the existing private HTTPS service and an already
 authorized enrolled-peer SSH bridge to the optional loopback proxy backend. It
 preserves the configured external HTTPS Host. The legacy HTTP listener still
-accepts only the loopback Host. Prove the bridge port is inaccessible directly
-from other peers and LAN ingress before owner tokens are used. Verify certificate
+accepts only the loopback Host. For the stricter trust profile, prove the bridge port is inaccessible directly
+from other peers and LAN ingress before owner tokens are used. The owner explicitly
+declined proxy-only segregation among friendly enrolled peers for the reported
+private verification setup. Do not infer acceptance of LAN/other-overlay exposure. Verify certificate
 trust, route ownership, authentication forwarding, and foreground/background
 behavior locally. Keep destination and certificate configuration private.
 
@@ -170,7 +179,7 @@ authenticated network trace into public evidence.
 | Racing answers | Preserve the displayed ID/version on both devices. Submit different choices concurrently through the same Birbforge decision action. Capture one accepted result, an explicit HTTP 409 conflict for the loser, and converged authoritative state. A stale version must also reject explicitly. |
 | Connection loss | Interrupt observation through the already authorized route or device network without cancelling. Capture disconnected/connecting state, restoration, a new observation, identical conversation identity, and unchanged accepted input count. No send action or new prompt UUID may occur on reconnect. Test iPhone background/foreground recovery too. |
 | Unauthorized action | Use the fixture stranger or invalid credential and an attempted locally forged owner/request. Capture 404 or 401 rejection and unchanged owner state. An `actor` decision field must return 400. Redact all headers and tokens. |
-| Accessibility | Run the core journey with OS large text on iPhone and VoiceOver-labelled controls. On Mac, use actual Tab traversal and Enter/Space activation with visible focus. Capture settings, device/browser versions, control labels, and successful transitions. The application body-text toggle is additional evidence, not OS font scaling. |
+| Accessibility | For full accessibility acceptance, run the core journey with OS large text on iPhone and VoiceOver-labelled controls. These native checks are deferred for current owner use and must remain NOT VERIFIED until run. On Mac, use actual Tab traversal and Enter/Space activation with visible focus. Capture settings, device/browser versions, control labels, and successful transitions. The application body-text toggle is additional evidence, not OS font scaling. |
 
 The producer has four inputs per conversation. Use separate disposable
 conversations for independent attempts when needed. Do not request workflow

@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-11-06T15:28:58.664595+00:00",
+  "testedRevision": "5d333cda03a6b385b669f6025b248d4ba4272071",
+  "handoff": "birbforge-h-5mbs",
+  "validation": "Implementation owner recomputed delivered file SHA256 values and pinned Git blob hashes. Device execution was by the local Mac owner, not rerun on Linux.",
+  "evidenceManifestSha256": "08e0b1b5c05c98d78bce12171464a940282ca922c568278958bdf7b9e598ac94",
+  "evidenceFilesChecked": 13,
+  "files": [
+    {
+      "name": "decision-race.json",
+      "sha256": "4ab468cfe6ecdd49a12761ad851333cfadc2a31779111d57d7c5dade69990564"
+    },
+    {
+      "name": "decision-rejections.json",
+      "sha256": "1b49f07057f74694f269ba88dcb67f2b4d0ba29f1db924d3815d407f10443715"
+    },
+    {
+      "name": "handoff.md",
+      "sha256": "16338f70e7a1731b1de3482f12ce6a3dec13c683d9867bfd34d1ab6eb080cee2"
+    },
+    {
+      "name": "iphone-invalid-rejected.png",
+      "sha256": "d2d806a3bac878b55b7ca9fc7cc858d7765e7bad74ef16746c04066b0fbfd609"
+    },
+    {
+      "name": "iphone-network-loss.png",
+      "sha256": "2a5ac050d21c2cbb42c4cdc13302d34a66f38df60c619b9325a3eb2c6ea7aee6"
+    },
+    {
+      "name": "iphone-pending.png",
+      "sha256": "1f3baea511aaa5eebd3cc6f839bf8484c431cdc61be22224824c3f2df5b50027"
+    },
+    {
+      "name": "iphone-race-converged.png",
+      "sha256": "ee1de5140fe2052084aed0cd4949ae23c552e0fea9a3a8553b1846aa2dcdddcd"
+    },
+    {
+      "name": "iphone-recovered.png",
+      "sha256": "56492250f0469a7076d7747623c8c545a09d7a243ee2457c4c3cdadd8daebcb0"
+    },
+    {
+      "name": "iphone-resolved-from-mac.png",
+      "sha256": "0b68e8dae90f22cd7a56914c6e33675132937198bb7b2b8312251c33e46e6f39"
+    },
+    {
+      "name": "iphone-resolved-native.png",
+      "sha256": "84c311172cc07aaa9a6cc7eabd4d8cc7f140971105ef3f003d53ce2d200a8dfc"
+    },
+    {
+      "name": "iphone-stranger-rejected.png",
+      "sha256": "da9af7ed66e90e5e93f92977b60b3ade96cfa586071ac2efaa422a211a4a4e49"
+    },
+    {
+      "name": "mac-browser-checks.json",
+      "sha256": "ba3a3382c2477bb3b90105f2b0d4efa087a96827e8aa23ae254e655490e55807"
+    },
+    {
+      "name": "results.json",
+      "sha256": "1f7435a89026f081f08f73e76b0eed28ad4f75398d6a339ae6f3090a87317111"
+    }
+  ],
+  "gitSourceHashesRecomputed": 30,
+  "macBeforeAfterSourceChecks": "Reported by local owner; Mac worktree not accessed by this Linux receipt check",
+  "nativeBundleHashVerification": "Owner-supplied SHA256; native bundle bytes were not included for independent recomputation",
+  "publication": "Raw screenshots, handoff body, paths, origin, device identifiers and service metadata remain private."
+}

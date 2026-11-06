@@ -1,5 +1,11 @@
 # Independent review disposition
 
+Sections before "Native and Mac evidence reconciliation" record the status at
+each historical review. Their open native gates and stricter activation profile
+are historical, not current functional results. The final section records the
+later operator evidence and reported owner decisions without granting merge
+approval or endorsing an unverified LAN/other-ingress risk.
+
 Fresh design and code reviews returned `claude-opus-5-5` in the CLI modelUsage
 record. Both used a new Claude CLI process, safe mode, and Read, Glob, and Grep
 only. Before invocation, help and process-local auth status were inspected.
@@ -69,7 +75,7 @@ hint. A closing decision row records the final passing checks and manifest.
 
 These affected checks passed after the review. The reviewer did not execute
 them or recompute hashes. The latest source manifest covers implementation and
-test source, not changing prose under `docs`. The Mac/iPhone handoff is a pending
+test source, not changing prose under `docs`. At that review, the Mac/iPhone handoff was a pending
 local verification procedure, not acceptance evidence.
 
 ## Final targeted review
@@ -86,8 +92,8 @@ stream-error retry independently of browser online/offline notifications.
 
 Those small assertion additions were implemented after this final review and
 rerun by the implementation owner. They were not independently executed by the
-reviewer. Native Expo transport, device networking, and OS accessibility remain
-NOT VERIFIED. The [SDK 55 iOS CLI help](evidence/expo-ios-help.txt) records the
+reviewer. At that review, native Expo transport, device networking, and OS accessibility
+remained NOT VERIFIED. The [SDK 55 iOS CLI help](evidence/expo-ios-help.txt) records the
 inspected flags. It is not evidence of an Xcode build or device installation.
 
 ## Private phone access continuation
@@ -113,7 +119,7 @@ and create-only, and shutdown prevents remaining startup steps. No private key
 or application TLS service was introduced.
 
 [The first fix review](evidence/private-fix-review.json) confirmed those code
-fixes but found material activation/evidence gaps. The procedure now requires
+fixes but found material activation/evidence gaps. At that review, the procedure required
 proxy-only bridge reachability, observed NetBird source/interface, other-peer
 and actual LAN-ingress denial, with no owner tokens until those gates pass.
 A Host 403 or an HTTPS audience group alone is explicitly insufficient. Missing
@@ -139,8 +145,57 @@ row names the final affected verification run. These small changes were rerun
 by the implementation owner after review.
 
 The local TLS proxy is a fixture with a client-only CA, not evidence of the real
-NetBird service or Apple trust. The actual route, public/non-enrolled denial,
-bridge-port restrictions, native app, and six full device journeys remain
-NOT VERIFIED. Human authentication and permission review remains required before
+NetBird service or Apple trust. At that review, the actual route, public/non-enrolled denial,
+bridge-port restrictions, native app, and full device journeys remained
+NOT VERIFIED. Later functional results and the reported exception follow below. Human authentication and permission review remains required before
 merge. No DNS, network/account setting, firewall, OS trust, or production change
 was performed in this continuation.
+
+## Native and Mac evidence reconciliation
+
+The local verification owner returned `birbforge-h-5mbs` for tested revision
+`5d333cda03a6b385b669f6025b248d4ba4272071`. The implementation owner recomputed
+all 13 delivered evidence file hashes and 30 Git source hashes without mismatch,
+checked JSON outcome/count invariants and inspected a native result screenshot.
+[The receipt](evidence/native-evidence-receipt.json) records that check. It does
+not claim a native rerun, access to the Mac source tree, independent recomputation
+of the supplied native bundle hash, or a new test of a later documentation commit.
+
+[Acceptance](evidence/acceptance.md) now records five functional journeys with
+explicit limits. The race used concurrent Mac API requests while both real UIs
+observed. Native recovery had no separate POST-attempt counter; the exactly-one
+POST count belongs to the independent Mac browser harness. Native OS Large Text
+and VoiceOver remain DEFERRED / NOT VERIFIED by the owner decision reported in
+the handoff. Mac keyboard controls were exercised.
+
+The handoff also reports the owner's explicit trusted-enrolled-peer decision
+and refusal of proxy-only bridge isolation/firewall changes for this private
+setup. This records a friendly-enrolled-peer exception for owner use, not acceptance
+of possible LAN/other-overlay exposure. Source/interface isolation and direct
+LAN/other-ingress denial remain unverified. A reachable caller could spoof Host,
+leaving bearer authorization as its only per-person action gate. The handoff
+does not confirm acceptance of that residual risk; human authentication and
+permission review must resolve it before merge. Neither
+the prior source review nor this documentation reconciliation grants a new
+security endorsement. The app's bearer, exact authority, and loopback checks are
+unchanged. Human authentication/permission review remains required before merge.
+A broader or untrusted audience requires renewed review of the trust boundary.
+
+This reconciliation changes public prose and redacted evidence only. It does
+not regenerate device/source manifests, stop the retained runtime or SSH bridge,
+change permissions/network settings, or authorize merge or production deployment.
+
+The [reconciliation review](evidence/native-reconciliation-review.json) found
+trust-scope and historical-status contradictions. The reported friendly-peer
+exception is now expressly limited to enrolled peers. It does not establish
+acceptance of reachable LAN/other-overlay callers, for whom bearer auth could
+be the only per-person action gate. Historical review-time statuses are labeled.
+
+The [fix review](evidence/native-reconciliation-fix-review.json) confirmed those
+corrections and identified one remaining future-activation gap. The procedure now
+explicitly requires every new or re-created owner-use bridge to establish
+LAN/other-ingress denial or wait for explicit human permissions review before
+owner tokens are sent. Only friendly-peer segregation is waived. This is a
+future-operation guard, not a claim of a passed test or a lifecycle change to the
+retained session. The implementation owner addressed that finding and reran the
+documentation checks. No additional device execution is claimed.
