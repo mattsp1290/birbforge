@@ -1,0 +1,10 @@
+import { readFileSync } from 'node:fs';
+import { GatewayConfig, gateway } from './gateway';
+const path = process.env.BIRBFORGE_CLIENT_CONFIG;
+if (!path) throw new Error('BIRBFORGE_CLIENT_CONFIG is required');
+const config = GatewayConfig.parse(JSON.parse(readFileSync(path, 'utf8')));
+const port = Number(process.env.BIRBFORGE_PORT ?? 8787);
+if (!Number.isSafeInteger(port) || port < 1 || port > 65535) throw new Error('Invalid port');
+const server = gateway(config, 'dist');
+server.listen(port, '127.0.0.1', () => process.stdout.write(`Birbforge ready on loopback port ${port}\n`));
+process.on('SIGTERM', () => {server.close(); server.closeAllConnections();});

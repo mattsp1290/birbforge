@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+repo=$PWD
+root=$(cat .local/dependency-path)
+test "$(cat "$root/.birbforge-revision")" = 88b219c18adeb352d2f291f099ede990a3190a58
+python3 scripts/check-dependency.py "$root"
+export DD_INJECTION_ENABLED=false DD_TRACE_ENABLED=false DD_INSTRUMENTATION_TELEMETRY_ENABLED=false
+unset PYTHONPATH
+cd "$root"
+exec uv run --locked python -I "$repo/scripts/runtime.py" "$repo"

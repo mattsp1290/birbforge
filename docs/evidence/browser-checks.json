@@ -1,0 +1,26 @@
+{
+  "target": "Linux ARM64 headless Chromium, not a Mac browser or native phone",
+  "browserVersion": "153.0.8010.12",
+  "inputPostRequests": 1,
+  "keyboardTabsToDecision": 5,
+  "observationsBeforeNetworkLoss": 2,
+  "observationsAfterNetworkRecovery": 3,
+  "checkedAt": "2026-11-06T13:33:05.329Z",
+  "nodeVersion": "v22.23.3",
+  "viewport": {
+    "width": 1280,
+    "height": 1000
+  },
+  "nativePhone": "NOT VERIFIED",
+  "macBrowser": "NOT VERIFIED",
+  "conversationId": "aa2d8f8a-6bed-47a3-a6aa-4484f54c5248",
+  "transitions": [
+    "lost create acknowledgement retried with the same conversation identity",
+    "browser A submitted goal and received durable input",
+    "keyboard activation in browser B inbox resolved browser A conversation",
+    "explicit observation disconnect and reconnect retained resolution",
+    "network loss and automatic reconnect preserved one input without prompt resubmission"
+  ],
+  "pageErrors": [],
+  "screenshot": "Private .local/browser-large-text.png; transition assertions are the acceptance evidence"
+}
