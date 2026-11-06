@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-06T13:33:07.984138+00:00",
+  "checked_at": "2026-11-06T14:35:09.610495+00:00",
   "scope": "Source hashes computed after the successful scripts/verify checks. Target acceptance is separately recorded.",
   "node": "v22.23.3",
   "source_hashes": {
@@ -20,14 +20,16 @@
     "scripts/dev": "2f44e7300588dd629e06a5968ad8ecb8b41384194cce273c70b98998d64b7582",
     "scripts/evidence.py": "ce1758a0b7961411d50f3fcf4b8e19c4c4ba36d4626bf00497951780f0b5a175",
     "scripts/npm": "97630bd39782bd187d5a5ad7db9228c8c68b2f9aadb0949fac96edcd4fd83902",
-    "scripts/public-check.py": "30053a64ed9ccc541bc303b449e137613446d4e4b1a377c663b3081f3023186b",
-    "scripts/runtime.py": "2dce7f791bad5aa1dab174929dd82898b1e9a19491b56aa8cf96eee21e61fccb",
+    "scripts/public-check.py": "c3d9cebadea717306a6b774137509268baa4eab1fe7d4669443dd285bd9b628f",
+    "scripts/runtime.py": "22b995840ec886371d8509da17f421491399db8bff55a09fc06f60284d5078fd",
     "scripts/setup": "5c78126ad68a6f40aee5a265f43afcfcee59721a24ec829318e9f6c506f2fb8f",
-    "scripts/verify": "b7d9375d03c78780be96425c4e051c923e11fce4ddb7b24935db9bb95162948c",
-    "server/gateway.ts": "9500ed345ef50e7eeaa6e0215fd9e3a481e4967e9c15bd7dfbdfc83ce2bc2d19",
-    "server/main.ts": "326211e4098804acce282e2f7671ba0f8df54909f1cdf6f4ff748d5dd3355322",
+    "scripts/verify": "3a63e770e631252699aa121ff882afa23840d52ad18af13c7ce3775a93e227a7",
+    "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+    "server/gateway.ts": "427e555a20984c9d2805618cda5759a4d958283b86ac95a9832a00a87602e8fc",
+    "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
     "tests/fixtures/producer-commands.schema.json": "37bfd1382a10bb36b97b18a6c8eb6e54d9c013af971eb523b4dd64b7dada03bf",
     "tests/fixtures/producer-source.json": "358513d5116871add4f9abdae5afa3c8c885926801211ffab8d1668ec74de7e2",
+    "tests/private-access.test.ts": "000124c46cadfbb87c9001609ce8ba9c79d4aae70fa13eca7ab7dec65284f5e5",
     "tests/runtime.test.ts": "39b62c9b85211a231373b181da486333fe5dc5bab756bb583b4f8025acefd505",
     "tsconfig.json": "d15c50ed6329749890df8372a32cbd84e3627bd752e6995fe52e77124c2cd8f4",
     "tsconfig.node.json": "7a046a8f04d906bef1ae67b7c32ce2fc68e5775e0fbe764f582bbe5564958e61"

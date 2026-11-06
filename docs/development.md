@@ -1,7 +1,7 @@
 # Run the disposable UI proof
 
 Use this Linux machine's existing Docker, Git, uv, bn 0.3.0, curl, ripgrep,
-sha256sum, and Python prerequisites. No OS package installation is part of setup.
+sha256sum, OpenSSL CLI, and Python prerequisites. No OS package installation is part of setup.
 All runtime listeners bind to loopback. Do not use the private Beans hub.
 
 1. Run `scripts/setup` to restore the locked repository JavaScript dependencies.
@@ -91,3 +91,9 @@ A remote target requires an already authorized forward that presents that host.
 A NetBird address used directly as the endpoint will be rejected. On a physical
 phone, `127.0.0.1` names the phone itself. These constraints are deliberate for
 this local proof and do not establish usable private device connectivity.
+
+
+An optional exact-authority loopback backend for the existing private HTTPS
+service is described in [private phone access](private-phone-access.md).
+It uses the same generated credentials, producer, and actions. The automated TLS
+proxy is a fixture only. No test CA is installed in OS or phone trust.

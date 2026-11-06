@@ -33,17 +33,23 @@ try:
     proof.start_worker()
     proof.start_gateway()
     environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'BIRBFORGE_CLIENT_CONFIG': str(proof.root / 'clients.json'), 'TSX_TSCONFIG_PATH': str(repo / 'tsconfig.node.json')}
+    environment.update({'DD_INJECTION_ENABLED': 'false', 'DD_TRACE_ENABLED': 'false', 'DD_INSTRUMENTATION_TELEMETRY_ENABLED': 'false'})
+    ready_file = proof.root / 'birbforge-ready.json'
+    environment['BIRBFORGE_READY_FILE'] = str(ready_file)
+    if os.environ.get('BIRBFORGE_PROXY_CONFIG'):
+        environment['BIRBFORGE_PROXY_CONFIG'] = os.environ['BIRBFORGE_PROXY_CONFIG']
     log = (proof.root / 'birbforge.log').open('w')
     gateway = subprocess.Popen([str(repo / '.local/bin/node'), '--import', 'tsx', 'server/main.ts'], cwd=repo, env=environment, stdout=log, stderr=log)
     def gateway_ready():
         if gateway.poll() is not None:
             raise RuntimeError('Birbforge gateway exited during startup')
-        return httpx.get('http://127.0.0.1:8787').status_code == 200
+        return ready_file.exists() and httpx.get('http://127.0.0.1:8787').status_code == 200
     wait_for(gateway_ready, 'Birbforge gateway')
     write_private(proof.root / 'runtime-versions.json', proof.report['versions'])
     write_private(repo / '.local/session.json', {
         'fixture_root': str(proof.root), 'url': 'http://127.0.0.1:8787',
         'tokens': proof.tokens,
+        'proxy_origin': json.loads(ready_file.read_text())['proxyOrigin'],
     })
     print('Birbforge loopback UI at http://127.0.0.1:8787. Private credentials are in .local/session.json.', flush=True)
     while gateway.poll() is None:

@@ -23,8 +23,9 @@ review is mandatory before merge.
 
 All paths below are under `/api`. All require `Authorization: Bearer <test-token>`.
 Credentials are entered interactively and never embedded in the exported bundle.
-The gateway binds to IPv4 loopback and serves the exported web app at the same
-origin. It rejects foreign Origin headers, unapproved Host headers, unknown
+The default gateway binds to IPv4 loopback and serves the exported web app at the same
+origin. An optional source-restricted private backend reuses the existing
+HTTPS proxy contract in [private phone access](private-phone-access.md). It rejects foreign Origin headers, unapproved Host headers, unknown
 paths, query strings, methods, and invalid command bodies.
 
 | Operation | Body | Producer operation |

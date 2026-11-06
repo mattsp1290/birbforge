@@ -1,5 +1,7 @@
 #!/bin/sh
 set -eu
+unset LD_PRELOAD NODE_OPTIONS
+export DD_INJECTION_ENABLED=false DD_TRACE_ENABLED=false DD_INSTRUMENTATION_TELEMETRY_ENABLED=false
 cd "$(dirname "$0")/.."
 : "${BIRBFORGE_CHROMIUM:?Select an existing Chromium binary; no browser installation is performed}"
 scripts/npm exec expo install -- --check
@@ -25,4 +27,6 @@ scripts/npm test
 .local/bin/node scripts/browser-check.mjs
 .local/bin/node docs/build.mjs
 python3 docs/check.py
+fixture=$(.local/bin/node --input-type=module -e 'import {readFileSync} from "node:fs"; process.stdout.write(JSON.parse(readFileSync(".local/session.json","utf8")).fixture_root)')
+python3 scripts/public-check.py "$fixture" --report docs/evidence/private-access-scan.json
 python3 scripts/evidence.py

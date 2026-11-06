@@ -89,3 +89,58 @@ rerun by the implementation owner. They were not independently executed by the
 reviewer. Native Expo transport, device networking, and OS accessibility remain
 NOT VERIFIED. The [SDK 55 iOS CLI help](evidence/expo-ios-help.txt) records the
 inspected flags. It is not evidence of an Xcode build or device installation.
+
+## Private phone access continuation
+
+The owner-selected existing infrastructure superseded the initial app-owned
+TLS sketch. [The revised design review](evidence/proxy-design-review.json)
+preferred reusing its private HTTPS service. Both design records are historical;
+they do not establish live endpoint compatibility or approve the later bridge.
+
+[The private-access code review](evidence/private-code-review.json) identified
+an overly general bind/source configuration that could allow a plaintext LAN
+hop. The implementation removed it. Both application listeners are now fixed
+to loopback. Proxy configuration contains only a port and one canonical external
+HTTPS origin. Actual socket-source checks reject anything except 127.0.0.1.
+The proposed enrolled-peer SSH bridge stays outside application authority and
+requires its own observed ingress and direct-port isolation checks.
+
+The review's TLS fixture finding was fixed by separating HTTP Host from normal
+TLS hostname validation. Its missing-design-evidence finding was resolved by
+publishing the redacted reviews and rewriting the workflow around the final
+shape. Config validation uses an opened descriptor, startup readiness is atomic
+and create-only, and shutdown prevents remaining startup steps. No private key
+or application TLS service was introduced.
+
+[The first fix review](evidence/private-fix-review.json) confirmed those code
+fixes but found material activation/evidence gaps. The procedure now requires
+proxy-only bridge reachability, observed NetBird source/interface, other-peer
+and actual LAN-ingress denial, with no owner tokens until those gates pass.
+A Host 403 or an HTTPS audience group alone is explicitly insufficient. Missing
+controls require a scoped owner-approved proposal, not an insecure fallback.
+The scanner now self-tests a synthetic key marker, generates its own report,
+and runs from `scripts/verify`. Historical and final designs are distinguished
+in the workflow and append-only decisions.
+
+[The final targeted review](evidence/private-final-review.json) returned
+`claude-opus-5-5` and found no material implementation defect, unsafe activation
+guidance, or unsupported acceptance claim. It confirmed all three material
+fix-review findings resolved on source/evidence inspection. It did not execute
+tests, inspect private config or account settings, recompute hashes, or approve
+a merge. CLI safe mode, tools, and process-local subscription authentication
+were observed by the implementation owner, not independently by the reviewer.
+
+Low follow-ups were accepted after that review. Fixture child gateways receive
+the same process-local Datadog-disable flags. Public scanning rejects symlinks
+before dereferencing them and recognizes DSA key headers as well as the tested
+PKCS8 marker. The activation text includes every non-NetBird ingress and places
+local processes within the owned peer's host trust boundary. A closing decision
+row names the final affected verification run. These small changes were rerun
+by the implementation owner after review.
+
+The local TLS proxy is a fixture with a client-only CA, not evidence of the real
+NetBird service or Apple trust. The actual route, public/non-enrolled denial,
+bridge-port restrictions, native app, and six full device journeys remain
+NOT VERIFIED. Human authentication and permission review remains required before
+merge. No DNS, network/account setting, firewall, OS trust, or production change
+was performed in this continuation.

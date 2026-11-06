@@ -16,9 +16,9 @@ gates. Do not install OS packages or change account, network, or signing setting
 without the owner's authorization. Preserve unrelated work in a separate worktree.
 
 An existing authorized SSH connection to the Linux machine is needed for the
-Mac browser. The iPhone also needs an existing authorized private route to the
-same Linux loopback runtime. A VPN address alone is insufficient for this
-implementation. Inspect that route before spending time building the app.
+Mac browser. The iPhone also needs the reviewed [private HTTPS and SSH bridge route](private-phone-access.md)
+to the same Linux loopback runtime. Inspect both the route and bridge-port
+isolation before spending time building the app.
 
 ## Check out the exact revision on Mac
 
@@ -128,15 +128,19 @@ The local native build and Release configuration are documented by Expo.
 ## Establish iPhone runtime access explicitly
 
 The iPhone app's `127.0.0.1` is the phone, not the Mac or Linux machine.
-The Linux gateway accepts only Host `127.0.0.1` with an optional port. It binds
-only to Linux loopback. Do not enter a raw Mac LAN or NetBird IP and claim that
+The default Linux gateway accepts only Host `127.0.0.1` with an optional port. It binds
+only to Linux loopback. The optional [private proxy adapter](private-phone-access.md)
+adds an exact-authority loopback backend for the existing private HTTPS service
+and an already authorized enrolled-peer SSH bridge. Do not enter a raw Mac LAN or NetBird IP and claim that
 it should work.
 
 An existing authorized on-device SSH forward can provide a phone-local loopback
 endpoint through encrypted SSH to Linux, if that already installed client
-supports forwarding while Birbforge is foregrounded. Alternatively, an existing
-approved private HTTPS route can terminate on the Linux loopback gateway if it
-already preserves or rewrites the upstream Host to `127.0.0.1`. Verify certificate
+supports forwarding while Birbforge is foregrounded. The preferred route uses the existing private HTTPS service and an already
+authorized enrolled-peer SSH bridge to the optional loopback proxy backend. It
+preserves the configured external HTTPS Host. The legacy HTTP listener still
+accepts only the loopback Host. Prove the bridge port is inaccessible directly
+from other peers and LAN ingress before owner tokens are used. Verify certificate
 trust, route ownership, authentication forwarding, and foreground/background
 behavior locally. Keep destination and certificate configuration private.
 
@@ -145,7 +149,8 @@ acceptance. Neither route has been observed from Linux. The Mac-only SSH forward
 above does not create phone access. If no suitable route exists, report
 `iPhone connectivity NOT VERIFIED` with the smallest additional setup needed.
 Do not expose port 8787 publicly, bind all interfaces, disable TLS checks, change
-VPN routes, install a tunnel product, or add a new proxy under this handoff.
+VPN routes, install a tunnel product, or add a new proxy under this handoff. Use the existing private HTTPS service
+and the reviewed adapter when its scoped activation is authorized.
 
 Enter the resulting authorized phone-local or private HTTPS endpoint into the
 native app, then enter the same generated owner token used in the Mac browser.

@@ -5,7 +5,7 @@
   "keyboardTabsToDecision": 5,
   "observationsBeforeNetworkLoss": 2,
   "observationsAfterNetworkRecovery": 3,
-  "checkedAt": "2026-11-06T13:33:05.329Z",
+  "checkedAt": "2026-11-06T14:35:06.577Z",
   "nodeVersion": "v22.23.3",
   "viewport": {
     "width": 1280,
@@ -13,7 +13,7 @@
   },
   "nativePhone": "NOT VERIFIED",
   "macBrowser": "NOT VERIFIED",
-  "conversationId": "aa2d8f8a-6bed-47a3-a6aa-4484f54c5248",
+  "conversationId": "8166991e-413b-4689-b48e-4f53e865bfb4",
   "transitions": [
     "lost create acknowledgement retried with the same conversation identity",
     "browser A submitted goal and received durable input",

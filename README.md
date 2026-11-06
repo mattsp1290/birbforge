@@ -6,6 +6,7 @@ Birbcrew runtime through AG-UI. Native phone and Mac browser acceptance remain
 open. This proof grants no PR or merge authority.
 
 - [Run the disposable development proof](docs/development.md).
+- [Prepare private phone access](docs/private-phone-access.md).
 - [Verify on Mac and iPhone](docs/mac-iphone-verification.md).
 - [Read the authenticated action contract](docs/action-contract.md).
 - [Check milestone acceptance and review gates](docs/evidence/acceptance.md).
