@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="One conversation and one input decision across phone and browser."><title>02 · Birbforge · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link selected" aria-current="page" href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>02 · Birbforge</h1><p class="lead">One conversation and one input decision across phone and browser.</p></div><article><p>Status: draft owner brief. Execution awaits the owner&#39;s launch and the Birbcrew
+contract proof. This file does not claim an implemented UI or action API.</p>
+<h2 id="outcome">Outcome<a class="anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>An authenticated owner can begin a goal conversation on a phone, continue it in
+a Mac browser, and resolve the same pending input through either conversation
+or inbox. Both clients converge on authoritative state after reconnect.</p>
+<p>Use Birbcrew&#39;s human-input request, resolved by ID and version through an
+authenticated Birbforge action. Generated local test credentials suffice for
+this isolated proof. Production identity is a later deployment gate.</p>
+<h2 id="scope-and-dependencies">Scope and dependencies<a class="anchor" href="#scope-and-dependencies" aria-label="Link to Scope and dependencies">#</a></h2><p>Use the proven Birbcrew AG-UI contract and fixtures. Validate Expo and React
+Native Web against the selected SDKs before expanding the interface. Share
+domain state and action handlers. Use platform-specific presentation where a
+browser-only CopilotKit component cannot run natively. Do not substitute an
+embedded browser demonstration for the required native phone journey.</p>
+<p>Build one real conversation and one durable input decision. Keep PRs, cloud
+dispatch and notifications as explicit later milestones. The decision fixture
+does not grant merge authority. Reuse CopilotKit OSS where it reduces work.
+Intelligence is excluded. A2UI is unnecessary for this acceptance journey.</p>
+<p>Consume Beans-backed context through the agreed boundary. Beans owns authored
+work records and shared notes. Avoid creating another editable work or notes
+store. Use synthetic records in a disposable Beans hub for the first UI proof.</p>
+<h2 id="required-evidence">Required evidence<a class="anchor" href="#required-evidence" aria-label="Link to Required evidence">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Journey</th>
+<th>Passing observation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Phone to browser</td>
+<td>The same conversation, finalized messages and pending input appear on both clients</td>
+</tr>
+<tr>
+<td>Inbox to conversation</td>
+<td>Resolving one input updates both surfaces without a second decision</td>
+</tr>
+<tr>
+<td>Racing answers</td>
+<td>One valid version wins; the stale answer receives an explicit conflict</td>
+</tr>
+<tr>
+<td>Connection loss</td>
+<td>Reconnect restores coherent state without resending a prompt</td>
+</tr>
+<tr>
+<td>Unauthorized action</td>
+<td>The server rejects it even if the client edits local state</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>The core journey works with large text, keyboard access on web and accessible phone controls</td>
+</tr>
+</tbody></table></div>
+<p>Record dependency versions, device or simulator identity, browser version and
+evidence for each journey. Run the interface in both targets. Screenshots alone
+do not establish a working state transition. Local proof precedes private
+NetBird deployment. Authentication and permission changes require human review before merge.</p>
+<h2 id="handoff-requirements">Handoff requirements<a class="anchor" href="#handoff-requirements" aria-label="Link to Handoff requirements">#</a></h2><p>Publish the action contract and compatibility fixtures in this repository.
+Document exercised setup and verification commands. Report implementation,
+unresolved integration limits and checks separately. Obtain independent review.
+No real merge, production access, Slack message or installation change belongs
+to this first UI milestone.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#outcome">Outcome</a><a href="#scope-and-dependencies">Scope and dependencies</a><a href="#required-evidence">Required evidence</a><a href="#handoff-requirements">Handoff requirements</a></nav></aside></body></html>

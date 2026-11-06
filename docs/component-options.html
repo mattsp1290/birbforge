@@ -1,0 +1,398 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Evaluated components, tradeoffs and primary sources."><title>Build less, reuse more · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link selected" aria-current="page" href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Build less, reuse more</h1><p class="lead">Evaluated components, tradeoffs and primary sources.</p></div><article><p>Research date: November 5, 2026. The owner approved self-hosted Temporal and
+Pydantic AI as the first Birbcrew runtime to validate. Other component proposals
+remain subject to their stated proofs. No services were deployed or paid integrations
+activated. Repository documentation and public upstream sources were inspected;
+compatibility and operational claims below still need a targeted live proof.</p>
+<h2 id="recommendation">Recommendation<a class="anchor" href="#recommendation" aria-label="Link to Recommendation">#</a></h2><p>Use <strong>CopilotKit&#39;s open-source TypeScript runtime and client SDKs, Temporal,
+PostgreSQL, and existing agent harnesses</strong>. Build Birbforge&#39;s delivery policy and
+user experience around them. Keep the initial deployment private on k3s, with
+a native Mac worker for validation that requires macOS.</p>
+<p>The owner has selected <a href="https://github.com/mattsp1290/birbcrew">Birbcrew</a> to
+replace crabber-coworkers. Its responsibility is reusable persistent coworkers.
+Python with Pydantic AI is the approved first runtime to validate. TypeScript
+with pi remains an alternative if that proof fails. AG-UI is mandatory and
+central to both Birbcrew and Birbforge;
+A2UI is optional. Birbforge retains the factory interface and delivery policy.
+Temporal is the selected durable execution engine. These decisions authorize
+readiness planning, not implementation. See <a href="ag-ui-architecture.html">AG-UI architecture</a>.</p>
+<p>The <a href="runtime-recommendation.html">runtime recommendation</a> develops the next
+decision. Temporal is the shared coordinator, with Pydantic AI as the first
+Birbcrew integration proof and pi SDK as the alternative. It also records the owner&#39;s confirmation
+that the Mac is already joined to the k3s setup and the requirement to reuse
+Birbhomes&#39; guest/native execution paths and lifecycle controls.</p>
+<p>Temporal is the preferred workflow engine for our combination of distributed
+workers, long human waits, independent review, serialized production delivery,
+and recovery. It costs infrastructure effort. This recommendation favors owning
+that deployment over owning the corresponding scheduling and recovery code.</p>
+<p>DBOS is the strongest smaller alternative. Reconsider it if we deliberately
+start with one coordinator process and accept the documented recovery model.
+Do not quietly grow a custom distributed coordinator around it.</p>
+<p>CopilotKit Intelligence is explicitly excluded by the owner, both hosted and
+self-hosted. It is not a future upgrade option. Use the standalone open-source
+SDK/runtime path and independent conversation persistence. This supersedes the
+earlier suggestion to consider Intelligence as a paid option.</p>
+<h2 id="what-the-local-projects-teach-us">What the local projects teach us<a class="anchor" href="#what-the-local-projects-teach-us" aria-label="Link to What the local projects teach us">#</a></h2><p>Crabber&#39;s inspected workspace owns model providers, authentication, agent
+execution, session stores, tools, extension loading, WASM support, durable
+controls, event delivery, and telemetry. Its README discusses recovery and
+ambiguous outcomes in detail. These are legitimate runtime concerns, but most
+are not Birbforge&#39;s differentiating product behavior.</p>
+<p>Agentcraft&#39;s inspected README adds native Apple clients, remote workers,
+deployment tooling, a GitHub catalog service, and a custom Codex credential
+broker. Its vision of remote execution and inspectable results remains useful.
+We should not automatically inherit its services or authentication machinery.</p>
+<p>These observations come from documentation and workspace structure, not a
+line-by-line quality audit. Existing repositories remain untouched. Reuse
+proven lessons and acceptance journeys before copying implementation.</p>
+<h2 id="who-owns-what">Who owns what<a class="anchor" href="#who-owns-what" aria-label="Link to Who owns what">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Proposed owner</th>
+<th>Birbforge&#39;s remaining work</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Phone and browser rendering</td>
+<td>Expo, React Native, React Native Web</td>
+<td>Inbox, goals, review/evidence screens, responsive layouts</td>
+</tr>
+<tr>
+<td>Agent conversation and interactive cards</td>
+<td>CopilotKit clients and TypeScript runtime, AG-UI</td>
+<td>Register factory actions and map runtime events</td>
+</tr>
+<tr>
+<td>Reasoning, coding tools, context management</td>
+<td>Codex, Claude Code, pi</td>
+<td>Configure roles, skills, permissions, and supported invocation paths</td>
+</tr>
+<tr>
+<td>Reusable persistent coworkers</td>
+<td>Birbcrew using an existing agent framework</td>
+<td>Required AG-UI interface; choose runtime and durability integration</td>
+</tr>
+<tr>
+<td>Verification execution and evidence</td>
+<td>Birbverify using repository-owned tests and deployment procedures</td>
+<td>Define acceptance policy, bind evidence to candidate revisions, and surface progress through AG-UI</td>
+</tr>
+<tr>
+<td>Workflow history, retries, durable waits, task routing</td>
+<td>Temporal</td>
+<td>Define the actual delivery workflow and activity contracts</td>
+</tr>
+<tr>
+<td>Authored work and shared knowledge</td>
+<td>Beans</td>
+<td>Scoped access, provenance and safe mutation integration</td>
+</tr>
+<tr>
+<td>Delivery records and queryable views</td>
+<td>PostgreSQL</td>
+<td>Accepted scope snapshots, policies, approvals, PR bindings, inbox projections</td>
+</tr>
+<tr>
+<td>CI and deployment</td>
+<td>Each repository&#39;s existing CI and deployment tools</td>
+<td>Trigger or observe the correct revision and collect evidence</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td>Datadog and existing collectors/SDKs</td>
+<td>Correlation, factory signals, dashboards, production health policy</td>
+</tr>
+<tr>
+<td>Production health investigation</td>
+<td>pup CLI</td>
+<td>Run bounded, repository-specific queries and retain evidence</td>
+</tr>
+<tr>
+<td>Slack and phone delivery</td>
+<td>Existing Slack/push APIs or SDKs</td>
+<td>Destinations, notification rules, delivery receipts, deep links</td>
+</tr>
+</tbody></table></div>
+<p>No new model-provider SDK, shell/file tool library, agent context compactor, or
+generic job scheduler belongs in the initial Birbforge scope.</p>
+<h2 id="copilotkit-buy-the-right-layer">CopilotKit: buy the right layer<a class="anchor" href="#copilotkit-buy-the-right-layer" aria-label="Link to CopilotKit: buy the right layer">#</a></h2><p>The open-source SDKs and <strong>TypeScript</strong> runtime can operate without an
+Intelligence service. They cover chat, agent state, frontend tools, and
+generative UI. Framework- or application-owned history remains supported but
+requires integration. Other runtime languages currently have different
+Intelligence requirements, which makes TypeScript the practical default here.
+<a href="https://docs.copilotkit.ai/concepts/oss-vs-enterprise">Source: open source versus Intelligence</a></p>
+<p>React Native has provider/hooks and optional rendered chat components. Its
+headless entry point helps us share application behavior while choosing
+appropriate phone and browser presentation. Expo explicitly supports React
+Native Web; this does not imply every third-party component is universal.
+<a href="https://docs.copilotkit.ai/react-native">CopilotKit native guide</a>,
+<a href="https://docs.expo.dev/workflow/web/">Expo web guide</a></p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Product</th>
+<th>Useful capabilities</th>
+<th>Decision for Birbforge</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CopilotKit OSS</td>
+<td>Conversation, tools, state, UI integration</td>
+<td>Adopt as a dependency</td>
+</tr>
+<tr>
+<td>Intelligence</td>
+<td>Saved rich conversations, cross-device continuity, memories, learning</td>
+<td>Explicitly excluded</td>
+</tr>
+<tr>
+<td>OpenBot</td>
+<td>Coworkers, governed tools, computers, routines, administration</td>
+<td>Excluded as an application base because it requires Intelligence</td>
+</tr>
+<tr>
+<td>OpenMuse</td>
+<td>React Native personal-agent app with activity and goal surfaces</td>
+<td>UX reference only; its application requires Intelligence</td>
+</tr>
+<tr>
+<td>OpenDots</td>
+<td>Spaces, persistent coworkers, pages, channels</td>
+<td>Excluded as an application base because it requires Intelligence</td>
+</tr>
+<tr>
+<td>Soar</td>
+<td>Commercial coworker product built on OpenBot</td>
+<td>Outside the selected standalone OSS path</td>
+</tr>
+</tbody></table></div>
+<p>The following findings explain the evaluated templates; they are not adoption
+recommendations. Do not fork these applications to remove Intelligence. Any
+small reused component must be independently useful and free of that dependency.</p>
+<p>OpenBot is MIT-licensed and beta. It now provides a published container and Helm
+deployment guidance, so operating an unmodified instance does not require
+building a fork. However, it explicitly describes itself as a template with
+private workspace packages. Customizing its application still brings ownership
+of a substantial codebase. Its external AG-UI endpoint support is useful; a
+working Codex/pi bridge and factory merge policy remain to be proven.
+<a href="https://github.com/CopilotKit/OpenBot/blob/main/README.md">OpenBot README</a>,
+<a href="https://github.com/CopilotKit/OpenBot/blob/main/docs/deployment.md">deployment guidance</a></p>
+<p>OpenBot&#39;s gateway governs actions routed through it. Translating an external
+CLI&#39;s events into AG-UI does not by itself intercept that CLI&#39;s filesystem,
+shell, or repository credentials. We must enforce factory actions through
+controlled tools and credential boundaries. Its routines documentation also
+describes scheduling limitations; a scheduled conversation is not evidence of
+the full required delivery lifecycle.
+<a href="https://github.com/CopilotKit/OpenBot/blob/main/docs/architecture.md">Architecture</a>,
+<a href="https://github.com/CopilotKit/OpenBot/blob/main/docs/routines.md">routines</a></p>
+<p>OpenMuse is an alpha template that already includes React Native, an activity
+surface, and its own task-worker machinery. Its roadmap still lists device
+push and a live OpenBot bridge as unfinished. Adopting it wholesale would mean
+reworking personal-assistant features and deciding who owns its scheduler.
+<a href="https://github.com/CopilotKit/OpenMuse/blob/main/README.md">OpenMuse README</a>,
+<a href="https://github.com/CopilotKit/OpenMuse/blob/main/ROADMAP.md">roadmap</a></p>
+<p>OpenDots is also an alpha template; it requires Intelligence for conversation
+storage and has separate application/background-work state. It does not remove
+our delivery-specific integration requirements. Soar is listed as early access
+in CopilotKit&#39;s main repository. Neither is established here as a ready-made
+software factory.
+<a href="https://github.com/CopilotKit/OpenDots/blob/main/README.md">OpenDots</a>,
+<a href="https://github.com/CopilotKit/CopilotKit/blob/main/README.md">CopilotKit product overview</a></p>
+<p>Production self-hosted Intelligence currently requires a Team self-hosted or
+Enterprise arrangement. It brings Postgres, Redis, identity configuration, and
+multiple platform services. The free Mac/Docker local evaluation is a distinct
+path, not an entitlement to run production on k3s. Neither path is in scope
+for Birbforge, regardless of price or licensing.
+<a href="https://docs.copilotkit.ai/intelligence/self-hosting">Production self-hosting</a>,
+<a href="https://docs.copilotkit.ai/intelligence/self-hosting-local">local evaluation</a></p>
+<h2 id="durable-workflow-alternatives">Durable workflow alternatives<a class="anchor" href="#durable-workflow-alternatives" aria-label="Link to Durable workflow alternatives">#</a></h2><p>These are architecture judgments for our requirements, not benchmark results.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Why consider it</th>
+<th>Tradeoff</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Temporal</td>
+<td>Distributed workers, durable history and waits, established workflow tooling</td>
+<td>Service operation and deterministic workflow/versioning discipline</td>
+<td>Preferred</td>
+</tr>
+<tr>
+<td>DBOS</td>
+<td>Workflows and queues in a library backed by Postgres</td>
+<td>Distributed failure detection/recovery needs coordination; Conductor is separately licensed</td>
+<td>Strong smaller alternative</td>
+</tr>
+<tr>
+<td>Inngest</td>
+<td>TypeScript workflows, flow controls, outbound-connected workers</td>
+<td>Self-hosted operational configuration and server license differ from a permissive OSS library</td>
+<td>Credible runner-up</td>
+</tr>
+<tr>
+<td>Windmill</td>
+<td>Ready-made scripts, flows, approvals, worker UI</td>
+<td>Another application/control surface; some approval controls are paid</td>
+<td>Useful if an operations platform becomes the primary requirement</td>
+</tr>
+<tr>
+<td>LangGraph</td>
+<td>Checkpointed agent graphs and human interrupts</td>
+<td>Does not eliminate our existing-harness integration or deployment coordination work</td>
+<td>Use only if the chief-of-staff reasoning needs it</td>
+</tr>
+<tr>
+<td>pi-durable</td>
+<td>Agent conversation/task durability close to pi</td>
+<td>Explicitly experimental; adopting it does not prove the distributed factory lifecycle</td>
+<td>Track, but do not make it foundational yet</td>
+</tr>
+</tbody></table></div>
+<p>Temporal workers poll task queues and execute application code outside the
+Temporal service. That suits separate Linux and Mac worker processes. Human
+decisions can enter through workflow messaging; long waits need not keep a
+coding agent busy. Temporal&#39;s server is MIT-licensed.
+<a href="https://docs.temporal.io/workers">Worker model</a>,
+<a href="https://docs.temporal.io/encyclopedia/workflow-message-passing">workflow messages</a>,
+<a href="https://github.com/temporalio/temporal/blob/main/LICENSE">license</a></p>
+<p>Temporal supports PostgreSQL for persistence and visibility; Elasticsearch is
+not an unconditional requirement. We still need to size and operate a real
+deployment, with backups, upgrades, monitoring, and private access. A developer
+server is not the proposed production installation.
+<a href="https://docs.temporal.io/temporal-service/persistence">Persistence</a>,
+<a href="https://docs.temporal.io/self-hosted-guide/deployment">self-hosting</a></p>
+<p>DBOS reduces the basic footprint to application processes plus Postgres. Its
+documentation distinguishes automatic startup recovery on a single node from
+distributed recovery coordination. Conductor supplies that coordination and
+operations tooling; self-hosted Conductor requires a proprietary license. We
+could choose DBOS without it, but should not conceal the recovery work that
+would then remain ours.
+<a href="https://docs.dbos.dev/architecture">Architecture</a>,
+<a href="https://docs.dbos.dev/conductor/self-hosting/hosting-conductor">Conductor deployment</a></p>
+<p>Inngest&#39;s connect workers make outbound connections, which fits private workers.
+Its self-hosted default includes in-memory queue/state with periodic SQLite
+snapshots; a durable deployment needs deliberate storage and crash-recovery
+validation. The inspected server license is SSPL with an Apache future grant,
+not the same license as Temporal. This is a selection fact, not a legal opinion
+about a particular distribution.
+<a href="https://www.inngest.com/docs/durable-execution/deploying-functions/connect">Connect</a>,
+<a href="https://www.inngest.com/docs/self-hosting">self-hosting</a>,
+<a href="https://github.com/inngest/inngest/blob/main/LICENSE.md">server license</a></p>
+<p>Windmill provides a server, workers, and a Postgres-backed queue, plus approval
+flows. Its documented authenticated-approver and no-self-approval options are
+Cloud/Enterprise features. Our app could enforce policy around it, but that
+reduces the benefit of adopting its approval surface. Native Mac execution
+would need its own compatibility proof.
+<a href="https://www.windmill.dev/docs/advanced/self_host">Self-hosting</a>,
+<a href="https://www.windmill.dev/docs/flows/flow_approval">approval controls</a></p>
+<p>LangGraph supplies useful checkpoint and interrupt semantics, but wrapping
+existing coding agents in a graph is still integration work. Adding it alongside
+Temporal and complete coding harnesses needs a specific benefit. pi-durable
+also deserves attention, but its README warns that APIs change without notice.
+<a href="https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph">LangGraph design</a>,
+<a href="https://github.com/earendil-works/pi/blob/main/packages/durable/README.md">pi-durable</a></p>
+<h2 id="agent-execution-without-recreating-pi">Agent execution without recreating pi<a class="anchor" href="#agent-execution-without-recreating-pi" aria-label="Link to Agent execution without recreating pi">#</a></h2><p>Use pi through its SDK or RPC when pi is the selected harness. It already owns
+the agent loop, coding tools, session behavior, and extension mechanism. Its
+documentation explicitly leaves isolation to the host, so workspaces and
+credentials still need appropriate execution boundaries.
+<a href="https://github.com/earendil-works/pi/blob/main/README.md">Pi</a></p>
+<p>For Codex, favor its existing app-server interfaces for interactive sessions.
+Managed ChatGPT authentication and rate-limit reporting already exist; we
+should not write another refresh-token broker. The installed cloud CLI exposes
+submission, status, and diff operations, marked experimental. That establishes
+a candidate integration, not successful unattended dispatch on this account.
+<a href="https://learn.chatgpt.com/docs/app-server">Codex App Server</a></p>
+<p>Claude Code has noninteractive CLI operation and documented cloud task flows.
+Use supported native authentication/invocation paths rather than assuming a
+subscription is interchangeable with any model API key. Validate each adapter&#39;s
+session lifecycle and account behavior separately.
+<a href="https://code.claude.com/docs/en/headless">Programmatic Claude Code</a>,
+<a href="https://code.claude.com/docs/en/claude-code-on-the-web">cloud tasks</a></p>
+<p>Automatic fallback is a workflow decision: preserve the approved brief, commit,
+patches, evidence, and handoff summary, then start an attempt on an eligible
+provider. Hidden model context is not a portable checkpoint. Reconcile unknown
+submission outcomes before retrying, and keep reviewer independence intact.
+GitHub, GitLab, and Forgejo need explicit provider capability checks; do not
+assume a provider&#39;s hosted GitHub integration supports all three.</p>
+<h2 id="proposed-architecture">Proposed architecture<a class="anchor" href="#proposed-architecture" aria-label="Link to Proposed architecture">#</a></h2><figure class="diagram"><div class="diagram-scroll" tabindex="0" aria-label="Scrollable system diagram"><img src="assets/architecture.svg" alt="Factory component map"/></div><figcaption>Design diagram · <a href="assets/architecture.svg">Open full size</a></figcaption></figure><details class="source-detail"><summary>Detailed logical source behind this simplified diagram</summary><pre><code>flowchart TB
+    Human[Owner on phone or Mac browser] --&gt; UI[Expo interface: inbox and conversation]
+    UI --&gt; API[Private Birbforge API and CopilotKit runtime]
+    API &lt;--&gt; Chief[Chief of staff on an existing agent harness]
+    Chief --&gt; Actions[Authorized factory actions]
+    API --&gt; Actions
+    Actions --&gt; Temporal[Temporal delivery workflows]
+    Actions --&gt; Records[Postgres product records and inbox views]
+    Temporal --&gt; Dispatch[Cloud task adapters]
+    Dispatch --&gt; Cloud[Provider-hosted authors]
+    Temporal --&gt; Linux[Linux validation workers]
+    Temporal --&gt; Mac[Native Mac validation worker]
+    Linux --&gt; Staging[Private k3s staging]
+    Mac --&gt; Staging
+    Temporal --&gt; Delivery[Repository review and delivery adapter]
+    Delivery --&gt; CI[Existing forge and CI]
+    CI --&gt; Production[Repository production environment]
+    Temporal --&gt; Health[pup production verification]
+    Health --&gt; Datadog[Datadog]
+    Temporal --&gt; Notify[Push and Slack links]
+    API -. telemetry .-&gt; Datadog
+    Linux -. telemetry .-&gt; Datadog
+    Mac -. telemetry .-&gt; Datadog</code></pre></details><p>The interface and API remain private through NetBird. External integrations use
+outbound polling where practical; public forge callbacks cannot simply reach a
+private endpoint. Workers contact the private workflow service. A provider&#39;s
+hosted author is an external task, not implicitly a Temporal worker or a member
+of the private network.</p>
+<p>Temporal owns execution history. Beans owns authored work records and shared
+notes. Product tables own accepted scope snapshots, policy revisions,
+approval records, and queryable inbox data. They must not become a second
+scheduler. Agent harnesses own their sessions; the UI needs a deliberate
+history/reconnect adapter. That adapter is real work. Evaluate existing harness
+history APIs and independent persistence components before implementing it;
+Intelligence is excluded. Durable workflow history and user-facing conversation
+history have different purposes, so Temporal alone does not supply chat replay.</p>
+<p>Factory actions must be validated server-side. CopilotKit tool cards are an
+interaction surface, not authorization. The chief of staff gets task-management
+tools; protected merge/deployment actions use constrained credentials and
+current policy checks outside the model&#39;s discretion.</p>
+<h2 id="custom-code-that-earns-its-place">Custom code that earns its place<a class="anchor" href="#custom-code-that-earns-its-place" aria-label="Link to Custom code that earns its place">#</a></h2><ol>
+<li>A shared action contract for the inbox and chief of staff.</li>
+<li>Repository policies: approval categories, provider eligibility, verification,
+production health, and rollback rules.</li>
+<li>Delivery workflows: owner assignment, independent review, staging acceptance,
+revision-bound approvals, environment sequencing, and recovery.</li>
+<li>Adapters for runtime sessions, cloud tasks, forge operations, and evidence.</li>
+<li>A focused phone/browser experience for goals, decisions, and outcomes.</li>
+</ol>
+<p>For example, an environment workflow can own the merge-through-health queue
+while task queues route work to Linux and Mac. This is our workflow definition
+using Temporal&#39;s primitives, not a claim that Temporal understands PR policy.</p>
+<p>Retries cannot make external actions exactly-once by declaration. Every merge,
+cloud submission, notification, and deployment action needs an operation
+identity and a way to reconcile what actually happened after an interrupted
+response. Prefer provider-supported idempotency and recorded remote IDs.</p>
+<p>Datadog instrumentation can use existing OpenTelemetry integrations. Put detailed
+run/PR identifiers in traces and structured events; keep metric dimensions
+bounded. Query production through pup, with repo-specific health criteria.
+<a href="https://docs.datadoghq.com/opentelemetry/instrument/">Datadog OpenTelemetry support</a></p>
+<h2 id="proof-before-committing-to-the-stack">Proof before committing to the stack<a class="anchor" href="#proof-before-committing-to-the-stack" aria-label="Link to Proof before committing to the stack">#</a></h2><p>Use one bounded pilot slice before broad scaffolding:</p>
+<ol>
+<li>Phone and browser observe the same chief-of-staff conversation and inbox.</li>
+<li>An approved goal dispatches one real provider task and records its remote ID.</li>
+<li>Restart the coordinator during the task; recover without duplicate execution.</li>
+<li>Validate the resulting revision on the Linux/Mac paths that actually apply,
+including the app deployed to k3s staging.</li>
+<li>Request human review; reconnect on the phone and resolve the same request.</li>
+<li>Demonstrate that stale approvals cannot authorize a newer revision, and that
+actual forge identities/protection rules enforce the intended review model.</li>
+<li>Prove provider fallback from recorded artifacts and policy, without accidental
+paid overage or two competing owners.</li>
+<li>Exercise merge/deployment observation and approved rollback against a
+disposable test target; do not induce a production incident to test recovery.</li>
+<li>Follow the complete run in Datadog and deliver a private notification link.</li>
+</ol>
+<p>The live pilot will expose adapter limitations earlier than building a large
+dashboard. No benchmark, account entitlement, native compatibility, or production
+recovery guarantee is implied by this research alone.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#recommendation">Recommendation</a><a href="#what-the-local-projects-teach-us">What the local projects teach us</a><a href="#who-owns-what">Who owns what</a><a href="#copilotkit-buy-the-right-layer">CopilotKit: buy the right layer</a><a href="#durable-workflow-alternatives">Durable workflow alternatives</a><a href="#agent-execution-without-recreating-pi">Agent execution without recreating pi</a><a href="#proposed-architecture">Proposed architecture</a><a href="#custom-code-that-earns-its-place">Custom code that earns its place</a><a href="#proof-before-committing-to-the-stack">Proof before committing to the stack</a></nav></aside></body></html>

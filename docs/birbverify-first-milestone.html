@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Prove attributable execution and recovery before real staging admission."><title>03 · Birbverify · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link selected" aria-current="page" href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>03 · Birbverify</h1><p class="lead">Prove attributable execution and recovery before real staging admission.</p></div><article><p>Status: scoped owner brief with dependency gates. Agree the concrete schema
+with consumers and obtain the owner&#39;s launch before implementation. No worker
+or staging proof exists yet.</p>
+<h2 id="outcome">Outcome<a class="anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>One versioned verification request runs repository-owned checks against an exact
+candidate and returns an evidence manifest. Duplicate delivery and worker loss
+preserve identity and expose uncertainty. A later request cannot take over a
+shared environment while an earlier worker may still mutate it.</p>
+<h2 id="scope">Scope<a class="anchor" href="#scope" aria-label="Link to Scope">#</a></h2><p>Implement the request and result types, compatibility fixtures and a minimal
+Temporal activity worker. Use the proposal in Birbforge&#39;s
+<code>docs/verification-contract.md</code> as the review input. Publish concrete schemas
+here and let consumers pin them. Birbforge owns admission, policy and the durable
+environment queue. A test workflow can exercise workers without creating a
+second scheduler in this repository.</p>
+<p>Begin with an isolated fixture repository and environment. Execute its existing
+checks and capture source identity, procedure revision, observations and artifact
+digests. Use private local fixture storage for this proof. A storage adapter is
+not a claim that deployed retention and access controls are complete.</p>
+<h2 id="acceptance">Acceptance<a class="anchor" href="#acceptance" aria-label="Link to Acceptance">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Required result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Exact candidate passes</td>
+<td>Every required check has attributable observations and a manifest</td>
+</tr>
+<tr>
+<td>Required evidence missing</td>
+<td>The result cannot satisfy the delivery gate</td>
+</tr>
+<tr>
+<td>Duplicate request</td>
+<td>The same key and payload resolve to one request; changed payload conflicts</td>
+</tr>
+<tr>
+<td>Interrupted operation reply</td>
+<td>Recovery reconciles a stable operation ID before repeating an effect</td>
+</tr>
+<tr>
+<td>Worker loss</td>
+<td>Infrastructure uncertainty is distinct from an application assertion failure</td>
+</tr>
+<tr>
+<td>Second staging request</td>
+<td>It waits until the first request is stopped and cleanup is confirmed</td>
+</tr>
+<tr>
+<td>Stale worker</td>
+<td>A revoked execution cannot mutate the fixture target; uncertain termination quarantines it</td>
+</tr>
+<tr>
+<td>Candidate changes</td>
+<td>Evidence keeps its original revision and cannot be relabeled as current</td>
+</tr>
+<tr>
+<td>Cancellation</td>
+<td>Requested and acknowledged states differ; release follows confirmed stop and cleanup</td>
+</tr>
+</tbody></table></div>
+<p>The fixture must demonstrate the mutation boundary used for fencing. Temporal
+durability alone is not proof of exclusive external ownership. Do not claim
+k3s isolation from an in-memory lock or successful fixture-only test.</p>
+<h2 id="next-deployment-gate">Next deployment gate<a class="anchor" href="#next-deployment-gate" aria-label="Link to Next deployment gate">#</a></h2><p>After the contract proof, integrate the Birbparty repository&#39;s existing deployment
+and verification procedures through Birbhomes&#39; private staging rules. Confirm
+current staging readiness, deployed artifact identity, worker permissions,
+native Mac isolation and artifact storage before accepting real candidate code.
+The complete pilot must run on k3s. Fixture tests do not satisfy that gate.</p>
+<h2 id="completion-and-handoff">Completion and handoff<a class="anchor" href="#completion-and-handoff" aria-label="Link to Completion and handoff">#</a></h2><p>Document exercised setup and verification commands, pinned dependencies and all
+failure observations. Obtain independent review. Expose progress through
+Birbforge&#39;s AG-UI projection without inventing another user-facing agent protocol.
+This milestone grants no merge, production deployment or rollback authority.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#outcome">Outcome</a><a href="#scope">Scope</a><a href="#acceptance">Acceptance</a><a href="#next-deployment-gate">Next deployment gate</a><a href="#completion-and-handoff">Completion and handoff</a></nav></aside></body></html>

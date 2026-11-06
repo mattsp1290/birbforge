@@ -1,0 +1,178 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Why Temporal and Pydantic AI are the first combination to prove."><title>Runtime choice · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link selected" aria-current="page" href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Runtime choice</h1><p class="lead">Why Temporal and Pydantic AI are the first combination to prove.</p></div><article><p>Researched November 5, 2026. The owner approved self-hosted Temporal and
+Pydantic AI as the first Birbcrew runtime to validate. These choices authorize
+readiness planning, not implementation. No factory account integrations,
+workers, or restart behavior have been live-tested.</p>
+<h2 id="accepted-direction-and-remaining-proof">Accepted direction and remaining proof<a class="anchor" href="#accepted-direction-and-remaining-proof" aria-label="Link to Accepted direction and remaining proof">#</a></h2><p>Use one self-hosted Temporal service for factory coordination and durable
+coworker execution, with PostgreSQL persistence. Keep Birbforge&#39;s interface and
+CopilotKit OSS runtime in TypeScript. Evaluate Python with Pydantic AI as the
+preferred Birbcrew implementation because it has documented AG-UI and Temporal
+integrations. Retain TypeScript with the pi SDK as the alternative if the
+end-to-end proof shows lower integration or account-access cost.</p>
+<p>This recommendation prioritizes existing integrations over using one language
+everywhere. It does not replace Codex, Claude Code, or pi as coding tools. Cloud
+authors and coding harnesses remain separately invoked execution backends.
+Birbcrew&#39;s chief of staff uses constrained factory tools to coordinate them.
+Birbcrew is the first implementation repository. Each repository gets its own
+poteto-mode owner handoff.</p>
+<h2 id="why-temporal">Why Temporal<a class="anchor" href="#why-temporal" aria-label="Link to Why Temporal">#</a></h2><p>Our durable unit is a delivery lifecycle: author a change, wait for review,
+reserve staging, verify it, wait for human input where required, merge, and
+observe deployment health. A model conversation is only part of that lifecycle.</p>
+<p>Temporal workers poll queues and can run outside the service. That lets the
+same workflow coordinate k3s workloads and the existing Mac execution paths.
+Long waits need not keep a model generating or an agent process busy.
+<a href="https://docs.temporal.io/workers">Worker model</a></p>
+<p>Use existing SDK primitives for workflows, activities, timers, cancellation,
+messaging and versioning. The custom work is expressing delivery policy and
+reconciling external effects. Temporal does not supply our PR approval model or
+guarantee exactly-once deployments.
+<a href="https://docs.temporal.io/develop/typescript">TypeScript SDK</a></p>
+<p>Self-hosting requires backups, schema upgrades, monitoring and restricted
+network access. Deploy a sustained-workload service, not a development server.
+Keep infrastructure definitions in Birbhomes. PostgreSQL application records
+and Temporal persistence must have separate ownership and migrations even if
+they share an operated PostgreSQL installation.
+<a href="https://docs.temporal.io/self-hosted-guide/deployment">Deployment guidance</a>,
+<a href="https://docs.temporal.io/temporal-service/persistence">persistence</a></p>
+<h2 id="two-viable-birbcrew-paths">Two viable Birbcrew paths<a class="anchor" href="#two-viable-birbcrew-paths" aria-label="Link to Two viable Birbcrew paths">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>TypeScript + pi SDK</th>
+<th>Python + Pydantic AI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent execution</td>
+<td>Reuse pi&#39;s sessions, tools and context handling</td>
+<td>Reuse the existing agent loop and selected harness capabilities</td>
+</tr>
+<tr>
+<td>AG-UI</td>
+<td>Implement and maintain a pi event adapter</td>
+<td>Use the documented AG-UI adapter</td>
+</tr>
+<tr>
+<td>Durability</td>
+<td>Integrate session recovery with Temporal activity lifecycles</td>
+<td>Use the documented Temporal capability inside actual workflows</td>
+</tr>
+<tr>
+<td>Language footprint</td>
+<td>Shares TypeScript with Birbforge</td>
+<td>Adds Python across a versioned interface</td>
+</tr>
+<tr>
+<td>Work still ours</td>
+<td>Stream translation, session ownership, replay/reconnect, tool authorization</td>
+<td>Durable-stream integration, conversation persistence, reconnect, tool authorization</td>
+</tr>
+<tr>
+<td>Selection gate</td>
+<td>No recreated pi internals; reliable recovery and AG-UI semantics</td>
+<td>Supported account access; existing capabilities rather than a new coding harness</td>
+</tr>
+</tbody></table></div>
+<p>Pi already exposes persistent sessions, custom tools and lifecycle events. Its
+session-settled signal matters: a lower-level run-end event may precede automatic
+recovery or queued work. A correct AG-UI bridge must preserve those semantics.
+<a href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sdk.md">Pi SDK</a></p>
+<p>Pydantic AI provides an AG-UI adapter and a Temporal durability capability. Its
+documented workflow-stream integration can carry live agent events without
+adding a separate message broker. These are available building blocks, not
+proof that our phone reconnect and cross-device history already work. A direct
+HTTP agent invocation is not automatically a durable background workflow.
+<a href="https://pydantic.dev/docs/ai/integrations/ui/ag-ui/">AG-UI</a>,
+<a href="https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/">Temporal</a></p>
+<p>Its existing harness also includes skills, repository context, context-management
+and instrumentation capabilities. Adopt only those we need. This makes it a
+credible existing-runtime choice rather than an invitation to recreate pi in
+Python. Datadog remains the observability destination; a new hosted observability
+product is not part of this recommendation.
+<a href="https://pydantic.dev/docs/ai/harness/">Harness capabilities</a></p>
+<p>The standalone CopilotKit runtime stays TypeScript even if Birbcrew is Python.
+That runtime can connect to an AG-UI agent without Intelligence. Do not confuse
+a Python agent backend with CopilotKit&#39;s Python runtime, which has a different
+service dependency.
+<a href="https://docs.copilotkit.ai/concepts/oss-vs-enterprise">CopilotKit OSS boundary</a></p>
+<h2 id="where-pi-durable-fits">Where pi-durable fits<a class="anchor" href="#where-pi-durable-fits" aria-label="Link to Where pi-durable fits">#</a></h2><p>Pi-durable documents persisted conversations, model/tool execution and process
+recovery, but explicitly marks its API experimental. It is a distinct harness,
+not simply a persistence switch on the coding-agent SDK. Do not initially stack
+it under Temporal without a specific benefit and clear ownership for retries,
+cancel, tools and state. Revisit it if it removes more code than it adds.
+<a href="https://github.com/earendil-works/pi/blob/main/packages/durable/README.md">Pi-durable</a></p>
+<h2 id="recovery-boundaries">Recovery boundaries<a class="anchor" href="#recovery-boundaries" aria-label="Link to Recovery boundaries">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>State or effect</th>
+<th>Proposed authority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Delivery progress, waits and retries</td>
+<td>Temporal workflow history</td>
+</tr>
+<tr>
+<td>Authored requests, plans, issues and shared notes</td>
+<td>Beans hub</td>
+</tr>
+<tr>
+<td>Accepted scope snapshot, policy and approval records</td>
+<td>Birbforge application records</td>
+</tr>
+<tr>
+<td>Conversation and finalized messages</td>
+<td>Chosen Birbcrew framework/session store</td>
+</tr>
+<tr>
+<td>Workspace contents and code changes</td>
+<td>Isolated workspace plus version control</td>
+</tr>
+<tr>
+<td>Verification observations and artifacts</td>
+<td>Birbverify manifests and private artifact storage</td>
+</tr>
+<tr>
+<td>Cloud task lifecycle</td>
+<td>Provider&#39;s task ID and status, reconciled by factory adapters</td>
+</tr>
+</tbody></table></div>
+<p>A restarted workflow must reconnect to existing external work where possible.
+It must not resubmit an entire coding task just because a polling activity died.
+Model/tool work belongs in supported durable activities or framework adapters,
+not arbitrary nondeterministic calls in workflow code. Coordinate one active
+writer per session. Stream disconnection is separate from cancellation.</p>
+<h2 id="reuse-the-enrolled-mac">Reuse the enrolled Mac<a class="anchor" href="#reuse-the-enrolled-mac" aria-label="Link to Reuse the enrolled Mac">#</a></h2><p>The owner confirms that the Mac is already joined to the k3s setup. Birbhomes
+documents a Linux guest for cluster/container work and a native macOS runner
+for Apple tooling, with existing lifecycle and network gates. Respect both
+paths. Do not introduce an always-on Temporal worker that bypasses those gates.</p>
+<p>First evaluate dispatching native checks through the existing runner. If a
+dedicated Temporal activity worker removes meaningful integration work, it
+must be supervised by the same lifecycle controls. The choice is still open;
+neither approach is implemented or qualified here. Do not copy private host,
+account or network coordinates into these public docs.</p>
+<h2 id="proof-needed-before-implementation-commitment">Proof needed before implementation commitment<a class="anchor" href="#proof-needed-before-implementation-commitment" aria-label="Link to Proof needed before implementation commitment">#</a></h2><ol>
+<li>A coworker uses an eligible existing account to call one authorized factory
+tool, with no accidental API billing or custom token broker.</li>
+<li>The run streams through AG-UI to phone and browser; disconnecting both leaves
+work running, and reconnecting recovers coherent state.</li>
+<li>Restart a worker during a tool call. Recover or explicitly reconcile the
+outcome without duplicate external action.</li>
+<li>Pause for a durable human-input request and resolve it from another client.
+Birbforge later proves revision-bound approvals through the phone interface.</li>
+<li>Recover finalized conversation history after process restart.</li>
+<li>In the later Birbverify integration milestone, dispatch a real check through
+the existing Mac path. Respect its lifecycle gates and preserve the
+shared-staging reservation through interruption.</li>
+</ol>
+<p>Framework provider documentation is not proof of our accounts&#39; entitlement or
+unattended operation. Pydantic AI documents subscription-related integrations,
+so do not dismiss it as necessarily requiring paid API keys; verify the selected
+path against provider documentation and the actual deployment before adoption.
+<a href="https://pydantic.dev/docs/ai/models/openai-codex/">Pydantic provider documentation</a></p>
+<p>Temporal is the selected shared engine. The first implementation milestone
+validates Pydantic AI using the bounded proof above. Do not build both stacks or
+a general-purpose runtime abstraction. A local Temporal development service is
+appropriate for this isolated proof. Birbhomes owns the subsequent sustained
+k3s deployment. The Birbparty acceptance milestone still requires deployed k3s
+verification.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#accepted-direction-and-remaining-proof">Accepted direction and remaining proof</a><a href="#why-temporal">Why Temporal</a><a href="#two-viable-birbcrew-paths">Two viable Birbcrew paths</a><a href="#where-pi-durable-fits">Where pi-durable fits</a><a href="#recovery-boundaries">Recovery boundaries</a><a href="#reuse-the-enrolled-mac">Reuse the enrolled Mac</a><a href="#proof-needed-before-implementation-commitment">Proof needed before implementation commitment</a></nav></aside></body></html>

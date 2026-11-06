@@ -1,0 +1,213 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Prove durable conversations before downstream product work."><title>01 · Birbcrew · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link selected" aria-current="page" href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>01 · Birbcrew</h1><p class="lead">Prove durable conversations before downstream product work.</p></div><article><p>Status: ready for the owner to launch the bounded implementation milestone. Prepared November 5, 2026.
+The owner selected Birbcrew as the first repository and approved Pydantic AI
+with Temporal as the first integration to validate. The current session prepares
+the handoff. Execution starts when the owner launches the repository agent with
+this milestone. This file does not claim that any product code already exists.</p>
+<h2 id="outcome">Outcome<a class="anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>One persistent coworker conversation survives client disconnection and worker
+restart. Two AG-UI clients observe the same conversation. A test tool records
+one durable effect even when its reply is interrupted. A human-input request
+can be answered after reconnect without repeating the completed tool effect.</p>
+<p>This is a working runtime proof that later repositories can consume. Keep the
+result small enough to review as one milestone. Use Python, Pydantic AI&#39;s
+existing AG-UI adapter, and its Temporal integration. Do not build a general
+agent framework or implement both Python and pi paths.</p>
+<h2 id="scope">Scope<a class="anchor" href="#scope" aria-label="Link to Scope">#</a></h2><p>Implement an authenticated conversation API, durable execution, persistent
+finalized messages, reconnect state, explicit cancellation, and a repeatable
+verification journey. For this isolated proof, use a local Temporal development
+service and local PostgreSQL. Bind listeners to loopback by default. Test
+credentials are generated locally and excluded from Git. This local proof is
+not a production deployment or the Birbparty staging acceptance gate.</p>
+<p>Use two small AG-UI test clients. They establish protocol behavior, not phone
+UI acceptance. Birbforge owns the eventual Expo phone and browser interface.
+Use existing SDK clients and encoders rather than inventing a second event
+protocol. A2UI and CopilotKit Intelligence are not dependencies.</p>
+<p>Instrument the journey with existing OpenTelemetry support and correlated logs.
+Prove telemetry emission with a local collector or test exporter. Birbhomes
+later connects the deployed services to Datadog. Do not report local telemetry
+capture as a verified Datadog installation.</p>
+<h2 id="state-and-authority">State and authority<a class="anchor" href="#state-and-authority" aria-label="Link to State and authority">#</a></h2><p>Choose concrete types before implementation. The domain contains these records.</p>
+<ul>
+<li>A coworker has a stable identity and a versioned definition of instructions,
+eligible models and available tools.</li>
+<li>A conversation belongs to a coworker and an authenticated installation owner.</li>
+<li>An accepted input has a stable client request ID and payload identity.</li>
+<li>A run attempt identifies the workflow execution and its observable outcome.</li>
+<li>A human-input request has an ID, version, expected responder and resolution.</li>
+<li>A tool operation has a stable operation ID and a durable outcome.</li>
+<li>A finalized message preserves the chosen framework&#39;s message representation.</li>
+</ul>
+<p>Temporal owns durable execution and waits. The conversation store owns finalized
+messages needed beyond an individual workflow history. Application records do
+not become another scheduler. Prefer the framework&#39;s supported persistence
+facilities where suitable. Keep application migrations separate from Temporal&#39;s
+database schema. Never query Temporal&#39;s internal database as an application API.</p>
+<p>Ensure one active writer per conversation through the selected workflow design.
+Document how workflow replacement or Continue-As-New preserves identity and
+ordering. Do not assume an in-memory lock provides ownership across processes.</p>
+<p>Requests can be resent. The same client request ID and payload refer to the
+same accepted input. A different payload with that ID is a conflict. Reconnect
+does not submit another prompt. Disconnect does not cancel a run. Cancellation
+requires an explicit authorized request and an observable acknowledgement.</p>
+<p>Retain authoritative message state separately from temporary streamed text.
+Reconnect must return a coherent snapshot plus subsequent events, or a proven
+replay mechanism. Handle overlap without duplicate finalized messages. A client
+must know when an old cursor cannot be replayed and a fresh snapshot is required.
+Do not promise indefinite token-by-token history unless the selected mechanism
+actually supports it.</p>
+<h2 id="shared-repository-knowledge">Shared repository knowledge<a class="anchor" href="#shared-repository-knowledge" aria-label="Link to Shared repository knowledge">#</a></h2><p>Use Beans for shared repository notes. Keep separate conversations per goal
+under a stable coworker identity. Add one bounded read from a disposable Beans
+fixture hub, with explicit project and actor selection. Record the note keys
+and paths, updated timestamps, content digests and the clean fixture hub commit
+supplied to the conversation. The commit identifies a captured fixture snapshot,
+not a revision field that Beans already returns with each note. Read from a
+quiescent clean fixture and verify its commit and content stay stable during
+capture. The note context must survive
+reconnect without copying unrelated project knowledge into the conversation.</p>
+<p>Use the installed <code>bn</code> CLI&#39;s documented machine-readable interface.
+Create the fixture under a temporary directory with isolated configuration.
+Confirm the hub-selection flag from installed help and pass it explicitly to
+every invocation. Before seeding, assert that the resolved hub is inside that
+directory and has no remote or only a local bare remote. Fail closed otherwise. Never read
+the owner&#39;s entire private hub as test data. Beans mutations commit and push
+their hub. Do not issue real-hub writes as a side effect of this proof.
+The first milestone reads shared notes. Automated note writes require a later
+proof of retry reconciliation and stale-write protection in Beans.</p>
+<h2 id="test-tool-and-human-input">Test tool and human input<a class="anchor" href="#test-tool-and-human-input" aria-label="Link to Test tool and human input">#</a></h2><p>Use one benign tool that records a synthetic work item in a local fixture store.
+The tool accepts an operation ID and returns the existing result on duplicate
+delivery. It never creates real issues, PRs, messages or deployments.</p>
+<p>Inject interruption after the fixture effect is committed but before its result
+reaches the workflow. Recovery must reconcile that operation rather than repeat
+the effect. A read-only tool alone cannot prove this behavior.</p>
+<p>Use a human-input pause to choose a synthetic next step. The request survives
+restart. An unauthorized client, an obsolete request version, or a second
+conflicting response cannot resolve it. This is not a real PR approval. Birbforge
+will own revision-bound approvals and merge authorization.</p>
+<h2 id="provider-boundary">Provider boundary<a class="anchor" href="#provider-boundary" aria-label="Link to Provider boundary">#</a></h2><p>Start deterministic recovery tests with the framework&#39;s test-model facilities.
+Then run a separate live model journey using one eligible existing subscription.
+Keep the live acceptance check explicit. Mock success cannot establish account
+compatibility or production model behavior.</p>
+<p>Select one eligible approved subscription for the live journey. OpenCode Go is
+the current candidate, subject to whether the actual journey fits its supported
+use. The provider documentation inspected November 5, 2026 reports compatible
+APIs, client identification and a stable session header. It also describes an
+Extra Usage setting that can permit pay-as-you-go fallback. Recheck those
+requirements, the actual account configuration and the selected endpoint before
+a live call. Do not enable overage or infer that an API-shaped endpoint is
+necessarily metered outside the subscription.
+<a href="https://opencode.ai/v2/docs/console/go/">OpenCode Go documentation</a></p>
+<p>Use Pydantic AI&#39;s supported compatible-provider implementation where appropriate.
+Validate tool calling and streaming for the selected model. Do not forge another
+client&#39;s identity or create a token broker. If no approved subscription path
+works, record that failed gate and evaluate the existing pi alternative before
+proposing a runtime change. Do not silently switch to paid API access.
+<a href="https://pydantic.dev/docs/ai/models/compatible-apis/">Compatible providers</a></p>
+<p>Codex and Claude coding execution remain external factory integrations. This
+milestone does not have to implement their cloud dispatch or turn their CLIs
+into general model endpoints.</p>
+<h2 id="work-sequence">Work sequence<a class="anchor" href="#work-sequence" aria-label="Link to Work sequence">#</a></h2><ol>
+<li>Inspect current repository instructions and state. Verify supported Python,
+Pydantic AI, AG-UI and Temporal versions. Pin compatible dependencies.</li>
+<li>Establish project checks and one runnable deterministic conversation journey.</li>
+<li>Add the benign effect and human-input wait using supported framework APIs.</li>
+<li>Add persistence and client reconnection. Prove them against a real local
+Temporal service and PostgreSQL, not only mocked workflow histories.</li>
+<li>Inject process failures and verify idempotent recovery and cancellation.</li>
+<li>Run the separate approved-subscription journey and preserve redacted evidence.</li>
+<li>Perform independent review and verify the documented clean-start procedure.
+Deliver the milestone as a reviewable change with explicit remaining gaps.</li>
+</ol>
+<p>The implementation agent may decompose these into smaller PRs if each ends in
+a runnable check. Do not introduce unrelated features to fill a phase.</p>
+<h2 id="acceptance-evidence">Acceptance evidence<a class="anchor" href="#acceptance-evidence" aria-label="Link to Acceptance evidence">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Required observation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Normal interaction</td>
+<td>An authenticated client receives text, tool progress and finalized messages through AG-UI</td>
+</tr>
+<tr>
+<td>Duplicate submission</td>
+<td>Repeating an accepted request produces one logical input and one resulting operation</td>
+</tr>
+<tr>
+<td>Reconnect</td>
+<td>Client B recovers the same conversation without starting another run or duplicating finalized messages</td>
+</tr>
+<tr>
+<td>Gateway restart</td>
+<td>Finalized history persists and a reconnect finds the authoritative current state</td>
+</tr>
+<tr>
+<td>Worker interruption</td>
+<td>The synthetic operation appears once after interruption between effect commit and acknowledgement</td>
+</tr>
+<tr>
+<td>Human wait</td>
+<td>Client B resolves the same pending request by ID and version after restart through an authorized action independent of the original stream</td>
+</tr>
+<tr>
+<td>Conflicting response</td>
+<td>An obsolete or conflicting resolution cannot mutate the accepted decision</td>
+</tr>
+<tr>
+<td>Explicit cancellation</td>
+<td>Work stops or reports unresolved termination accurately. A disconnected client does not trigger it</td>
+</tr>
+<tr>
+<td>Isolation</td>
+<td>Another test principal cannot read, resume or cancel the owner&#39;s conversation</td>
+</tr>
+<tr>
+<td>Shared context</td>
+<td>A conversation uses only the selected Beans project notes and retains their keys, paths, timestamps, content digests and captured clean fixture commit across reconnect</td>
+</tr>
+<tr>
+<td>Telemetry</td>
+<td>Related run, tool and recovery observations carry the expected correlation IDs without secrets</td>
+</tr>
+<tr>
+<td>Real subscription</td>
+<td>A real model completes the journey through the approved account path, with billing-mode evidence and any usage-visibility limitations stated</td>
+</tr>
+</tbody></table></div>
+<p>Deliver one documented verification entry point that reproduces the deterministic
+scenarios and a separate opt-in live-account check. These commands do not exist
+yet. The implementation must supply their actual names and prerequisites.
+Record process termination points, workflow identifiers, fixture outcomes and
+redacted event captures. Label each gate VERIFIED, NOT VERIFIED or INCONCLUSIVE.</p>
+<h2 id="completion-and-human-decisions">Completion and human decisions<a class="anchor" href="#completion-and-human-decisions" aria-label="Link to Completion and human decisions">#</a></h2><p>The live-account check is opt-in for ordinary test runs, but required for this
+milestone&#39;s acceptance. The milestone is complete only when every required gate
+is VERIFIED, independent review is resolved, and the clean-start instructions
+have been exercised. A failed or unavailable account check is a reported
+blocker with evidence. It is not a successful milestone or permission to use
+an unapproved paid provider.</p>
+<p>The authenticated API uses generated local test credentials. It does not select
+the installation&#39;s production login system. Authentication and permissions
+changes still require human review before merge under the agreed factory policy.
+Implementing a local proof does not waive that gate.</p>
+<p>Escalate changes to account settings or paid usage, a proposed runtime switch,
+material scope expansion, or any action outside this milestone&#39;s authorization.
+Report the observed failure and the smallest proposed remedy. Choose routine
+test libraries and local test-authentication details without asking the owner
+to design them. Missing credentials may require the owner&#39;s supported login
+flow. Never ask them to paste secrets into a public document.</p>
+<h2 id="boundaries-for-the-owning-agent">Boundaries for the owning agent<a class="anchor" href="#boundaries-for-the-owning-agent" aria-label="Link to Boundaries for the owning agent">#</a></h2><p>Use the installed poteto-mode skill and the host&#39;s supported execution tools.
+Read its routed skills when triggered. State any tool or model adaptation.
+Do not claim Cursor-specific tools are available in Codex.</p>
+<p>Own Birbcrew changes. Propose cross-repository contract changes to the coordinator
+instead of editing another owner&#39;s repository without coordination. Protocol
+fixtures and agent-side conversation contracts belong here. Birbforge owns
+factory actions and approvals. Birbverify owns verification requests and results.</p>
+<p>No production access, real repository merge, cloud author dispatch, Slack send,
+cluster deployment, or secret migration belongs to this milestone. Do not add
+the full Birbforge app, a new scheduler, a custom model transport, or a permanent
+message broker solely to finish this proof.</p>
+<h2 id="remaining-readiness-work">Remaining readiness work<a class="anchor" href="#remaining-readiness-work" aria-label="Link to Remaining readiness work">#</a></h2><p>The owner agreed the design, Beans authored-work ownership and Codex with Claude
+CLI review. The canonical launch gate is in Birbforge&#39;s
+<code>docs/start-repository-owner.md</code>. HTML inspection and independent readiness
+review are complete. Product acceptance checks in this milestone remain unverified.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#outcome">Outcome</a><a href="#scope">Scope</a><a href="#state-and-authority">State and authority</a><a href="#shared-repository-knowledge">Shared repository knowledge</a><a href="#test-tool-and-human-input">Test tool and human input</a><a href="#provider-boundary">Provider boundary</a><a href="#work-sequence">Work sequence</a><a href="#acceptance-evidence">Acceptance evidence</a><a href="#completion-and-human-decisions">Completion and human decisions</a><a href="#boundaries-for-the-owning-agent">Boundaries for the owning agent</a><a href="#remaining-readiness-work">Remaining readiness work</a></nav></aside></body></html>

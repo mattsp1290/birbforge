@@ -1,0 +1,12 @@
+{
+  "name": "birbforge-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "python3 check.py"
+  },
+  "devDependencies": {
+    "marked": "17.0.5"
+  }
+}

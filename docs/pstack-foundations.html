@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The practices we borrow and the platform work they leave to us."><title>Why pstack · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Understand</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link selected" aria-current="page" href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Understand <span>· DESIGN RECORD</span></div><h1>Why pstack</h1><p class="lead">The practices we borrow and the platform work they leave to us.</p></div><article><p>Research and design interpretation, November 5, 2026. This page separates
+published working practices from our proposed factory implementation.</p>
+<h2 id="lauren-tan-s-contribution">Lauren Tan&#39;s contribution<a class="anchor" href="#lauren-tan-s-contribution" aria-label="Link to Lauren Tan's contribution">#</a></h2><p>Lauren Tan publishes pstack as poteto. Its README emphasizes engineering quality,
+less code, verification and parallel work built on agents whose work can be
+trusted. The reusable artifact is a set of skills, principles and playbooks.
+It is not an installed durable factory service.
+<a href="https://github.com/cursor/plugins/tree/main/pstack">pstack repository</a></p>
+<p>Our goal is to reproduce those working disciplines with the tools we have.
+We are not claiming to reproduce Lauren&#39;s private infrastructure or measured
+throughput. The linked profile is secondary reporting, not an architecture
+specification. Reported PR volume does not establish correctness or a capacity
+target for Birbforge.
+<a href="https://x.com/mvanhorn/status/2111481455906103390">Original profile link</a></p>
+<h2 id="practices-translated-into-the-factory">Practices translated into the factory<a class="anchor" href="#practices-translated-into-the-factory" aria-label="Link to Practices translated into the factory">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Practice</th>
+<th>Birbforge consequence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Prove the result by using it</td>
+<td>Birbverify retains deployed user-journey evidence tied to the candidate</td>
+</tr>
+<tr>
+<td>Give each PR an accountable owner</td>
+<td>Ownership continues through feedback, merge, deployment and health observation</td>
+</tr>
+<tr>
+<td>Review independently</td>
+<td>A separate reviewer evaluates the exact revision; the author cannot approve itself</td>
+</tr>
+<tr>
+<td>Keep scope and progress reviewable</td>
+<td>Beans stores authored work; accepted scope and approval records remain explicit</td>
+</tr>
+<tr>
+<td>Prefer smaller code ownership</td>
+<td>Reuse Temporal, existing agent runtimes, protocol SDKs and repository test tools</td>
+</tr>
+<tr>
+<td>Turn recurring lessons into structure</td>
+<td>Improve a check, type or policy when evidence shows a recurring failure</td>
+</tr>
+</tbody></table></div>
+<p>These are our design applications of the published practices. Specific workflow
+procedures remain in the installed skill and repository policies.
+<a href="https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/SKILL.md">Poteto mode</a></p>
+<p>The published full-autopilot playbook carries work through merge. The stacked
+variant prepares a reviewed stack for an operator to land. Birbforge&#39;s agreed
+target permits owner-agent merges after independent and required human approval.
+Our current implementation sessions do not inherit unrestricted deployment
+authority from a playbook name.
+<a href="https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/playbooks/autopilot-full.md">Full autopilot</a>,
+<a href="https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/playbooks/autopilot-stack.md">stacked autopilot</a></p>
+<h2 id="the-broader-software-factory-idea">The broader software-factory idea<a class="anchor" href="#the-broader-software-factory-idea" aria-label="Link to The broader software-factory idea">#</a></h2><p>Ben Holmes&#39;s published framework includes shared configuration, conversation
+history, evaluation, conversational access, artifacts, computer-use verification
+and an action timeline. This is a useful coverage check for our design. Our
+mapping uses repository policies, Birbcrew history, repeatable acceptance,
+Birbforge conversation, Birbverify evidence and Datadog correlation. Model
+benchmarking remains a later capability rather than a prerequisite to the first
+runtime proof.
+<a href="https://www.warp.dev/blog/7-ways-to-build-a-software-factory">Ben Holmes&#39;s article</a>,
+<a href="https://x.com/bholmesdev/status/2115862731610107965?s=46">original post</a></p>
+<p>StrongDM describes a loop of an initial specification, end-to-end validation and
+feedback until holdout scenarios pass. The useful lesson here is to define the
+observable outcome before an author optimizes its implementation. Our staging
+plan cannot be silently weakened by candidate changes to tests. We retain the
+human review gates and subscription constraints agreed for this installation.
+<a href="https://factory.strongdm.ai/principles">StrongDM principles</a></p>
+<h2 id="harness-portability">Harness portability<a class="anchor" href="#harness-portability" aria-label="Link to Harness portability">#</a></h2><p>The installed poteto-mode skill contains Cursor-specific tools and model names.
+The chosen implementation host is Codex with Claude CLI for fresh independent
+review. The <a href="start-repository-owner.html">launch guide</a> records that adaptation.
+No global model configuration or upstream skill was changed during planning.</p>
+<h2 id="what-the-research-does-not-prove">What the research does not prove<a class="anchor" href="#what-the-research-does-not-prove" aria-label="Link to What the research does not prove">#</a></h2><p>Documentation establishes candidate integrations. It does not prove account
+entitlement, unattended cloud dispatch, phone reconnect, native Mac isolation,
+safe rollback or current staging health. Each has a named implementation gate.
+The first milestone resolves the durable-conversation dependency before we
+expand the factory.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#lauren-tan-s-contribution">Lauren Tan&#39;s contribution</a><a href="#practices-translated-into-the-factory">Practices translated into the factory</a><a href="#the-broader-software-factory-idea">The broader software-factory idea</a><a href="#harness-portability">Harness portability</a><a href="#what-the-research-does-not-prove">What the research does not prove</a></nav></aside></body></html>

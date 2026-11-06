@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="One interaction protocol across coworkers, conversation and inbox."><title>AG-UI everywhere · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Contracts</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link selected" aria-current="page" href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Contracts <span>· DESIGN RECORD</span></div><h1>AG-UI everywhere</h1><p class="lead">One interaction protocol across coworkers, conversation and inbox.</p></div><article><p>Status: required protocol, proposed architecture. Researched November 5, 2026.
+AG-UI is mandatory in both projects. A2UI is optional. No integration has been
+implemented or live-tested. CopilotKit Intelligence remains excluded.</p>
+<p>The owner approved self-hosted Temporal and Pydantic AI as the first runtime
+to validate. See the <a href="runtime-recommendation.html">runtime recommendation</a>.
+Pi SDK remains the alternative if that proof fails. Neither integration has
+been proven end to end.</p>
+<h2 id="product-boundary">Product boundary<a class="anchor" href="#product-boundary" aria-label="Link to Product boundary">#</a></h2><p>Birbcrew provides persistent coworkers through an AG-UI interface. Birbforge
+uses AG-UI throughout the chief-of-staff conversation, agent activity, and
+interactive decision surfaces on phone and browser. This is a shared interface
+between the products, not a chat widget added after the factory is built.</p>
+<figure class="diagram"><div class="diagram-scroll" tabindex="0" aria-label="Scrollable system diagram"><img src="assets/interaction.svg" alt="AG-UI interaction and authority"/></div><figcaption>Design diagram · <a href="assets/interaction.svg">Open full size</a></figcaption></figure><details class="source-detail"><summary>Detailed logical source behind this simplified diagram</summary><pre><code>flowchart TB
+    Phone[Birbforge phone interface] &lt;--&gt; Client[CopilotKit OSS / AG-UI clients]
+    Browser[Birbforge browser interface] &lt;--&gt; Client
+    Client &lt;--&gt;|AG-UI| Gateway[Authenticated Birbforge interaction endpoint]
+    Gateway &lt;--&gt;|AG-UI| Crew[Birbcrew coworkers]
+    Crew --&gt; Runtime[Pydantic AI runtime proof]
+    Crew --&gt; Actions[Authorized factory tools]
+    Gateway --&gt; Actions
+    Actions --&gt; Workflow[Durable delivery workflows]
+    Actions --&gt; Records[Goals, approvals, inbox and evidence records]
+    Workflow --&gt; Projection[Authoritative progress and state projection]
+    Projection --&gt; Gateway</code></pre></details><p>Use standard lifecycle, text, tool, and state events where they fit. Scope
+factory-specific data within the protocol&#39;s supported state and extension
+mechanisms; avoid inventing a parallel agent event protocol. AG-UI provides
+framework-independent interaction and supports multiple transports.
+<a href="https://github.com/ag-ui-protocol/ag-ui">Protocol overview</a>,
+<a href="https://github.com/ag-ui-protocol/ag-ui/blob/main/docs/concepts/events.mdx">event concepts</a></p>
+<h2 id="what-the-user-experiences">What the user experiences<a class="anchor" href="#what-the-user-experiences" aria-label="Link to What the user experiences">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Role for AG-UI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Chief-of-staff conversation</td>
+<td>Stream responses and tool activity; accept follow-up input</td>
+</tr>
+<tr>
+<td>Goal planning</td>
+<td>Share plan state and collect the owner&#39;s decisions</td>
+</tr>
+<tr>
+<td>Inbox detail</td>
+<td>Present the same decision request and evidence referenced in conversation</td>
+</tr>
+<tr>
+<td>Active work</td>
+<td>Project authoritative task progress, with links to specialist sessions</td>
+</tr>
+<tr>
+<td>Human review</td>
+<td>Surface requests and return responses to the authorized action handler</td>
+</tr>
+<tr>
+<td>Device switching</td>
+<td>Reconnect to the same thread/run identities and recover current state</td>
+</tr>
+</tbody></table></div>
+<p>Example: the owner asks which PR needs attention. The chief of staff reads
+actual review records and presents a review card. The owner can resolve that
+request in conversation or from the inbox. Both routes address the same request
+ID and revision; the server validates actor, policy, and freshness before
+recording the decision. A card is not itself approval evidence.</p>
+<p>Stable navigation, lists, configuration, and artifact upload/download can use
+ordinary application APIs. AG-UI is the agent interaction contract, not a
+requirement to encode every HTTP operation as an agent tool call.</p>
+<h2 id="runtime-options">Runtime options<a class="anchor" href="#runtime-options" aria-label="Link to Runtime options">#</a></h2><p>AG-UI does not require replacing pi or selecting a particular language.
+The inspected upstream integration list does not include a pi adapter, and
+the inspected pi repository search found none; this is not a claim that no
+community adapter exists.</p>
+<p>TypeScript with pi remains viable: its SDK exposes sessions, custom tools,
+streamed messages, tool events, and run lifecycle signals. Birbcrew would map
+those to AG-UI using the official protocol types/encoders. That adapter must
+handle stable IDs, ordering, terminal outcomes, cancellation, snapshots, and
+reconnection. This is bounded integration work, but it is more than renaming
+token events. Keep provider logic, coding tools, and context management in pi.
+<a href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sdk.md">Pi SDK</a></p>
+<p>Python with Pydantic AI is the selected first proof because it provides documented
+AG-UI and Temporal integrations. Durable execution still requires starting a
+workflow; simply invoking the UI adapter from an HTTP endpoint does not make
+the run durable. Its documented event-stream bridge is relevant to evaluating
+this combination. Native subscription compatibility and coding-agent delegation
+remain separate acceptance requirements.
+<a href="https://pydantic.dev/docs/ai/integrations/ui/ag-ui/">Pydantic AI AG-UI</a>,
+<a href="https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/">Temporal integration</a></p>
+<p>Prove the selected Pydantic AI path with conversation, tool, interruption,
+restart and reconnect journeys. Evaluate pi only if that proof fails. Existing AG-UI
+integrations also include Mastra, LangGraph, and Google ADK; protocol support
+alone does not establish a better fit for the complete factory.</p>
+<h2 id="a2ui-s-optional-role">A2UI&#39;s optional role<a class="anchor" href="#a2ui-s-optional-role" aria-label="Link to A2UI's optional role">#</a></h2><p>The linked Google article describes A2UI as declarative interface data, with
+AG-UI transporting it to a client renderer. This can let the chief of staff
+compose relevant cards and controls from an approved catalog.
+<a href="https://developers.googleblog.com/build-generative-ui-apps-with-a2ui-copilotkit-agents/">Google&#39;s article</a></p>
+<p>Core views and approval controls should be trusted application components,
+available through both inbox and conversation regardless of A2UI support.
+Optional generated layouts can reference these components without gaining
+authority to approve, merge, or modify policy.</p>
+<p>Do not assume React Native AG-UI support means equivalent A2UI renderer support.
+The A2UI renderer directory lists stable React web support, while React Native
+appears as a community renderer for an older protocol version. Validate exact
+versions and behavior before adopting it; do not build a new general renderer
+as a prerequisite for the factory.
+<a href="https://a2ui.org/reference/renderers/">Renderer matrix</a>,
+<a href="https://docs.copilotkit.ai/react-native">CopilotKit React Native</a></p>
+<h2 id="persistence-and-control">Persistence and control<a class="anchor" href="#persistence-and-control" aria-label="Link to Persistence and control">#</a></h2><p>AG-UI standardizes interaction; it does not provide our database, durable job
+engine, authentication, or merge authorization. Closing a stream must not
+implicitly cancel background work. Explicit cancellation is a separate action
+with an acknowledged outcome. Reconnection must recover a coherent snapshot
+and supported event history without creating another run.</p>
+<p>Store or reconstruct user-facing conversation history through the chosen
+framework and independent persistence components. Keep workflow history and
+conversation history distinct. Server-owned records determine approvals and
+delivery status; client-supplied state cannot grant permissions.</p>
+<h2 id="proposed-proof">Proposed proof<a class="anchor" href="#proposed-proof" aria-label="Link to Proposed proof">#</a></h2><p>One thread should demonstrate streaming, a factory-tool call, an input request,
+phone/browser reconnection, and a worker restart without duplicate work. Then
+resolve a revision-bound review from one device and observe its resolved state
+on the other. Run this without Intelligence and without A2UI first. Optional
+A2UI presentation must not change the authority or outcome of those actions.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#product-boundary">Product boundary</a><a href="#what-the-user-experiences">What the user experiences</a><a href="#runtime-options">Runtime options</a><a href="#a2ui-s-optional-role">A2UI&#39;s optional role</a><a href="#persistence-and-control">Persistence and control</a><a href="#proposed-proof">Proposed proof</a></nav></aside></body></html>

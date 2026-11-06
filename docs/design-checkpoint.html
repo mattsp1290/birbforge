@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The agreed behavior, components and implementation order."><title>System overview · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Understand</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link selected" aria-current="page" href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">Design agreed · 05 Nov 2026<br>Runtime proof comes next.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Understand <span>· DESIGN RECORD</span></div><h1>System overview</h1><p class="lead">The agreed behavior, components and implementation order.</p></div><article><p>Status: design agreed by the owner on November 5, 2026. HTML documentation authorized.
+This describes the target system and the order in which to prove it. No runtime
+integration or deployed acceptance test has passed in this documentation task.</p>
+<h2 id="the-experience">The experience<a class="anchor" href="#the-experience" aria-label="Link to The experience">#</a></h2><p>You approve a goal from your phone or Mac browser. A chief-of-staff conversation
+helps refine the scope and shows the same decisions as the structured inbox.
+The factory assigns a PR owner, obtains independent review, verifies the exact
+candidate in k3s staging, and merges only when the required approvals are current.</p>
+<p>The owner follows any production deployment triggered by existing CI. It uses
+pup and Datadog to check the deployed revision against repository health rules.
+If necessary, it follows an applicable human-approved rollback procedure,
+verifies recovery, and prepares a repair. Uncertain recovery stops delivery and
+requests help. Closing either client does not stop the factory.</p>
+<h2 id="components-and-their-boundaries">Components and their boundaries<a class="anchor" href="#components-and-their-boundaries" aria-label="Link to Components and their boundaries">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility</th>
+<th>Foundation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Birbforge</td>
+<td>Phone and browser UI, chief-of-staff tools, approved scope, inbox, review policy and delivery coordination</td>
+<td>React Native direction; Expo and React Native Web proposed; AG-UI required; CopilotKit OSS</td>
+</tr>
+<tr>
+<td>Birbcrew</td>
+<td>Stable coworkers, separate goal conversations, durable waits, authorized tool use and reconnect</td>
+<td>Approved first proof uses Python, Pydantic AI and self-hosted Temporal</td>
+</tr>
+<tr>
+<td>Birbverify</td>
+<td>Execute repository-owned verification journeys and produce evidence for the exact candidate</td>
+<td>Existing test tools and Temporal activities</td>
+</tr>
+<tr>
+<td>Beans</td>
+<td>Authored requests, plans, issues, shared project notes and handoffs</td>
+<td>Existing bn CLI and private Git-backed hub</td>
+</tr>
+<tr>
+<td>Birbhomes</td>
+<td>Private installation, Temporal and persistence operations, Linux workers and native Mac lifecycle</td>
+<td>Existing k3s and NetBird setup</td>
+</tr>
+<tr>
+<td>Birbparty</td>
+<td>First complete feature pilot</td>
+<td>Existing chat, plus emoji support and six creator-uploaded custom emojis</td>
+</tr>
+</tbody></table></div>
+<p>AG-UI carries conversations, agent progress and user-facing state across
+Birbcrew and Birbforge. Authenticated server actions enforce decisions regardless
+of whether they originate in conversation or the inbox. A2UI is optional.
+CopilotKit Intelligence is excluded.</p>
+<p>PostgreSQL is the proposed application store for finalized messages and factory
+records. Temporal owns execution and waits. Beans owns authored work and shared knowledge. Large
+evidence files use private artifact storage. These responsibilities do not
+require a separate service or database server for each row.</p>
+<h2 id="a-goal-through-the-system">A goal through the system<a class="anchor" href="#a-goal-through-the-system" aria-label="Link to A goal through the system">#</a></h2><figure class="diagram"><div class="diagram-scroll" tabindex="0" aria-label="Scrollable system diagram"><img src="assets/architecture.svg" alt="Factory component map"/></div><figcaption>Design diagram · <a href="assets/architecture.svg">Open full size</a></figcaption></figure><details class="source-detail"><summary>Detailed logical source behind this simplified diagram</summary><pre><code>flowchart TD
+    U[Phone and Mac browser] &lt;--&gt;|AG-UI| F[Birbforge inbox and chief of staff]
+    F &lt;--&gt;|Authorized tools and conversations| C[Birbcrew coworkers]
+    C --&gt; B[Beans authored work and repository notes]
+    F &lt;--&gt; B
+    F --&gt; T[Temporal delivery workflows]
+    C --&gt; T
+    T --&gt; A[Approved provider author]
+    A --&gt; P[Candidate PR]
+    P --&gt; R[Independent review]
+    R --&gt; V[Birbverify workers]
+    V --&gt; S[Reserved k3s staging and native Mac checks]
+    S --&gt; E[Private evidence]
+    E --&gt; G[Current revision and approval gates]
+    G --&gt; M[Owner merges]
+    M --&gt; CI[Existing repository CI]
+    CI --&gt; H[Observe deployment and Datadog health]
+    H --&gt; D[Complete or approved recovery]
+    T --&gt; N[Private push and Slack links]</code></pre></details><p>The diagram shows logical responsibilities, not a selected internal wire format.
+Birbforge owns the environment queue. Birbverify supplies execution activities.
+Workers cannot grant themselves access by requesting a capability.</p>
+<h2 id="rules-that-constrain-autonomy">Rules that constrain autonomy<a class="anchor" href="#rules-that-constrain-autonomy" aria-label="Link to Rules that constrain autonomy">#</a></h2><ul>
+<li>Only human-approved goals execute. Follow-up ideas enter the inbox.</li>
+<li>The PR owner cannot approve its own work. Approval and verification bind to
+the revision and accepted scope. A changed candidate requires fresh evaluation.</li>
+<li>Human review is always required for authentication, permissions, destructive
+migrations, secrets, credentials and production infrastructure changes.</li>
+<li>Agents can request human review for other work with the evidence and decision needed.</li>
+<li>Shared staging stays reserved through deployment, checks and cleanup.
+Uncertain worker ownership or cleanup quarantines the environment.</li>
+<li>Merge, deployment and production observation serialize per deployment environment.</li>
+<li>Fallback uses approved subscriptions and eligible integrations. It preserves
+scope and reviewer independence. Paid overage requires separate authorization.</li>
+<li>Repository notes provide context. They cannot grant approval or expand scope.</li>
+</ul>
+<h2 id="private-operation">Private operation<a class="anchor" href="#private-operation" aria-label="Link to Private operation">#</a></h2><p>Phone and browser access use private NetBird connectivity and application
+authentication. Normal actions work on both devices. Desktop-only CLI setup is
+acceptable. The initial Mac UI runs in a browser. Tauri remains a later option.</p>
+<p>Phone push and Slack deliver actionable notices and links. Approval happens in
+Birbforge. Public examples contain placeholders. Installation destinations,
+credentials, infrastructure addresses and evidence stay private.</p>
+<p>Datadog tracks factory progress, failures, provider fallback and deployment
+health. High-cardinality identities belong in correlated logs and traces.
+Telemetry does not replace authoritative execution or approval records.</p>
+<h2 id="implementation-sequence">Implementation sequence<a class="anchor" href="#implementation-sequence" aria-label="Link to Implementation sequence">#</a></h2><ol>
+<li><strong>Birbcrew proves the foundation.</strong> Two AG-UI clients share a persistent
+conversation. Disconnect, restart, human input and an interrupted tool reply
+recover correctly. Read scoped notes from a disposable Beans hub. Prove one
+eligible live subscription path as well as deterministic recovery tests.</li>
+<li><strong>Owners work against the proven contracts.</strong> Birbforge builds the phone and
+browser journey. Birbverify proves attributable execution and recovery.
+Beans proves safe note writes. Birbhomes establishes deployment prerequisites.</li>
+<li><strong>Birbparty supplies the complete pilot.</strong> Deploy the exact emoji candidate
+to shared k3s staging and exercise the feature. Existing production is not
+the pre-merge test target.</li>
+<li><strong>Delivery gains production follow-through.</strong> Exercise independent approval,
+merge, CI observation, Datadog checks and repository-approved recovery before
+granting unattended production responsibility.</li>
+</ol>
+<p>Each repository gets a human-started poteto-mode owner in Codex, with Claude CLI
+for independent review. Those sessions build
+the factory. They do not assume that its future automated coordination exists.</p>
+<h2 id="choices-still-open">Choices still open<a class="anchor" href="#choices-still-open" aria-label="Link to Choices still open">#</a></h2><p>Beans ownership of authored work and shared notes is agreed. Birbforge retains
+revision-bound approvals and delivery records. Codex with Claude CLI review is
+the selected host for the implementation sessions. The launch guidance must
+map pstack roles to those available tools without assuming Cursor-only APIs.</p>
+<p>Deployment milestones must select application identity, secret storage,
+artifact storage and retention, worker placement and native Mac isolation.
+They must also prove cloud dispatch, multi-provider eligibility and fallback.
+These are explicit deployment gates. They do not prevent the isolated first
+Birbcrew proof. The source research does not establish live compatibility.</p>
+<p>One eligible subscription path is required to accept the first Birbcrew milestone.
+Confirm supported login, eligibility and settings preventing unapproved overage
+before that live check. Broader fallback comes later.</p>
+<p>Birbparty still needs exact emoji scope, asset limits, replacement behavior and
+native acceptance details before feature execution. Existing staging and native
+toolchain readiness require live verification.</p>
+<p>The owner&#39;s agreement authorizes turning this design into the requested
+HTML documentation with these unresolved gates visibly labeled. It does not
+approve unselected deployment products or launch implementation agents.</p>
+<h2 id="supporting-records">Supporting records<a class="anchor" href="#supporting-records" aria-label="Link to Supporting records">#</a></h2><ul>
+<li><a href="design-decisions.html">Accepted product decisions</a></li>
+<li><a href="runtime-recommendation.html">Runtime recommendation and sources</a></li>
+<li><a href="ag-ui-architecture.html">AG-UI architecture</a></li>
+<li><a href="beans-integration.html">Beans integration</a></li>
+<li><a href="verification-contract.html">Verification contract</a></li>
+<li><a href="repository-owners.html">Repository owners</a></li>
+</ul>
+<p>The design-agreement gate is satisfied. The remaining launch gate is documented
+in <a href="start-repository-owner.html">the repository owner guide</a>.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design documentation. Runtime acceptance remains unverified.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#the-experience">The experience</a><a href="#components-and-their-boundaries">Components and their boundaries</a><a href="#a-goal-through-the-system">A goal through the system</a><a href="#rules-that-constrain-autonomy">Rules that constrain autonomy</a><a href="#private-operation">Private operation</a><a href="#implementation-sequence">Implementation sequence</a><a href="#choices-still-open">Choices still open</a><a href="#supporting-records">Supporting records</a></nav></aside></body></html>
