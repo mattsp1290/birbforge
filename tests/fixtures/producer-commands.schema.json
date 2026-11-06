@@ -1,0 +1,53 @@
+{
+  "dependency_revision": "88b219c18adeb352d2f291f099ede990a3190a58",
+  "HumanReply": {
+    "additionalProperties": false,
+    "properties": {
+      "request_id": {
+        "title": "Request Id",
+        "type": "string"
+      },
+      "version": {
+        "title": "Version",
+        "type": "integer"
+      },
+      "choice": {
+        "enum": [
+          "inspect",
+          "test"
+        ],
+        "title": "Choice",
+        "type": "string"
+      }
+    },
+    "required": [
+      "request_id",
+      "version",
+      "choice"
+    ],
+    "title": "HumanReply",
+    "type": "object"
+  },
+  "Prompt": {
+    "additionalProperties": false,
+    "properties": {
+      "request_id": {
+        "format": "uuid",
+        "title": "Request Id",
+        "type": "string"
+      },
+      "text": {
+        "maxLength": 4000,
+        "minLength": 1,
+        "title": "Text",
+        "type": "string"
+      }
+    },
+    "required": [
+      "request_id",
+      "text"
+    ],
+    "title": "Prompt",
+    "type": "object"
+  }
+}

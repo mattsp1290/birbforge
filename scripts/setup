@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+mkdir -p .local/bin
+image='node@sha256:363e1587494626837fa7f9a23bdb453d13b0ff3c67c705c2805cfc69c2d2fad7'
+if [ ! -x .local/bin/node ] || [ ! -f .local/npm/bin/npm-cli.js ]; then
+  docker image inspect "$image" >/dev/null 2>&1 || docker pull "$image"
+  container=$(docker create "$image")
+  trap 'docker rm "$container" >/dev/null' EXIT
+  docker cp "$container:/usr/local/bin/node" .local/bin/node
+  mkdir -p .local/npm
+  docker cp "$container:/usr/local/lib/node_modules/npm/." .local/npm/
+  docker rm "$container" >/dev/null
+  trap - EXIT
+fi
+ln -sf ../../scripts/npm .local/bin/npm
+scripts/npm ci --no-audit --no-fund

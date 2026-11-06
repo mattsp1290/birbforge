@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+unset LD_PRELOAD NODE_OPTIONS
+export DD_INJECTION_ENABLED=false DD_TRACE_ENABLED=false DD_INSTRUMENTATION_TELEMETRY_ENABLED=false
+cd "$(dirname "$0")/.."
+: "${BIRBFORGE_CHROMIUM:?Select an existing Chromium binary; no browser installation is performed}"
+scripts/npm exec expo install -- --check
+scripts/npm run check
+scripts/npm run export:native
+scripts/npm run export:web
+log=$(mktemp /tmp/birbforge-verify-XXXXXX.log)
+scripts/dev > "$log" 2>&1 &
+launcher=$!
+trap 'kill -TERM "$launcher" 2>/dev/null || true; wait "$launcher" 2>/dev/null || true' EXIT INT TERM
+.local/bin/node --input-type=module <<'JS'
+import {readFileSync} from 'node:fs';
+for (let attempt = 0; attempt < 180; attempt++) {
+  try {
+    const session = JSON.parse(readFileSync('.local/session.json', 'utf8'));
+    if ((await fetch(session.url)).ok) process.exit(0);
+  } catch {}
+  await new Promise(resolve => setTimeout(resolve, 500));
+}
+throw new Error('Launcher did not become ready; inspect the temporary verifier log');
+JS
+scripts/npm test
+.local/bin/node scripts/browser-check.mjs
+.local/bin/node docs/build.mjs
+python3 docs/check.py
+fixture=$(.local/bin/node --input-type=module -e 'import {readFileSync} from "node:fs"; process.stdout.write(JSON.parse(readFileSync(".local/session.json","utf8")).fixture_root)')
+python3 scripts/public-check.py "$fixture" --report docs/evidence/private-access-scan.json
+python3 scripts/evidence.py
