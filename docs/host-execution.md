@@ -77,3 +77,26 @@ On a Linux host, continue to use the existing `scripts/setup`,
 `scripts/dependency`, and `scripts/dev` directly. The guest wrappers do not change
 those commands. Setup and version checks alone do not establish milestone or
 feature acceptance.
+
+## Optional existing private HTTPS route
+
+The guest wrapper intentionally does not forward arbitrary host environment
+variables. Set the proxy path inside the guest command when the route owner has
+selected an existing authorized route and a free owned backend port.
+
+```sh
+scripts/guest -- env BIRBFORGE_PROXY_CONFIG=/absolute/private/proxy.json scripts/verification-dev
+```
+
+The file must be visible at that absolute guest path and pass the existing
+owner-only configuration checks in `docs/private-phone-access.md`. Both
+listeners bind only to guest loopback. The launcher waits for a new readiness
+receipt on each gateway start and records the validated `proxy_origin` in the
+private `.local/verification-session.json`. A malformed file or occupied port
+fails startup and invokes the launcher's scoped cleanup. Without the variable,
+the runtime retains its default loopback-only behavior.
+
+This command does not create an HTTPS route or forward. The route owner must
+verify TLS, service target, peer port and backend reachability before sending
+new credentials. A synthetic Host/Origin test on loopback does not verify the
+owner's external service or physical iPhone transport.

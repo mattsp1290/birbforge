@@ -17,7 +17,7 @@ from uuid import uuid4
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from verification_runtime import VerificationRuntime
+from verification_runtime import VerificationRuntime, free_port
 
 
 AGUI = """
@@ -326,6 +326,66 @@ class HTTPProof:
                     request_id=intent['request_id'], attempt_id=row['attempt_id'], outcome='failed')
         self.configure(config)
 
+    def check_proxy_backend(self, config):
+        assert self.runtime.proxy_origin == config['origin']
+        session = json.loads((self.runtime.repo / '.local/verification-session.json').read_text())
+        assert session['proxy_origin'] == config['origin']
+        conversation = str(uuid4())
+        path = f'/api/conversations/{conversation}/verification'
+        headers = {'Host': 'phone.example.invalid', 'Origin': config['origin'],
+                   'Authorization': 'Bearer ' + self.runtime.crew.tokens['owner']}
+        with httpx.Client(base_url=f"http://127.0.0.1:{config['port']}", headers=headers, timeout=25) as client:
+            assert client.get('/api/conversations', headers={'Authorization': ''}).status_code == 401
+            assert client.get('/api/conversations', headers={'Host': 'wrong.example.invalid'}).status_code == 403
+            assert client.get('/api/conversations', headers={'Origin': 'https://wrong.example.invalid'}).status_code == 403
+            response = client.post('/api/conversations', json={'id': conversation})
+            assert response.status_code == 200
+            intent = self.admission()
+            assert client.post(path, json={**intent, 'outcome': 'passed'}).status_code == 400
+            assert client.post(path, json=intent, headers={
+                'Authorization': 'Bearer ' + self.runtime.crew.tokens['stranger']}).status_code == 404
+            assert client.post(path, json=intent).status_code == 200
+
+            def finished():
+                response = client.get(path)
+                assert response.status_code == 200
+                rows = response.json()['requests']
+                return rows[0] if rows and rows[0]['phase'] == 'terminal' else None
+
+            row = self.wait(finished, 'real verification through private proxy backend')
+            assert row['outcome'] == 'passed' and row['eligibility']['eligible']
+            assert row['attempt_id'] is not None
+            def converged():
+                proxy_rows = client.get(path).json()['requests']
+                default_rows = self.request('GET', path)['requests']
+                self.observations.append({'proxy_rows': proxy_rows, 'default_rows': default_rows})
+                return proxy_rows[0] if proxy_rows == default_rows else None
+
+            observed = self.wait(converged, 'proxy and default snapshot convergence')
+            assert observed['manifest'] == row['manifest']
+            assert observed['revision'] >= row['revision']
+            row = observed
+            for _ in range(2):
+                response = client.post(path + '/events', json={
+                    'threadId': conversation, 'runId': str(uuid4()), 'messages': [],
+                    'tools': [], 'context': [], 'state': {}, 'forwardedProps': {},
+                })
+                assert response.status_code == 200
+                events = [json.loads(line[5:].strip()) for line in response.text.splitlines() if line.startswith('data:')]
+                assert [event['type'] for event in events] == ['RUN_STARTED', 'STATE_SNAPSHOT', 'RUN_FINISHED']
+                assert events[1]['snapshot']['verification']['requests'] == [row]
+            assert client.get(path).json()['requests'] == [row]
+            command = {'request_id': row['request_id'], 'command_id': str(uuid4()), 'expected_revision': row['revision']}
+            assert client.post(path + '/cancel', json=command).status_code == 200
+            cancelled = client.get(path).json()['requests'][0]
+            assert cancelled['cancellation'] == 'too_late'
+            assert cancelled['manifest'] == row['manifest']
+        self.record('strict_proxy_backend_real_activity_and_shared_authority',
+                    request_id=row['request_id'], attempt_id=row['attempt_id'],
+                    observer_connections=2, result='passed', invalid_auth=401,
+                    wrong_host=403, wrong_origin=403, stranger=404, forged_result=400,
+                    terminal_cancel='too_late', external_https_route='NOT VERIFIED', native_phone='NOT VERIFIED')
+
     def run(self):
         self.check_access()
         intent, row = self.check_admission_and_restart()
@@ -344,12 +404,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('repo', type=Path)
     parser.add_argument('--timeout', type=int, default=300)
+    parser.add_argument('--proxy', action='store_true', help='Exercise a synthetic strict loopback proxy backend, not a live HTTPS route')
     args = parser.parse_args()
     os.umask(0o077)
     runtime = VerificationRuntime(args.repo)
+    proxy_config = None
+    if args.proxy:
+        proxy_config = {'port': free_port(), 'origin': 'https://phone.example.invalid'}
+        path = runtime.root / 'proxy.json'
+        path.write_text(json.dumps(proxy_config))
+        os.environ['BIRBFORGE_PROXY_CONFIG'] = str(path)
     proof = HTTPProof(runtime)
     sources = sorted((runtime.repo / 'verification').glob('*.py')) + [
-        runtime.repo / path for path in ('server/gateway.ts', 'server/verification.ts',
+        runtime.repo / path for path in ('server/gateway.ts', 'server/main.ts', 'server/access.ts', 'server/verification.ts',
                                         'server/verification-contract.ts', 'app/src/verification-contract.ts',
                                         'scripts/verification_runtime.py', 'scripts/verification_http_proof.py')]
     hashes = lambda: {str(path.relative_to(runtime.repo)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sources}
@@ -367,6 +434,8 @@ def main():
         runtime.boot()
         report['versions'] = runtime.crew.report['versions']
         proof.run()
+        if proxy_config:
+            proof.check_proxy_backend(proxy_config)
         assert hashes() == report['source_sha256'], 'Source changed during proof; rerun the final implementation'
         report['result'] = 'passed'
     except BaseException as error:
