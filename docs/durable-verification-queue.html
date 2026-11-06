@@ -236,7 +236,8 @@ eligibility do not depend on these logs. No exporter is enabled.</p>
 <p>Mac-hosted Linux execution is distinct from native macOS execution. Darwin
 tool-version probes and exported native JavaScript bundles do not establish an
 iPhone journey. <code>docs/mac-iphone-verification.md</code> defines the exact-revision
-native handoff. Its final commit must be recorded before that handoff runs.</p>
+native handoff. It pins the exercised implementation commit. The <a href="evidence/verification-binding.json">delivery binding</a>
+records source, report, and dependency hashes.</p>
 <p>Setup and cleanup commands are in <code>docs/host-execution.md</code> and
 <code>docs/development.md</code>. Keep fixture credentials, host configuration, logs,
 screenshots, raw artifact bytes, and continuation handoffs private and outside

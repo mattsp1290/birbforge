@@ -17,12 +17,13 @@ commit in the private Beans handoff. Do not test a moving branch tip.
 
 ## Verify the queue at its final revision
 
-Set the final full commit before this handoff runs. `FINAL_QUEUE_COMMIT` is a
-placeholder to replace when the reviewed implementation is committed. It is
-not an executable revision or a claim of completed review.
+The reviewed and exercised implementation commit is
+`b448af803b62a178e463918e7080ebfa6f087219`. The later delivery commit changes only
+documentation and evidence binding. Test this immutable implementation revision,
+not a moving branch tip.
 
 ```sh
-BIRBFORGE_REVISION=FINAL_QUEUE_COMMIT
+BIRBFORGE_REVISION=b448af803b62a178e463918e7080ebfa6f087219
 git fetch origin integration/durable-verification-queue-recovery
 git worktree add --detach "$BIRBFORGE_MAC_CHECKOUT" "$BIRBFORGE_REVISION"
 cd "$BIRBFORGE_MAC_CHECKOUT"
