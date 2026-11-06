@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-11-06T20:38:23.507270+00:00",
+  "synthetic_pkcs8_marker_rejected": true,
+  "fixture_credentials_absent_from_public_files": true,
+  "filesChecked": 154,
+  "scope": "Produced by scripts/public-check.py; tracked and intended untracked files",
+  "fixture_supervisor_key_absent_from_public_files": true
+}

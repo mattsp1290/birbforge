@@ -1,0 +1,267 @@
+{
+  "checked_at": "2026-11-06T20:24:51.476363+00:00",
+  "target": "Mac-hosted Linux ARM64, real Temporal and pinned Birbverify fixture target/activity",
+  "passed": 30,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "test_post_commit_projection_failure_is_unavailable[error0]",
+      "suite": "tests.verification_python.test_adapter",
+      "seconds": "0.002"
+    },
+    {
+      "name": "test_post_commit_projection_failure_is_unavailable[error1]",
+      "suite": "tests.verification_python.test_adapter",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_post_commit_projection_failure_is_unavailable[error2]",
+      "suite": "tests.verification_python.test_adapter",
+      "seconds": "0.002"
+    },
+    {
+      "name": "test_invalid_command_rejected_before_loading_configuration",
+      "suite": "tests.verification_python.test_adapter",
+      "seconds": "0.000"
+    },
+    {
+      "name": "test_supervisor_rejects_unknown_modes_before_loading_configuration[arguments0]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.483"
+    },
+    {
+      "name": "test_supervisor_rejects_unknown_modes_before_loading_configuration[arguments1]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.539"
+    },
+    {
+      "name": "test_supervisor_rejects_unknown_modes_before_loading_configuration[arguments2]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.512"
+    },
+    {
+      "name": "test_admission_replay_binding_drift_and_independent_identity",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.002"
+    },
+    {
+      "name": "test_cancel_receipts_compare_full_payload_before_revision",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_untrusted_boundary_and_owner",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_canonical_producer_golden_defaults_unicode_datetime",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_capacity_retains_old_receipts",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_reconciliation_preserves_requests_absent_from_observation",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_unknown_termination_cancel_waits_for_recovery_evidence",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_diagnostics_allowlist_private_fields_and_size_bound",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.008"
+    },
+    {
+      "name": "test_malformed_installation_is_rejected_without_mutation[passing]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_malformed_installation_is_rejected_without_mutation[plan]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_malformed_installation_is_rejected_without_mutation[policy_revision]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_installation_binding_excludes_private_runtime_fields",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_no_attempt_requires_known_activity_closure[cancelled-not_acquired]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_no_attempt_requires_known_activity_closure[rejected-not_acquired]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_no_attempt_requires_known_activity_closure[unknown-uncertain]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_no_attempt_requires_known_activity_closure[completed-uncertain]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_all_queued_deadlines_expire_behind_uncertain_head",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_inspection_omits_queued_and_terminal_history",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_manifest_is_immutable_on_conflicting_observation",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_generic_worker_error_does_not_prove_no_acquisition[False]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_generic_worker_error_does_not_prove_no_acquisition[True]",
+      "suite": "tests.verification_python.test_queue",
+      "seconds": "0.001"
+    },
+    {
+      "name": "test_real_activity_queue_restarts_recovery_cancel_and_gate",
+      "suite": "tests.verification_python.test_temporal",
+      "seconds": "36.847"
+    },
+    {
+      "name": "test_timeout_without_attempt_stays_blocked_and_expires_all_queued",
+      "suite": "tests.verification_python.test_temporal",
+      "seconds": "5.524"
+    }
+  ],
+  "source_sha256": {
+    "tests/verification_python/test_adapter.py": "147a422539a3efde0b14faf4b3a67c2b1bbab7537dad3ff8ba12e9c6819872ed",
+    "tests/verification_python/test_queue.py": "cda4adf97ca86fa68f3707b940ac2219cae2212a8ecd4e7d533394022f1f21a2",
+    "tests/verification_python/test_temporal.py": "609a0d4fd6febdd7ab19a2d9443deb9be1c7cb55a71ec426541780e185855ac1",
+    "verification/__init__.py": "e79851bd0d281b0264c9abc02fb5dd15d832acfb6e23ada6cf701bcd7aa46b6b",
+    "verification/__main__.py": "db1ac0e9e6d3874b178f1f0a212bb531a2e98e69760fc03988caf458bbf11bcb",
+    "verification/adapter.py": "38b867fb1449dd03c6170c39a04c3a5b5f7fd3ca2ac02b26e93d124a12d57b2e",
+    "verification/diagnostics.py": "e354e76f607a5969da9e294b36302457e769a29b7fdeb86ece44928b8089dba9",
+    "verification/model.py": "2b4d491a3c5657576942356b9f96b23fd17b1b939ecad80dd56a93937780f89f",
+    "verification/producer.py": "9170d038ab7f361944955af50af00a0b9914af26a730a1d543b88ac9644b53ca",
+    "verification/supervisor.py": "0b290c141e8111fa6642d21e7458353edbd22df4237dda35109bf1ef149ee2d7",
+    "verification/workflow.py": "18f1f51eae9653a30f0e3febf7515687d751094967b53617f6e23555cf636685"
+  },
+  "junit_sha256": "df59afc4424b06189551b595ba41cc9cdee2470d759800227b6e3283112d8981",
+  "producer_pins": {
+    "birbverify": "a70315a276837ffdde32049fdb77670a3468e151",
+    "birbcrew": "88b219c18adeb352d2f291f099ede990a3190a58"
+  },
+  "limit": "Unknown timeout with no acquired attempt remains blocked. No target-owned request fence exists in this producer revision; no recovery override is claimed.",
+  "private_proof_sha256": "b630c184994f126237319fa2f9fcb7d4b6d35dd851fa11cf0ceca60b2106408c",
+  "observed_environment": {
+    "state": "free",
+    "attempt_id": null,
+    "stopped": true,
+    "cleanup_complete": true
+  },
+  "observed_recoveries": [
+    {
+      "attempt_id": "0d601113-2ed3-4c41-ac9a-5a8cf93f8a6d-e2c281db3ef2e577",
+      "completed_at": "2026-11-06T20:22:17.457181+00:00",
+      "container_absent": true,
+      "manifest_sha256": "b661a340130de199739a0d342af4cfe1fa275e852ed235792844b77770d54a8e",
+      "recovery_id": "1e822bd5-fda9-44f0-85ae-a1cc2bdb589b",
+      "request_id": "0d601113-2ed3-4c41-ac9a-5a8cf93f8a6d",
+      "worker_stopped": true
+    }
+  ],
+  "observed_requests": [
+    {
+      "request_id": "0d601113-2ed3-4c41-ac9a-5a8cf93f8a6d",
+      "request_sha256": "5ae5ed2dc0fbe2fe6f5d0387ba6904c5fe3ada8909e887467be6ee5dd7baaa0d",
+      "attempt_id": "0d601113-2ed3-4c41-ac9a-5a8cf93f8a6d-e2c281db3ef2e577",
+      "phase": "terminal",
+      "cancellation": "none",
+      "outcome": "inconclusive",
+      "eligibility": {
+        "eligible": false,
+        "reason": "not_passed"
+      },
+      "manifest_sha256": "b661a340130de199739a0d342af4cfe1fa275e852ed235792844b77770d54a8e",
+      "manifest_release": "quarantined"
+    },
+    {
+      "request_id": "d97af236-0fbf-4e9c-a723-6a5974b4c4e3",
+      "request_sha256": "b1c0c5c24b816082f3af623741f90096dfed35f73b4adf843704b758fdf06292",
+      "attempt_id": "d97af236-0fbf-4e9c-a723-6a5974b4c4e3-7b0c82dd80bc5cca",
+      "phase": "terminal",
+      "cancellation": "none",
+      "outcome": "passed",
+      "eligibility": {
+        "eligible": false,
+        "reason": "candidate_changed"
+      },
+      "manifest_sha256": "050a354bd000c8f713bfe0bf7d6c4875734a52876b64ebf7f898ddf2552c13ce",
+      "manifest_release": "released"
+    },
+    {
+      "request_id": "d63377b7-5e5b-423b-8c7c-37373e1b24b1",
+      "request_sha256": "2ee7be4bab07ef8a44a2ca9701ab173258b358fd9c9a315917c5559c1424f87a",
+      "attempt_id": null,
+      "phase": "cancelled_before_dispatch",
+      "cancellation": "acknowledged",
+      "outcome": null,
+      "eligibility": {
+        "eligible": false,
+        "reason": "not_passed"
+      },
+      "manifest_sha256": null,
+      "manifest_release": null
+    },
+    {
+      "request_id": "dded3fd4-4e95-4727-be1e-7740b74dfd17",
+      "request_sha256": "382aea785b15491e791b85c2865ad5fbc911c2d61a4c4d30deae2cd3297de9b0",
+      "attempt_id": "dded3fd4-4e95-4727-be1e-7740b74dfd17-7ca8b537714b0c1c",
+      "phase": "terminal",
+      "cancellation": "acknowledged",
+      "outcome": "cancelled",
+      "eligibility": {
+        "eligible": false,
+        "reason": "not_passed"
+      },
+      "manifest_sha256": "d15fcf7c0886668bb90e002b87d93b824b72dc76e9d5c6b1d42494f38219444b",
+      "manifest_release": "released"
+    },
+    {
+      "request_id": "d1400e96-cb48-4bd6-a02b-c491a16f422a",
+      "request_sha256": "0eb64108a9197cb13ab5f82dbdddf6ccffc92520bd1867619e1104b98008122c",
+      "attempt_id": null,
+      "phase": "not_acquired",
+      "cancellation": "none",
+      "outcome": null,
+      "eligibility": {
+        "eligible": false,
+        "reason": "not_passed"
+      },
+      "manifest_sha256": null,
+      "manifest_release": null
+    }
+  ]
+}

@@ -8,6 +8,16 @@ owner use; those checks remain DEFERRED / NOT VERIFIED. The original full
 accessibility journey below has not passed. Human authentication/permission
 review remains required before merge. This is not production or merge approval.
 
+## Later durable verification milestone
+
+The [durable verification queue](durable-verification-queue.md) adds a new
+fixture journey after this UI milestone. The native result above remains bound
+to its recorded commit. It does not verify the new request, cancellation,
+recovery, artifact, or shared observation controls. Fresh physical iPhone
+execution for the changed paths is NOT VERIFIED. Local queue execution and independent source review passed, as recorded
+in the linked queue evidence. Native OS Large Text and VoiceOver retain
+the existing DEFERRED / NOT VERIFIED status.
+
 ## Outcome
 
 An authenticated owner can begin a goal conversation on a phone, continue it in

@@ -5,7 +5,7 @@ import {randomUUID} from 'node:crypto';
 import {ConversationClient, ActionError} from '../app/src/controller';
 import {Snapshot, dependencyRevision} from '../app/src/contract';
 
-const session = JSON.parse(readFileSync('.local/session.json', 'utf8'));
+const session = JSON.parse(readFileSync(process.env.BIRBFORGE_SESSION_FILE ?? '.local/session.json', 'utf8'));
 async function wait(predicate: () => boolean, label: string) {
   const until = Date.now() + 60_000;
   while (!predicate()) {
@@ -67,7 +67,7 @@ test('pinned runtime accepts one decision and converges through real official AG
     events.push('disconnect and reconnect preserved one input, one decision and finalized messages');
     const raw = await a.request(`/${id}`);
     assert.ok(typeof raw === 'object' && raw !== null && !('native_messages' in raw) && !('owner' in raw));
-    writeFileSync('docs/evidence/runtime-checks.json', JSON.stringify({
+    writeFileSync(`${process.env.BIRBFORGE_EVIDENCE_DIR ?? 'docs/evidence'}/runtime-checks.json`, JSON.stringify({
       dependencyRevision, checkedAt: new Date().toISOString(), nodeVersion: process.version,
       producerVersions: JSON.parse(readFileSync(session.fixture_root + '/runtime-versions.json', 'utf8')),
       mode: 'deterministic fixture', target: 'Linux ARM64 Node official AG-UI clients',
@@ -83,7 +83,7 @@ test('lost acknowledgements retain identity and failed refreshes do not undo acc
   let dropInputAcknowledgement = true;
   let failNextGet = false;
   const client = new ConversationClient(session.url, session.tokens.owner, id, async (url, init) => {
-    if (failNextGet && init.method === 'GET') {
+    if (failNextGet && init.method === 'GET' && url.endsWith(`/${id}`)) {
       failNextGet = false;
       return new Response(JSON.stringify({code: 'fixture_refresh_failure'}), {status: 503});
     }
@@ -122,7 +122,7 @@ test('lost acknowledgements retain identity and failed refreshes do not undo acc
     await assert.rejects(client.submit({request_id: randomUUID(), text:'Rejected closed conversation input'}), error => error instanceof ActionError && error.status === 409);
     assert.equal(client.getSnapshot().pendingPrompt, null);
     assert.match(client.getSnapshot().notice, /Goal rejected/);
-    writeFileSync('docs/evidence/command-checks.json', JSON.stringify({
+    writeFileSync(`${process.env.BIRBFORGE_EVIDENCE_DIR ?? 'docs/evidence'}/command-checks.json`, JSON.stringify({
       checkedAt: new Date().toISOString(), dependencyRevision, nodeVersion: process.version,
       mode: 'deterministic runtime with client transport fault injection',
       conversationId: id, inputs: client.getSnapshot().conversation?.inputs.length,
@@ -145,13 +145,13 @@ test('a stream transport failure and failed reconnect GET recover without resubm
   let cutStream: (() => void) | undefined;
   const id = randomUUID();
   const client = new ConversationClient(session.url, session.tokens.owner, id, async (url, init) => {
-    if (init.method === 'GET' && failGet) {
+    if (init.method === 'GET' && failGet && url.endsWith(`/${id}`)) {
       failGet = false; failedGets++;
       return new Response(JSON.stringify({code:'fixture_gateway_unavailable'}), {status:503});
     }
     if (url.endsWith('/inputs')) inputs++;
     const response = await fetch(url, init);
-    if (!url.endsWith('/events')) return response;
+    if (!url.endsWith(`/${id}/events`)) return response;
     observations++;
     if (observations !== 1 || !response.body) return response;
     const reader = response.body.getReader();
@@ -186,7 +186,7 @@ test('a stream transport failure and failed reconnect GET recover without resubm
     assert.equal(inputs, 1);
     await client.refresh();
     assert.deepEqual(client.getSnapshot().conversation, before);
-    writeFileSync('docs/evidence/transport-checks.json', JSON.stringify({
+    writeFileSync(`${process.env.BIRBFORGE_EVIDENCE_DIR ?? 'docs/evidence'}/transport-checks.json`, JSON.stringify({
       checkedAt:new Date().toISOString(), dependencyRevision, nodeVersion:process.version,
       target:'Linux Node official AG-UI client with injected stream interruption and one failed GET',
       conversationId:id, observationRequests:observations, inputPostRequests:inputs,

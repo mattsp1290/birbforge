@@ -7,6 +7,7 @@ import { RunAgentInputSchema } from '@ag-ui/core/schemas';
 import { z } from 'zod/v4';
 import { Snapshot, Decision, Prompt } from '../app/src/contract';
 import type { ListenerPolicy, ProxySettings } from './access';
+import { VerificationConfig, serveVerification } from './verification';
 
 export const GatewayConfig = z.object({
   url: z.string().url().refine(value => {
@@ -14,6 +15,7 @@ export const GatewayConfig = z.object({
     return url.protocol === 'http:' && url.hostname === '127.0.0.1';
   }),
   tokens: z.record(z.string(), z.string().min(32)),
+  verification: VerificationConfig.optional(),
 });
 
 async function body(request: IncomingMessage) {
@@ -29,8 +31,8 @@ async function body(request: IncomingMessage) {
 
 export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: ListenerPolicy, webRoot?: string): RequestListener {
   const external = policy.kind === 'privateProxy' ? new URL(policy.settings.origin) : null;
-  const hashes = Object.values(config.tokens).map(token => ({
-    token, hash: createHash('sha256').update(token).digest(),
+  const hashes = Object.entries(config.tokens).map(([principal, token]) => ({
+    principal, token, hash: createHash('sha256').update(token).digest(),
   }));
   return async (request, response) => {
     response.setHeader('Cache-Control', 'no-store');
@@ -70,6 +72,14 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     const allowedOrigin = external?.origin ?? `http://${request.headers.host}`;
     if (request.headers.origin !== undefined && request.headers.origin !== allowedOrigin) {
       return send(403, 'origin_rejected');
+    }
+    const verification = /^\/api\/conversations\/([0-9a-f-]{36})\/verification(?:\/(cancel|events))?$/.exec(url.pathname);
+    if (verification && !url.search) {
+      const [, conversationId, action] = verification;
+      if (!z.string().uuid().safeParse(conversationId).success) return send(400, 'invalid_conversation');
+      return serveVerification({config: config.verification, producerUrl: config.url,
+        credential: credential.token, principal: credential.principal, conversationId, action,
+        request, response, readBody: () => body(request)});
     }
     const match = /^\/api\/conversations(?:\/([0-9a-f-]{36})(?:\/(inputs|decision|events|cancel))?)?$/.exec(url.pathname);
     if (!match || url.search) return send(404, 'not_found');
