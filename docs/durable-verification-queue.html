@@ -187,7 +187,7 @@ allowlisted JSON log envelopes; request and attempt identities are attributes,
 not metric labels. Artifact failures are deduplicated per request and capped at
 64 KiB per fixture. The cap may omit later diagnostics; authoritative state and
 eligibility do not depend on these logs. No exporter is enabled.</p>
-<h2 id="acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone<a class="anchor" href="#acceptance-evidence-for-this-milestone" aria-label="Link to Acceptance evidence for this milestone">#</a></h2><p>The following statuses apply to this milestone&#39;s final revision. Historical
+<h2 id="acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone<a class="anchor" href="#acceptance-evidence-for-this-milestone" aria-label="Link to Acceptance evidence for this milestone">#</a></h2><p>The following statuses describe the initial delivery at <code>7b8e1a5</code>. Historical
 <a href="first-milestone.html">first UI milestone</a> evidence does not satisfy these checks.</p>
 <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
 <thead>
@@ -245,4 +245,21 @@ Git. Public reports contain sanitized identities, digests, observations, and
 the precise revision exercised. No live model, private notes hub, external
 telemetry exporter, network reconfiguration, or production access belongs to
 this fixture.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a></nav></aside></body></html>
+<h2 id="private-route-launcher-follow-up">Private route launcher follow-up<a class="anchor" href="#private-route-launcher-follow-up" aria-label="Link to Private route launcher follow-up">#</a></h2><p>The native owner reported signed iPhone build/install/launch and Mac-only
+checks at <code>7b8e1a5</code>, with all seven native journeys blocked by the private route.
+The queue launcher had discarded <code>BIRBFORGE_PROXY_CONFIG</code> and accepted default
+listener readiness without the optional proxy backend.</p>
+<p>Implementation <code>2893bf3d68b7e582c5bd641b3bd272afc81e56da</code> forwards the explicit optional
+configuration to the gateway and waits for a fresh all-listener readiness
+receipt on every start. Existing Host, Origin, authentication and owner-only
+file checks remain unchanged. The <a href="evidence/verification-proxy-followup.json">follow-up evidence</a>
+records eight launcher tests, ten HTTP scenarios and independent Claude closure.
+The <a href="evidence/verification-proxy-browser.json">Mac browser rerun</a> used the default
+loopback UI while both listeners were active. Proxy AG-UI observations used raw
+SSE; the official client checks used the default listener.</p>
+<p>These tests do not verify the external HTTPS service or native transport.
+Continue with the updated exact-revision native handoff in <code>docs/mac-iphone-verification.md</code>.
+All seven native journeys remain NOT VERIFIED. Large Text and VoiceOver remain
+deferred. Original delivery reports above remain historical; the follow-up
+<a href="evidence/verification-proxy-binding.json">content binding</a> records the new source.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a><a href="#private-route-launcher-follow-up">Private route launcher follow-up</a></nav></aside></body></html>

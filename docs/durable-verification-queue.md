@@ -195,7 +195,7 @@ eligibility do not depend on these logs. No exporter is enabled.
 
 ## Acceptance evidence for this milestone
 
-The following statuses apply to this milestone's final revision. Historical
+The following statuses describe the initial delivery at `7b8e1a5`. Historical
 [first UI milestone](first-milestone.md) evidence does not satisfy these checks.
 
 | Proof | Current status |
@@ -223,3 +223,25 @@ Git. Public reports contain sanitized identities, digests, observations, and
 the precise revision exercised. No live model, private notes hub, external
 telemetry exporter, network reconfiguration, or production access belongs to
 this fixture.
+
+## Private route launcher follow-up
+
+The native owner reported signed iPhone build/install/launch and Mac-only
+checks at `7b8e1a5`, with all seven native journeys blocked by the private route.
+The queue launcher had discarded `BIRBFORGE_PROXY_CONFIG` and accepted default
+listener readiness without the optional proxy backend.
+
+Implementation `2893bf3d68b7e582c5bd641b3bd272afc81e56da` forwards the explicit optional
+configuration to the gateway and waits for a fresh all-listener readiness
+receipt on every start. Existing Host, Origin, authentication and owner-only
+file checks remain unchanged. The [follow-up evidence](evidence/verification-proxy-followup.json)
+records eight launcher tests, ten HTTP scenarios and independent Claude closure.
+The [Mac browser rerun](evidence/verification-proxy-browser.json) used the default
+loopback UI while both listeners were active. Proxy AG-UI observations used raw
+SSE; the official client checks used the default listener.
+
+These tests do not verify the external HTTPS service or native transport.
+Continue with the updated exact-revision native handoff in `docs/mac-iphone-verification.md`.
+All seven native journeys remain NOT VERIFIED. Large Text and VoiceOver remain
+deferred. Original delivery reports above remain historical; the follow-up
+[content binding](evidence/verification-proxy-binding.json) records the new source.
