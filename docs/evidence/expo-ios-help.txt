@@ -18,4 +18,3 @@
 
   Build for production (unsigned) with the Release configuration:
     $ npx expo run:ios --configuration Release
-
