@@ -1,13 +1,17 @@
 # Verify the same conversation on Mac and iPhone
 
-The durable verification queue changes native controls and transport paths.
-The recovery host had no available physical iPhone. A later owner handoff,
-`birbforge-h-wuok`, reports a signed Release build installed and launched on a
-physical iPhone at `7b8e1a5c2c1c99dfc0b47312c1bbaa74484a1efb`. Its Mac-only checks
-passed, but the private route blocked all seven native journeys. Those journeys
-remain NOT VERIFIED. The local launcher follow-up does not change that status. Use the exact-revision queue
-handoff below before extending any native acceptance claim. Native OS Large
-Text and VoiceOver remain DEFERRED / NOT VERIFIED.
+Physical queue acceptance is recorded for product revision
+`6b46dac2931225e0739e9deb047e48b956bff8fc`, using the explicit native fixture
+build at `88a8182346c380bd15f4b7b2ec7f442f81dbd130`. Read the
+[current results and cancellation qualification](durable-verification-queue.md#physical-iphone-acceptance)
+and [evidence binding](evidence/verification-native.json) before repeating a
+journey. Native OS Large Text and VoiceOver remain DEFERRED / NOT VERIFIED.
+
+The procedure below is the original exact-revision queue handoff. At that
+checkpoint the recovery host lacked a phone, and the first owner attempt was
+blocked by the private route. Those historical limitations are superseded by
+the recorded physical checks, not by the launcher fix alone. For transport
+fault injection, use the separate [native fixture entry point](../tests/native-fixture/README.md).
 
 The local owner exercised functional device journeys at
 5d333cda03a6b385b669f6025b248d4ba4272071. [Current acceptance](evidence/acceptance.md)
