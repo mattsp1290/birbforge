@@ -88,6 +88,13 @@ and its ownership and mode are checked through that descriptor.
 BIRBFORGE_PROXY_CONFIG=/absolute/private/proxy.json scripts/dev
 ```
 
+For the durable verification queue in the existing Linux guest, use the
+[guest invocation](host-execution.md#optional-existing-private-https-route).
+It sets the variable inside the guest boundary and records `proxy_origin` in
+`.local/verification-session.json`. The same strict proxy configuration and
+listener policies apply.
+
+
 The launcher retains its default loopback URL for the Mac browser SSH path.
 The configured external origin appears only in ignored `.local/session.json`.
 A unique private readiness file is published atomically after both listeners

@@ -2,8 +2,11 @@
 
 Status on November 6, 2026. This milestone adds Birbforge's first durable
 environment queue and shared verification view. The local execution checks and independent source review passed.
-Changed physical iPhone journeys remain pending. The earlier native acceptance
-record covers the first UI milestone only.
+Physical iPhone fixture acceptance is now recorded for product revision
+`6b46dac`, using the separate native test build at `88a8182`. The
+[cancellation qualification and current results](#physical-iphone-acceptance)
+below distinguish fresh checks from earlier evidence. Native OS accessibility
+checks remain owner-deferred; real staging remains unverified.
 
 This is an isolated, synthetic Linux Docker fixture. It grants no staging,
 production, PR, or merge authority. The broader
@@ -195,7 +198,7 @@ eligibility do not depend on these logs. No exporter is enabled.
 
 ## Acceptance evidence for this milestone
 
-The following statuses apply to this milestone's final revision. Historical
+The following statuses describe the initial delivery at `7b8e1a5`. Historical
 [first UI milestone](first-milestone.md) evidence does not satisfy these checks.
 
 | Proof | Current status |
@@ -223,3 +226,71 @@ Git. Public reports contain sanitized identities, digests, observations, and
 the precise revision exercised. No live model, private notes hub, external
 telemetry exporter, network reconfiguration, or production access belongs to
 this fixture.
+
+## Private route launcher follow-up
+
+The native owner reported signed iPhone build/install/launch and Mac-only
+checks at `7b8e1a5`, with all seven native journeys blocked by the private route.
+The queue launcher had discarded `BIRBFORGE_PROXY_CONFIG` and accepted default
+listener readiness without the optional proxy backend.
+
+Implementation `2893bf3d68b7e582c5bd641b3bd272afc81e56da` forwards the explicit optional
+configuration to the gateway and waits for a fresh all-listener readiness
+receipt on every start. Existing Host, Origin, authentication and owner-only
+file checks remain unchanged. The [follow-up evidence](evidence/verification-proxy-followup.json)
+records eight launcher tests, ten HTTP scenarios and independent Claude closure.
+The [Mac browser rerun](evidence/verification-proxy-browser.json) used the default
+loopback UI while both listeners were active. Proxy AG-UI observations used raw
+SSE; the official client checks used the default listener.
+
+These tests do not verify the external HTTPS service or native transport.
+Continue with the updated exact-revision native handoff in `docs/mac-iphone-verification.md`.
+At that launcher-only checkpoint all seven native journeys remained NOT VERIFIED.
+The physical acceptance below supersedes that status. Large Text and VoiceOver
+remain deferred. Original delivery reports above remain historical; the follow-up
+[content binding](evidence/verification-proxy-binding.json) records the new source.
+
+
+## Physical iPhone acceptance
+
+On November 6, 2026 (local time; November 7 UTC), the owner Mac and a physical
+iPhone exercised the remaining queue controls against the isolated fixture.
+The [native evidence record](evidence/verification-native.json) binds the
+results to product revision `6b46dac2931225e0739e9deb047e48b956bff8fc` and
+native fixture revision `88a8182346c380bd15f4b7b2ec7f442f81dbd130`.
+The application, controller, gateway and queue sources are unchanged between
+those revisions. The separate test entry point adds explicit transport fault
+controls; normal native bundles exclude them.
+
+| Journey | Evidence and limit |
+| --- | --- |
+| Shared admission, automatic reconnect, historical outcome versus current eligibility | Earlier physical checks at the same product revision remain valid. Fresh admission and recovery also appeared on the Mac. The earlier full journeys were not all rerun. |
+| Lost admission acknowledgement | The native fixture withheld one validated HTTP 200 response and temporarily held observations. The phone showed the original pending request, then reconciled to its passed result automatically. One native POST and one target operation were recorded. This tests app-facing reply loss, not dropped network packets or persistence across app reload. |
+| Cancellation | The phone's requested state was captured during an activity heartbeat timeout. A separate ordinary, unpaused cancellation showed acknowledged on phone and Mac, with confirmed stop, complete cleanup and no Temporal timeout. These separate runs establish the state distinction; they are not one clean requested-to-acknowledged screen recording. |
+| Known-attempt supervisor recovery | Actual worker loss left an inconclusive result and quarantined environment. A separate trusted supervisor confirmed stop and cleanup. Phone and Mac then showed a free environment and separate recovery receipt while the original request and manifest remained unchanged and ineligible. |
+| Forged native action | The real native transport sent an extra authority field. HTTP 400 and the phone rejection matched unchanged server requests and target effects. Earlier invalid/stranger credential checks remain historical; this is bounded rejection coverage. |
+
+Two paused cancellation attempts exceeded the activity heartbeat deadline; a
+third request finished before cancellation was pressed. These are recorded as
+unsuccessful timing attempts, not ordinary cancellation passes. The false
+assumption was that a ten-second pause could not exhaust a fifteen-second
+heartbeat deadline: the heartbeat was already aging before the pause.
+
+The closing audit rechecked 44 source hashes, 39 signed-app file hashes and
+three target artifact objects, with no mismatches. It compared authoritative
+before/after state and followed Temporal history across Continue-As-New.
+Independent Claude reviewed the fixture and private coordinator source and
+closed its findings. It did not independently execute the device journeys.
+The executing agent operated the real phone and browser and performed the
+read-only evidence audit; those are not two independent executions.
+
+Both clients were signed out. The disposable runtime, its seven containers
+and temporary forwards were stopped. Screenshots, credentials, runtime
+configuration and raw evidence stay outside Git; the public record contains
+digests and bounded observations.
+
+This closes the scoped physical-phone acceptance work. Native OS Large Text
+and VoiceOver remain explicitly deferred. Unknown dispatch or missing-context
+recovery, actual k3s staging, native candidate isolation, artifact access and
+retention, and production identity remain separate gates. No merge or
+deployment is authorized by this evidence.

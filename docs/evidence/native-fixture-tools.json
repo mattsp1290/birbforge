@@ -1,0 +1,39 @@
+{
+  "scope": "Fixture-only native transport controls; no product behavior or gateway permission changes",
+  "base_revision": "6b46dac2931225e0739e9deb047e48b956bff8fc",
+  "node": "22.22.3",
+  "checks": {
+    "driver_tests": 12,
+    "failed": 0,
+    "repository_typecheck": "passed",
+    "fixture_typecheck": "passed",
+    "signed_release_build": "passed",
+    "normal_native_bundle_fixture_markers": "absent"
+  },
+  "native_journeys": "NOT VERIFIED by these checks",
+  "review": {
+    "model": "claude-opus-5-5",
+    "route": "subscription CLI, safe mode, no tools",
+    "coverage": "Supplied source; no independent execution",
+    "native_driver_closure": "No remaining blockers",
+    "private_coordinator": "Separate review and acceptance; excluded from this public tooling report"
+  },
+  "source_sha256": {
+    "metro.config.cjs": "de55357cbdcd3d6021e4940cd3b2e5f169b5f52b91252b57d821866bf640dee3",
+    "tests/native-fixture.test.ts": "d2d7ebba964294a30147009243ea52a42f1c967448928240a847e8f72d6728b2",
+    "tests/native-fixture/index.tsx": "60156dc96ed5fd78c76f29798edade2d2e61d78e3fa7cc7ce781ddde9969ab9b",
+    "tests/native-fixture/driver.ts": "70c2257ba279344f26b533fe84af08bbf259cf0f6b0901326d11ce6b42f681b9",
+    "tests/native-fixture/README.md": "e756dbfa802d25ef2cdbcc7a85babb1febb840b36e1335950e11016706e60f9b",
+    "tests/native-fixture/transport.native.ts": "2c39c60bb45b481d331f98f75cbb53873f6741a15e5faecf5d04e71e15cf8911",
+    "tests/native-fixture/tsconfig.json": "65570c344df813ec41c649517c724f4951dfbc79e39cbc1442aca9e92e88c71e"
+  },
+  "evidence_sha256": {
+    "driver-tests-reviewed.tap": "998ea2a40b037a99f88cdd3222518947edb6ec52b8f8d5e1ae4ba5904cb4efa2",
+    "typecheck-reviewed.log": "edb0084172bd41fd84c2d83ca5d108aa78e5933be1a4eb8d5cac58300583a5fb",
+    "fixture-typecheck-reviewed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-build-reviewed.log": "52aa2beb4611df8c0cfe06a21fd7d523d45ea1b1fcae80f0a79e448144c1ac21",
+    "normal-build-exclusion.json": "d8b182ae8b11916f2ac195dc38c6b5c5ed5fb8876d26f8737284bc4b188cc4c9",
+    "code-review.json": "67cb9cc9d30b5773376da376448c967b8e8908a7017614369b3fc1cfe8c3f579",
+    "closure-review.json": "1fd83391f6e1b7800a6ea0cd2a83cadeda6cc2cf501057098696c6f4fef64353"
+  }
+}
