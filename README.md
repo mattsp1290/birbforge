@@ -3,11 +3,12 @@
 A shared native phone and browser interface for a durable goal conversation and
 one synthetic input decision, plus a synthetic durable verification queue.
 The first implementation consumes an exact pinned
-Birbcrew runtime through AG-UI. Functional native iPhone and Mac journeys were exercised at the pinned tested
-revision. Those results do not verify the later queue controls. Local queue execution and independent source review passed. Physical
-iPhone execution for these changes remains pending. Native OS
-accessibility is deferred and human merge review remains open. This proof
-grants no PR or merge authority.
+Birbcrew runtime through AG-UI. Functional native iPhone and Mac journeys,
+including the later queue controls, now have revision-bound fixture evidence.
+The [native queue record](docs/durable-verification-queue.md#physical-iphone-acceptance)
+distinguishes historical checks, fresh device checks and the cancellation
+qualification. Native OS accessibility remains deferred; staging and human
+merge review remain separate gates. This proof grants no PR or merge authority.
 
 - [Read the durable verification queue contract and evidence status](docs/durable-verification-queue.md).
 - [Run the disposable development proof](docs/development.md).
