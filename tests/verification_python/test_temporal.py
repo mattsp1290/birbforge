@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -41,7 +42,12 @@ async def test_real_activity_queue_restarts_recovery_cancel_and_gate(
     monkeypatch, capsys
 ):
     identity = uuid4().hex[:12]
-    root = Path(tempfile.mkdtemp(prefix=f"bfq-{identity}-", dir="/tmp"))
+    root = Path(
+        tempfile.mkdtemp(
+            prefix=f"bfq-{identity}-",
+            dir=os.environ.get("BIRBFORGE_FIXTURE_ROOT", "/tmp"),
+        )
+    )
     installed = initialize(root)
     first_id = str(uuid4())
     installed["pause_after_effect"] = [first_id]
@@ -404,7 +410,12 @@ async def test_timeout_without_attempt_stays_blocked_and_expires_all_queued():
     from verification.producer import Observations
 
     identity = uuid4().hex[:12]
-    root = Path(tempfile.mkdtemp(prefix=f"bfq-timeout-{identity}-", dir="/tmp"))
+    root = Path(
+        tempfile.mkdtemp(
+            prefix=f"bfq-timeout-{identity}-",
+            dir=os.environ.get("BIRBFORGE_FIXTURE_ROOT", "/tmp"),
+        )
+    )
     installed = initialize(root)
     target = start_target(root)
     try:

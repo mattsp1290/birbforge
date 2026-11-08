@@ -16,7 +16,7 @@ import urllib.request
 REPO = Path(__file__).resolve().parents[1]
 PINS = {
     'birbcrew': '88b219c18adeb352d2f291f099ede990a3190a58',
-    'birbverify': 'a70315a276837ffdde32049fdb77670a3468e151',
+    'birbverify': 'e785dd8882222b18eaf59ce2b1ceecbd092dcd9e',
 }
 TOOLS = (
     ('uv', 'https://github.com/astral-sh/uv/releases/download/0.11.3/uv-aarch64-unknown-linux-gnu.tar.gz',
@@ -110,24 +110,53 @@ def source_archive(source, revision):
     return subprocess.check_output(['git', '-C', source, 'archive', revision])
 
 
+def verify_archive(root, content, name):
+    with tarfile.open(fileobj=io.BytesIO(content)) as archive:
+        members = {member.name.rstrip('/'): member for member in archive.getmembers()}
+        for relative, member in members.items():
+            path = root / relative
+            if member.isfile():
+                if path.is_symlink() or not path.is_file() or path.read_bytes() != archive.extractfile(member).read():
+                    raise ValueError(f'Pinned producer source mismatch: {path}')
+            elif member.issym():
+                if not path.is_symlink() or os.readlink(path) != member.linkname:
+                    raise ValueError(f'Pinned producer symlink mismatch: {path}')
+            elif member.isdir():
+                if path.is_symlink() or not path.is_dir():
+                    raise ValueError(f'Pinned producer directory mismatch: {path}')
+            else:
+                raise ValueError(f'Unsupported producer archive member: {relative}')
+    generated = {'.venv', '.proof'}
+    if name == 'birbcrew':
+        generated.add('clients/node_modules')
+    for directory, folders, files in os.walk(root, followlinks=False):
+        parent = Path(directory).relative_to(root)
+        for entry in list(folders) + files:
+            relative = (parent / entry).as_posix()
+            path = root / relative
+            if relative in generated or entry == '__pycache__':
+                if path.is_symlink() or not path.is_dir():
+                    raise ValueError(f'Invalid generated directory: {path}')
+                if entry in folders:
+                    folders.remove(entry)
+                continue
+            if relative == '.birbforge-revision' and path.is_file() and not path.is_symlink():
+                continue
+            if relative not in members:
+                raise ValueError(f'Unexpected producer source: {path}')
+
+
 def verify_exports(setup):
     if setup.revisions != PINS:
         raise ValueError('Guest setup producer revisions do not match this repository')
     for name, revision in PINS.items():
         root = Path(setup.exports[name])
-        with tarfile.open(fileobj=io.BytesIO(source_archive(setup.sources[name], revision))) as archive:
-            for member in archive.getmembers():
-                path = root / member.name
-                if member.isfile():
-                    if path.is_symlink() or path.read_bytes() != archive.extractfile(member).read():
-                        raise ValueError(f'Pinned producer source mismatch: {path}')
-                elif member.issym() and (not path.is_symlink() or os.readlink(path) != member.linkname):
-                    raise ValueError(f'Pinned producer symlink mismatch: {path}')
+        verify_archive(root, source_archive(setup.sources[name], revision), name)
         if name == 'birbcrew':
             checked([sys.executable, str(REPO / 'scripts/check-dependency.py'), str(root)], stdout=sys.stderr)
         else:
             manifest = json.loads(subprocess.check_output([
-                'git', '-C', setup.sources[name], 'show', f'{revision}:docs/evidence/source-manifest.json']))
+                'git', '-C', setup.sources[name], 'show', f'{revision}:docs/evidence/contextless-closure-acceptance.json']))['source_hashes']
             for relative, digest in manifest.items():
                 if hashlib.sha256((root / relative).read_bytes()).hexdigest() != digest:
                     raise ValueError(f'Birbverify source manifest mismatch: {relative}')

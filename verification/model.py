@@ -3,9 +3,10 @@ from pathlib import Path
 from typing import Annotated, Literal, TypedDict
 from uuid import UUID
 
+from birbverify.closure import Binding
 from birbverify.contract import Plan, Request
 from birbverify.policy import authorize
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 RequestPhase = Literal[
     "queued",
@@ -16,11 +17,13 @@ RequestPhase = Literal[
     "cancelled_before_dispatch",
     "expired",
     "not_acquired",
+    "closed",
 ]
 CancellationState = Literal["none", "requested", "acknowledged", "too_late"]
 
 
 class QueueRow(TypedDict):
+    admission_binding: dict | None
     intent: dict
     payload: dict
     request_sha256: str
@@ -37,6 +40,7 @@ class QueueState(TypedDict):
     revision: int
     requests: list[QueueRow]
     commands: dict[str, dict]
+    outstanding_request_id: str | None
 
 
 class ProducerObservation(TypedDict):
@@ -56,6 +60,7 @@ class BindingInstallation(Record):
     plan: Plan
     plan_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
     policy_revision: Annotated[str, Field(pattern=r"^[0-9a-f]{40}$")]
+    closure_binding: Binding | None = None
 
     @classmethod
     def from_installed(cls, installed: dict):
@@ -66,6 +71,8 @@ class BindingInstallation(Record):
 
 class Config(Record):
     installation_root: Path
+    profile: Literal["legacy-v1", "closure-v2"] = "legacy-v1"
+    closure_binding: Binding | None = None
     temporal_address: str
     namespace: str = "default"
     workflow_id: str
@@ -74,6 +81,16 @@ class Config(Record):
     owner_principal: Literal["owner"] = "owner"
     max_requests: Annotated[int, Field(strict=True, ge=1, le=128)] = 128
     continue_threshold: Annotated[int, Field(strict=True, ge=2, le=10000)] = 100
+
+    @model_validator(mode="after")
+    def profile_binding(self):
+        if (self.profile == "closure-v2") != (self.closure_binding is not None):
+            raise ValueError("profile_binding_mismatch")
+        if self.profile == "closure-v2" and not self.workflow_id.endswith(
+            "-closure-v2"
+        ):
+            raise ValueError("fresh_closure_workflow_id_required")
+        return self
 
 
 class Admission(Record):

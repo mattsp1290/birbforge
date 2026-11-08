@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+[ "$(uname -s)" = Linux ] || { echo 'Run inside the isolated Linux fixture driver.' >&2; exit 1; }
+: "${BIRBFORGE_FIXTURE_ROOT:?Set a short private daemon-shared fixture directory}"
+: "${BIRBFORGE_CLOSURE_EVIDENCE:?Set a private evidence directory outside Git}"
+: "${BIRBFORGE_EXPORT_ATTESTATION:?Run scripts/closure-attestation.py prepare on the host first}"
+: "${BIRBVERIFY_WORKER_IMAGE:?Set the reviewed worker image identity}"
+setup=$(cat .local/guest-setup-path)
+python=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["exports"]["birbverify"]+"/.venv/bin/python")' "$setup")
+crew_python=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["exports"]["birbcrew"]+"/.venv/bin/python")' "$setup")
+export PYTHONPATH="$PWD"
+umask 077
+mkdir -p "$BIRBFORGE_CLOSURE_EVIDENCE"
+"$python" scripts/closure-attestation.py verify "$BIRBFORGE_EXPORT_ATTESTATION" --report "$BIRBFORGE_CLOSURE_EVIDENCE/export-attestation.json"
+"$python" -m ruff check verification tests/verification_python
+"$python" -m ruff format --check verification tests/verification_python
+scripts/npm run check
+"$python" -m pytest tests/verification_python -q --tb=short --junitxml="$BIRBFORGE_CLOSURE_EVIDENCE/junit.xml"
+scripts/npm exec tsx -- --tsconfig tsconfig.node.json --test tests/verification-client.test.ts tests/verification-contract.test.ts
+
+"$crew_python" -m pytest tests/test_verification_launcher.py -q --tb=short --junitxml="$BIRBFORGE_CLOSURE_EVIDENCE/launcher-junit.xml"

@@ -407,7 +407,7 @@ def main():
     parser.add_argument('--proxy', action='store_true', help='Exercise a synthetic strict loopback proxy backend, not a live HTTPS route')
     args = parser.parse_args()
     os.umask(0o077)
-    runtime = VerificationRuntime(args.repo)
+    runtime = VerificationRuntime(args.repo, profile="legacy-v1")
     proxy_config = None
     if args.proxy:
         proxy_config = {'port': free_port(), 'origin': 'https://phone.example.invalid'}
@@ -444,13 +444,21 @@ def main():
     finally:
         signal.alarm(0)
         processes = list(runtime.processes.values()) + list(runtime.crew.processes.values())
-        runtime.close()
-        report['cleanup'] = all(process.poll() is not None for process in processes)
+        cleanup_error = None
+        try:
+            runtime.close()
+            report['cleanup'] = all(process.poll() is not None for process in processes)
+        except Exception as error:
+            cleanup_error = error
+            report['cleanup'] = False
+            report['cleanup_failure_type'] = type(error).__name__
         path = runtime.root / 'http-proof.json'
         path.write_text(json.dumps(report, indent=2) + '\n')
         path.chmod(0o600)
         print(json.dumps({'result': report['result'], 'mode': report['mode'], 'cleanup': report['cleanup'],
                           'checks': proof.checks, 'private_report': str(path)}), flush=True)
+        if cleanup_error is not None:
+            raise cleanup_error
 
 
 if __name__ == '__main__':

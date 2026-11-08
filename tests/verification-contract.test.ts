@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {join} from 'node:path';
 import {URL} from 'node:url';
 import {validVerificationManifest, validVerificationRequest} from '../server/verification-contract';
-import {VerificationRequest} from '../app/src/verification-contract';
+import {Closure, VerificationRequest} from '../app/src/verification-contract';
 
 const directory = new URL('../server/contracts/birbverify.v1/', import.meta.url);
 const fixture = (name: string): unknown => JSON.parse(readFileSync(new URL(name, directory), 'utf8'));
@@ -80,10 +80,23 @@ test('vendored producer contracts retain every published byte', () => {
   const manifestSchema = JSON.parse(readFileSync(new URL('manifest.schema.json', directory), 'utf8'));
   assert.deepEqual(VerificationRequest.shape.outcome.unwrap().options, manifestSchema.properties.outcome.enum);
   const source = JSON.parse(readFileSync(new URL('source.json', directory), 'utf8'));
-  assert.equal(source.revision, 'a70315a276837ffdde32049fdb77670a3468e151');
+  assert.equal(source.revision, 'e785dd8882222b18eaf59ce2b1ceecbd092dcd9e');
   for (const [name, expected] of Object.entries(source.source_hashes)) {
-    if (!name.startsWith('contracts/v1/')) continue;
-    const content = readFileSync(new URL(name.slice('contracts/v1/'.length), directory));
+    const prefix = [['contracts/v1/', 'birbverify.v1/'], ['contracts/closure/v1/', 'birbverify.closure.v1/'], ['contracts/target/v2/', 'birbverify.target.v2/']].find(([path]) => name.startsWith(path));
+    if (!prefix) continue;
+    const content = readFileSync(new URL('../' + prefix[1] + name.slice(prefix[0].length), directory));
     assert.equal(createHash('sha256').update(content).digest('hex'), expected, name);
   }
+});
+
+
+test('closure projection distinguishes missing history and unavailable acquired provenance', () => {
+  const complete = {kind: 'released', closure_id: 'b1814954-3a41-43dd-960e-579b481df7ac', execution_epoch: 2,
+    acquisition: {kind: 'never_acquired', attempt_id: null, reservation_sha256: null},
+    receipt_sha256: 'a'.repeat(64), proof: 'valid', history: {manifest_status: 'unavailable', manifest_sha256: null}};
+  assert.deepEqual(Closure.parse(complete), complete);
+  assert.equal(Closure.safeParse({...complete, manifest: {outcome: 'passed'}}).success, false);
+  assert.equal(Closure.safeParse({...complete, acquisition: {kind: 'acquired_provenance_unavailable', attempt_id: 'a', reservation_sha256: null}}).success, false);
+  assert.equal(Closure.safeParse({...complete, history: {manifest_status: 'present', manifest_sha256: null}}).success, false);
+  assert.equal(Closure.safeParse({...complete, proof: 'assumed'}).success, false);
 });

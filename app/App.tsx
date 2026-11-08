@@ -28,9 +28,20 @@ function VerificationRow({row, client, large}: {row: VerificationRequest; client
       : 'Historical evidence · refresh to check eligibility'}</Text>
     <Text style={styles.muted}>Eligibility concerns verification evidence. It grants no merge approval.</Text>
     <Text selectable style={styles.identity}>Request {row.request_id}</Text>
-    <Text selectable style={styles.identity}>Attempt {row.attempt_id ?? 'Not acquired'}</Text>
+    <Text selectable style={styles.identity}>Attempt {row.attempt_id ?? (row.closure && row.closure.kind !== 'absent' && row.closure.acquisition.kind === 'never_acquired' ? 'Never acquired · target confirmed' : 'Not recorded')}</Text>
     <Text style={styles.muted}>Cancellation · {row.cancellation.replaceAll('_', ' ')} · revision {row.revision}</Text>
     <Text style={styles.muted}>Candidate {row.candidate_commit.slice(0, 12)} · plan {row.plan_sha256.slice(0, 12)} · {row.manifest ? 'Recorded manifest' : 'No recorded manifest'}</Text>
+    {row.closure && row.closure.kind !== 'absent' && <View testID="verification-closure" style={styles.details}>
+      <Text style={styles.label}>{row.closure.kind === 'released' ? 'REQUEST CLOSED' : 'REQUEST CLOSURE PENDING'}</Text>
+      <Text style={styles.muted}>{row.closure.acquisition.kind === 'never_acquired' ? 'Target confirmed no execution acquired.'
+        : row.closure.kind === 'released' ? 'Execution stop and cleanup recorded.' : 'Waiting for target-confirmed stop and cleanup.'}</Text>
+      {row.closure.kind === 'released' ? <>
+        <Text testID="closure-proof" style={styles.notice}>Retained closure proof · {observed ? row.closure.proof : 'refresh required'}</Text>
+        <Text style={styles.muted}>{row.closure.history.manifest_status === 'present' ? 'Original verification history preserved.' : 'No verification manifest was recorded. Closure grants no eligibility.'}</Text>
+      </> : <Text style={styles.notice}>{row.closure.blocking_reason?.replaceAll('_', ' ') ?? row.closure.phase.replaceAll('_', ' ')}</Text>}
+      <Text selectable style={styles.identity}>Closure {row.closure.closure_id} · execution epoch {row.closure.execution_epoch}</Text>
+      <Text style={styles.muted}>Historical closure does not describe current environment ownership.</Text>
+    </View>}
     <View style={styles.row}>
       <Button label={details ? 'Hide verification identities' : 'Show verification identities'} selected={details} onPress={() => setDetails(!details)} />
       {cancellable && <Button label="Cancel verification request" disabled={state.sending || !!state.pending || state.availability !== 'available'} onPress={() => {
@@ -58,7 +69,8 @@ function VerificationPanel({client, large}: {client: VerificationClient; large: 
       <Text testID="verification-connection" style={styles.status}>{state.availability} · {state.connection} · revision {snapshot?.revision ?? 0}</Text>
       {snapshot && <>
         <Text testID="verification-environment" style={[styles.body, large && styles.large]}>Environment · {snapshot.environment.state}</Text>
-        <Text style={styles.muted}>Worker {snapshot.environment.stopped ? 'stopped' : 'stop not confirmed'} · cleanup {snapshot.environment.cleanup_complete ? 'complete' : 'not confirmed'}</Text>
+        {snapshot.target_revision === undefined ? <Text style={styles.muted}>Worker {snapshot.environment.stopped ? 'stopped' : 'stop not confirmed'} · cleanup {snapshot.environment.cleanup_complete ? 'complete' : 'not confirmed'}</Text>
+          : <Text style={styles.muted}>Target revision {snapshot.target_revision}. Stop and cleanup evidence belongs to each request.</Text>}
         <Text selectable style={styles.identity}>Environment attempt {snapshot.environment.attempt_id ?? 'None'}</Text>
         <Text style={styles.muted}>Environment availability is separate from the request outcome.</Text>
         <Text style={styles.label}>INSTALLED SOURCE</Text>

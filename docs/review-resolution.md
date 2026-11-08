@@ -1,10 +1,28 @@
 # Independent review disposition
 
-Sections before "Native and Mac evidence reconciliation" record the status at
-each historical review. Their open native gates and stricter activation profile
-are historical, not current functional results. The final section records the
-later operator evidence and reported owner decisions without granting merge
-approval or endorsing an unverified LAN/other-ingress risk.
+## Current status on 2026-11-08
+
+The owner authorized the scoped authentication and permission review and
+continuation recorded in `birbforge-h-q8xg`. The owner later explicitly authorized
+merging birb* PRs that the agent has reviewed and approved and fixing review
+findings to reach approval. This resolves the earlier generic operator review
+gate for this owner-use fixture. It does not assert independent human source
+review, a completed merge or permission to activate a production deployment.
+
+[The latest native acceptance](evidence/contextless-closure-native-acceptance.md)
+records physical iPhone and Mac journeys at
+`e8a895976f9cee392bc3ac793b6cd77be3ffa613`. Its runtime and owned forwards are
+stopped and both clients are signed out. Native Large Text and VoiceOver remain
+owner-deferred. Future identity, permission and activation changes still require
+review within their own scope.
+
+## Historical review record
+
+All sections below retain the findings and permissions known at their review
+time. Their requests for generic pre-merge operator review are historical and
+are superseded by the scoped authorization above. Unverified isolation and
+reachability observations remain unverified. Later functional results do not
+change the revisions or limits of earlier evidence.
 
 Fresh design and code reviews returned `claude-opus-5-5` in the CLI modelUsage
 record. Both used a new Claude CLI process, safe mode, and Read, Glob, and Grep

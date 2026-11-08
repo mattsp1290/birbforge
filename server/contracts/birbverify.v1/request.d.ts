@@ -1,5 +1,3 @@
-/* Generated from Birbverify a70315a276837ffdde32049fdb77670a3468e151. Run scripts/verification-contracts.mjs. */
-
 export type ContractVersion = 'birbverify.v1';
 export type RequestId = string;
 export type GoalId = string;
