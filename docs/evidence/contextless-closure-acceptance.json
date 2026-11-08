@@ -242,7 +242,6 @@
     "final-cleanup-check.json": "bd6106cd5bb12f0d57f5ffb47d6c1515bf49b341516216338fa036741a6317a8"
   },
   "limits": [
-    "Physical iPhone and Mac-browser changed-rendering acceptance pending.",
     "Large Text and VoiceOver remain owner-deferred.",
     "Fixture proof is not staging, deployment, production identity or native candidate isolation.",
     "Source archives and selected tool bytes are attested; installed virtualenv dependencies are not fully attested.",
@@ -256,5 +255,11 @@
     "Workflow-only query worker pauses observation activities during retained-evidence corruption; normal worker restored.",
     "Python 3.13.18 selected explicitly for Birbcrew setup within its declared compatible range."
   ],
-  "raw_artifacts_public": false
+  "raw_artifacts_public": false,
+  "physical_device_acceptance": {
+    "status": "passed",
+    "record": "contextless-closure-native-acceptance.json",
+    "source_commit": "e8a895976f9cee392bc3ac793b6cd77be3ffa613",
+    "executed_at": "2026-11-08"
+  }
 }

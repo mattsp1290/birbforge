@@ -37,7 +37,7 @@ The driver has the host PID/cgroup view required for producer registration. A wo
 
 ## Remaining gates
 
-Physical Mac-browser and iPhone rendering for these changes is pending in the [exact-revision device handoff](../contextless-closure-native-handoff.md). Native exports and Linux Chromium are not device acceptance. Large Text and VoiceOver remain owner-deferred.
+Physical Mac-browser and iPhone rendering passed in the separate [exact-revision native acceptance](contextless-closure-native-acceptance.md). That record distinguishes actual device observations from the earlier native exports and Linux Chromium evidence. Large Text and VoiceOver remain owner-deferred.
 
 Legacy Config retains its compatibility default; the new fixture explicitly selects closure-v2 and v2 targets reject legacy tooling. A dedicated outstanding-request UI label and an explicit Continue-As-New run-ID assertion remain refinements. Actor/grant rotation deliberately fails closed rather than rewriting an existing command.
 
