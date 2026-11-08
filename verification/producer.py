@@ -63,11 +63,19 @@ class Observations:
         self.root = root
 
     @activity.defn(name="inspect_verification")
-    async def inspect(self, request_ids: list[str]) -> dict:
-        return observe(self.root, request_ids)
+    async def inspect(self, observation_request) -> dict:
+        if isinstance(observation_request, dict):
+            from verification.closure import observe as observe_closure
+
+            return observe_closure(
+                self.root, observation_request["rows"], observation_request["binding"]
+            )
+        return observe(self.root, observation_request)
 
 
-def projection(root: Path, state: QueueState, principal: str, conversation_id: str):
+def projection(
+    root: Path, state: QueueState, principal: str, conversation_id: str, *, config=None
+):
     current = installation(root)
     rows = [
         row
@@ -75,14 +83,25 @@ def projection(root: Path, state: QueueState, principal: str, conversation_id: s
         if row["intent"]["principal"] == principal
         and row["intent"]["conversation_id"] == conversation_id
     ]
-    observed = observe(
-        root,
-        [
-            row["payload"]["request_id"]
-            for row in rows
-            if row["phase"] in {"dispatching", "running", "uncertain"}
-        ],
+    closure_mode = config is not None and config.profile == "closure-v2"
+    observed = (
+        None
+        if closure_mode
+        else observe(
+            root,
+            [
+                row["payload"]["request_id"]
+                for row in rows
+                if row["phase"] in {"dispatching", "running", "uncertain"}
+            ],
+        )
     )
+    if closure_mode:
+        from verification.closure import observe as observe_closure
+
+        observed = observe_closure(
+            root, rows, config.closure_binding.model_dump(mode="json")
+        )
     requests = []
     for row in rows:
         view = public_row(row)
@@ -97,6 +116,8 @@ def projection(root: Path, state: QueueState, principal: str, conversation_id: s
             )
         elif view["attempt_id"] and view["phase"] == "dispatching":
             view["phase"] = "running"
+        if closure_mode:
+            view["closure"] = fact["closure"]
         request = Request.model_validate(row["payload"])
         reason = "not_passed"
         if view["manifest"] and view["outcome"] == "passed":
@@ -123,7 +144,7 @@ def projection(root: Path, state: QueueState, principal: str, conversation_id: s
         requests.append(view)
     identities = {row["request_id"] for row in requests}
     recoveries = []
-    for path in sorted((root / "recoveries").glob("*.json")):
+    for path in [] if closure_mode else sorted((root / "recoveries").glob("*.json")):
         receipt = json.loads(path.read_text())
         if receipt["request_id"] in identities:
             recoveries.append(receipt)
@@ -142,6 +163,7 @@ def projection(root: Path, state: QueueState, principal: str, conversation_id: s
         "requests": requests,
         "environment": environment,
         "recoveries": recoveries,
+        **({"target_revision": observed["target_revision"]} if closure_mode else {}),
     }
 
 

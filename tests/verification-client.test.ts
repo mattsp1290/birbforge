@@ -302,3 +302,23 @@ test('one-off refresh after disconnect does not claim an attached observation lo
     assert.ok(c.getSnapshot().snapshot);
   } finally {c.disconnect();}
 });
+
+
+test('stale target revisions are rejected and one request proof can change without a target mutation', async () => {
+  const closure = {kind: 'released', closure_id: randomUUID(), execution_epoch: 3,
+    acquisition: {kind: 'never_acquired', attempt_id: null, reservation_sha256: null},
+    receipt_sha256: 'e'.repeat(64), proof: 'valid', history: {manifest_status: 'unavailable', manifest_sha256: null}};
+  const original = row({closure: VerificationRequest.shape.closure.parse(closure)});
+  let current = snapshot({revision: 5, target_revision: 8, requests: [original]});
+  const c = client(async () => json(current));
+  await c.refresh();
+  current = snapshot({revision: 6, target_revision: 7});
+  await c.refresh();
+  assert.equal(c.getSnapshot().snapshot?.target_revision, 8);
+  current = snapshot({revision: 5, target_revision: 8, requests: [{...original, closure: VerificationRequest.shape.closure.parse({...closure, proof: 'invalid'})}]});
+  await c.refresh();
+  const observed = c.getSnapshot().snapshot?.requests[0]?.closure;
+  assert.ok(observed?.kind === 'released');
+  assert.equal(observed.proof, 'invalid');
+  assert.equal(c.getSnapshot().snapshot?.requests[0]?.manifest, null);
+});

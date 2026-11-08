@@ -24,9 +24,18 @@ class EnvironmentQueue:
     @workflow.init
     def __init__(self, initial: dict):
         self.state: QueueState = initial.get(
-            "state", {"revision": 0, "requests": [], "commands": {}}
+            "state",
+            {
+                "revision": 0,
+                "requests": [],
+                "commands": {},
+                "outstanding_request_id": None,
+            },
         )
         self.config = initial["config"]
+        self.closure_mode = self.config.get("profile") == "closure-v2"
+        if self.closure_mode and "outstanding_request_id" not in self.state:
+            raise ValueError("legacy_history_migration_unsupported")
         self.active = None
         self.cycles = 0
 
@@ -69,7 +78,13 @@ class EnvironmentQueue:
             payload = bind(intent, message["installation"], workflow.now())
         except Exception:  # noqa: BLE001
             return failure("installation_denied", 403)
+        admission_binding = message["installation"].get("closure_binding")
+        if self.closure_mode and admission_binding != self.config["closure_binding"]:
+            return failure("admission_target_changed", 403)
+        if not self.closure_mode and admission_binding is not None:
+            return failure("legacy_profile_cannot_access_closure_target", 403)
         row: QueueRow = {
+            "admission_binding": admission_binding,
             "intent": intent,
             "payload": payload,
             "request_sha256": digest(payload),
@@ -132,7 +147,7 @@ class EnvironmentQueue:
         if row["cancellation_command_ids"]:
             return failure("cancellation_already_decided")
         row["cancellation_command_ids"].append(body["command_id"])
-        if row["phase"] in {"terminal", "expired", "not_acquired"}:
+        if row["phase"] in {"terminal", "expired", "not_acquired", "closed"}:
             row["cancellation"] = "too_late"
         elif row["phase"] == "queued":
             row.update(phase="cancelled_before_dispatch", cancellation="acknowledged")
@@ -161,7 +176,9 @@ class EnvironmentQueue:
     async def inspect(self):
         return await workflow.execute_activity(
             "inspect_verification",
-            [
+            {"rows": self.state["requests"], "binding": self.config["closure_binding"]}
+            if self.closure_mode
+            else [
                 row["payload"]["request_id"]
                 for row in self.state["requests"]
                 if row["phase"] in {"dispatching", "running", "uncertain"}
@@ -194,13 +211,29 @@ class EnvironmentQueue:
                         self.diagnostic("manifest_conflict", row)
                     row["phase"] = "terminal"
                 elif (
-                    row["phase"] == "uncertain"
+                    not self.closure_mode
+                    and row["phase"] == "uncertain"
                     and row["attempt_id"] is None
                     and row.get("activity_outcome") in {"cancelled", "rejected"}
                 ):
                     row["phase"] = "not_acquired"
                     if row["cancellation"] == "requested":
                         row["cancellation"] = "acknowledged"
+            if (
+                self.closure_mode
+                and fact
+                and fact.get("release_confirmed")
+                and self.state["outstanding_request_id"] == row["payload"]["request_id"]
+            ):
+                self.state["outstanding_request_id"] = None
+                self.state["revision"] += 1
+                if row["manifest"] is None:
+                    row["phase"] = "closed"
+                if (
+                    row["cancellation"] == "requested"
+                    and fact.get("closure", {}).get("kind") == "released"
+                ):
+                    row["cancellation"] = "acknowledged"
             if row["manifest"] and row["cancellation"] == "requested":
                 manifest = row["manifest"]
                 if (
@@ -249,6 +282,7 @@ class EnvironmentQueue:
                         "cancelled_before_dispatch",
                         "expired",
                         "not_acquired",
+                        "closed",
                     }
                 ),
                 None,
@@ -260,7 +294,18 @@ class EnvironmentQueue:
                 if deadline <= workflow.now():
                     head["phase"] = "expired"
                     self.touch(head)
-                elif observed and observed["environment"]["state"] == "free":
+                elif (
+                    observed
+                    and observed["environment"]["state"] == "free"
+                    and (
+                        not self.closure_mode
+                        or self.state["outstanding_request_id"] is None
+                    )
+                ):
+                    if self.closure_mode:
+                        self.state["outstanding_request_id"] = head["payload"][
+                            "request_id"
+                        ]
                     head["phase"] = "dispatching"
                     self.touch(head)
                     self.active = workflow.start_activity(

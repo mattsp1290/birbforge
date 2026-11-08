@@ -15,6 +15,7 @@ MAX_INPUT = 16384
 
 
 async def execute(config: Config, raw: dict):
+    check_profile(config)
     intent = Command.model_validate(raw).normalized()
     if intent["principal"] != config.owner_principal:
         return failure("forbidden", 403)
@@ -53,7 +54,11 @@ async def execute(config: Config, raw: dict):
         EnvironmentQueue.snapshot, rpc_timeout=timedelta(seconds=10)
     )
     snapshot = projection(
-        config.installation_root, state, intent["principal"], intent["conversation_id"]
+        config.installation_root,
+        state,
+        intent["principal"],
+        intent["conversation_id"],
+        config=config,
     )
     value = (
         snapshot
@@ -65,6 +70,18 @@ async def execute(config: Config, raw: dict):
         )
     )
     return {"ok": True, "value": value}
+
+
+def check_profile(config):
+    installed = installation(config.installation_root)
+    if config.profile == "closure-v2":
+        from verification.closure import installed_binding
+
+        installed_binding(
+            config.installation_root, config.closure_binding.model_dump(mode="json")
+        )
+    elif installed.get("closure_binding"):
+        raise ValueError("legacy_profile_cannot_access_closure_target")
 
 
 def load_config(path):

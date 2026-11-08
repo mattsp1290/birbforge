@@ -60,6 +60,7 @@ export class VerificationClient {
   }
   private accept(snapshot: VerificationSnapshot, generation: number) {
     if (generation !== this.generation || snapshot.revision < (this.value.snapshot?.revision ?? -1)) return;
+    if ((snapshot.target_revision ?? -1) < (this.value.snapshot?.target_revision ?? -1)) return;
     this.credentialRejected = false;
     const pending = this.value.pending;
     const matched = pending && snapshot.requests.some(row => pending.kind === 'admission'

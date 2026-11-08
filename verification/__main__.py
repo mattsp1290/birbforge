@@ -13,7 +13,7 @@ from temporalio.client import Client
 from temporalio.common import WorkflowIDReusePolicy
 from temporalio.worker import Worker
 
-from verification.adapter import load_config
+from verification.adapter import check_profile, load_config
 from verification.producer import Observations
 from verification.workflow import EnvironmentQueue
 
@@ -36,6 +36,7 @@ async def main():
     workflow.logger.workflow_info_on_extra = False
     mode, path = sys.argv[1:3]
     config = load_config(path)
+    check_profile(config)
     client = await Client.connect(config.temporal_address, namespace=config.namespace)
     if mode == "install":
         await client.start_workflow(
@@ -55,6 +56,8 @@ async def main():
             activities=[Observations(config.installation_root).inspect],
         ).run()
     elif mode == "activity-worker":
+        if config.profile != "legacy-v1":
+            raise ValueError("closure_requires_registered_worker_group")
         from birbverify.temporal_worker import Activities
 
         with (config.installation_root / "activity-worker.lock").open("a") as lock:

@@ -25,3 +25,5 @@ test credentials, and an explicitly selected fixture Beans hub. It never reads
 the private hub. Credentials, fixture logs, host configuration, and screenshots
 stay outside Git. Authentication and permission changes require human review
 before merge.
+
+[Contextless closure integration](docs/contextless-closure-integration.md) documents the fresh v2 queue profile, supervisor commands and isolated proof.

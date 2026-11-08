@@ -5,6 +5,7 @@ import {execFileSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 
 const session = JSON.parse(readFileSync('.local/verification-session.json', 'utf8'));
+assert.equal(session.profile, 'legacy-v1', 'This historical browser proof requires scripts/verification-dev --legacy-v1');
 assert.ok(session.running_source_sha256, 'Launcher must bind its running source and web build');
 const sourcePaths = Object.keys(session.running_source_sha256);
 const sourceHashes = () => Object.fromEntries(sourcePaths.map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')]));

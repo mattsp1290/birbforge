@@ -32,10 +32,11 @@ def test_post_commit_projection_failure_is_unavailable(monkeypatch, capsys, erro
     async def connect(*args, **options):
         return SimpleNamespace(get_workflow_handle=lambda identity: Handle())
 
-    def projection(*args):
+    def projection(*args, **kwargs):
         raise error
 
     config = SimpleNamespace(
+        profile="legacy-v1",
         owner_principal="owner",
         temporal_address="fixture",
         namespace="default",

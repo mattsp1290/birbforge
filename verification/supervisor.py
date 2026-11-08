@@ -5,7 +5,7 @@ import json
 import os
 import sys
 import tempfile
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from uuid import UUID
 
@@ -56,6 +56,8 @@ def record_receipt(path, receipt):
 
 
 async def supervise(root: Path, attempt_id: str, recovery_id: str, *, fence_only=False):
+    if json.loads((root / "installation.json").read_text()).get("closure_binding"):
+        raise ValueError("legacy_supervisor_cannot_access_closure_target")
     TypeAdapter(Id).validate_python(attempt_id)
     recovery_id = str(UUID(recovery_id))
     runner = Runner(root)
@@ -208,28 +210,210 @@ def completed_receipt(path, recovery_id, request_id, attempt_id, result):
     return receipt
 
 
+async def queue_state(config):
+    from temporalio.client import Client
+
+    from verification.workflow import EnvironmentQueue
+
+    client = await Client.connect(config.temporal_address, namespace=config.namespace)
+    return await client.get_workflow_handle(config.workflow_id).query(
+        EnvironmentQueue.snapshot, rpc_timeout=timedelta(seconds=10)
+    )
+
+
+def save_command(path, command):
+    path.parent.mkdir(mode=0o700, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+        temporary.write(json.dumps(command, sort_keys=True).encode())
+        temporary.flush()
+        os.fsync(temporary.fileno())
+        temporary_path = Path(temporary.name)
+    try:
+        os.link(temporary_path, path)
+        directory = os.open(path.parent, os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        temporary_path.unlink()
+
+
+async def close_request(
+    config, request_id, closure_id, reason="context_lost", *, expected_attempt_id=None
+):
+    from birbverify.closure import BeginClosure, Snapshot
+    from birbverify.closure_supervisor import Supervisor
+
+    from verification.adapter import check_profile
+    from verification.closure import command_path
+
+    request_id, closure_id = str(UUID(request_id)), str(UUID(closure_id))
+    if config.profile != "closure-v2":
+        raise ValueError("closure_profile_required")
+    root = config.installation_root
+    locks = root / "closure-commands"
+    locks.mkdir(mode=0o700, exist_ok=True)
+    with (locks / f"{request_id}.lock").open("a") as lock:
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                await asyncio.sleep(0.05)
+        check_profile(config)
+        state = await queue_state(config)
+        row = next(
+            (
+                row
+                for row in state["requests"]
+                if row["payload"]["request_id"] == request_id
+            ),
+            None,
+        )
+        if row is None:
+            raise ValueError("request_not_found")
+        if state.get("outstanding_request_id") != request_id and row["phase"] not in {
+            "dispatching",
+            "running",
+            "uncertain",
+            "terminal",
+            "closed",
+        }:
+            raise ValueError("request_not_dispatched")
+        binding = config.closure_binding.model_dump(mode="json")
+        if row["admission_binding"] != binding:
+            raise ValueError("admission_target_changed")
+        if expected_attempt_id is not None and row["attempt_id"] != expected_attempt_id:
+            raise ValueError("attempt_request_mismatch")
+        supervisor = Supervisor(root, binding)
+        path = command_path(root, request_id)
+        installed = json.loads((root / "installation.json").read_text())
+        common = {
+            "contract_version": "birbverify.closure.v1",
+            "closure_id": closure_id,
+            "target_id": binding["target_id"],
+            "target_incarnation": binding["target_incarnation"],
+            "request": row["payload"],
+            "request_sha256": row["request_sha256"],
+            "authorization": {
+                **{
+                    key: row["payload"]["authority"][key]
+                    for key in ["principal", "workflow", "policy_revision"]
+                },
+                "admission_target_incarnation": binding["target_incarnation"],
+                "closure_actor": installed["closure_actor"],
+                "grant_reference": installed["closure_grant"],
+            },
+            "reason": reason,
+        }
+        if path.exists():
+            command = BeginClosure.model_validate_json(path.read_text()).model_dump(
+                mode="json"
+            )
+        else:
+            from birbverify.target import TargetError
+
+            try:
+                command = BeginClosure.model_validate(
+                    supervisor.read(closure_id)["command"]
+                ).model_dump(mode="json")
+            except TargetError as error:
+                if str(error) != "closure_unknown":
+                    raise
+                observed = Snapshot.model_validate(
+                    supervisor.call("observe_closure_state", request_ids=[request_id])
+                )
+                if (
+                    observed.target_id != binding["target_id"]
+                    or str(observed.target_incarnation) != binding["target_incarnation"]
+                ) or [fact.request_id for fact in observed.requests] != [request_id]:
+                    raise ValueError("closure_snapshot_identity_conflict")
+                fact = observed.requests[0]
+                if fact.request_sha256 not in {None, row["request_sha256"]}:
+                    raise ValueError("closure_snapshot_request_conflict")
+                if fact.closure is not None:
+                    raise ValueError("request_has_other_closure")
+                if state.get("outstanding_request_id") != request_id:
+                    raise ValueError("request_not_outstanding")
+                attempt = row["attempt_id"]
+                if fact.manifest is not None:
+                    historical_attempt = fact.manifest.attempt_id
+                    if attempt is not None and attempt != historical_attempt:
+                        raise ValueError("closure_snapshot_attempt_conflict")
+                    attempt = historical_attempt
+                owner = observed.environment.owner
+                if owner.kind == "attempt" and owner.request_id == request_id:
+                    if attempt is not None and attempt != owner.attempt_id:
+                        raise ValueError("closure_snapshot_attempt_conflict")
+                    attempt = owner.attempt_id
+                command = BeginClosure.model_validate(
+                    {
+                        **common,
+                        "expected_attempt_id": attempt,
+                        "expected_execution_epoch": fact.execution_epoch,
+                    }
+                ).model_dump(mode="json")
+            if any(command[key] != value for key, value in common.items()):
+                raise ValueError("closure_command_conflict")
+            save_command(path, command)
+        if any(command[key] != value for key, value in common.items()):
+            raise ValueError("closure_command_conflict")
+        result = supervisor.begin(command)
+        if result.get("status") == "already_released":
+            return result
+        return supervisor.reconcile(closure_id)
+
+
+async def recover_attempt(config, attempt_id, closure_id, reason="context_lost"):
+    TypeAdapter(Id).validate_python(attempt_id)
+    state = await queue_state(config)
+    matches = [row for row in state["requests"] if row["attempt_id"] == attempt_id]
+    if len(matches) != 1:
+        raise ValueError("attempt_request_not_found")
+    return await close_request(
+        config,
+        matches[0]["payload"]["request_id"],
+        closure_id,
+        reason,
+        expected_attempt_id=attempt_id,
+    )
+
+
 if __name__ == "__main__":
     os.umask(0o077)
     parser = argparse.ArgumentParser(
-        description="Reconcile one stopped fixture attempt through the target"
+        description="Close one fixture request through the producer target"
     )
     parser.add_argument("configuration")
-    parser.add_argument("attempt_id")
-    parser.add_argument("recovery_id")
+    parser.add_argument("identity")
+    parser.add_argument("closure_id")
     parser.add_argument(
-        "mode", choices=["fence", "recover"], nargs="?", default="recover"
+        "mode",
+        choices=["request", "attempt", "fence", "recover"],
+        nargs="?",
+        default="request",
+    )
+    parser.add_argument(
+        "--reason",
+        choices=["dispatch_unknown", "reservation_reply_lost", "context_lost"],
+        default="context_lost",
     )
     arguments = parser.parse_args()
     configuration = load_config(arguments.configuration)
-    print(
-        json.dumps(
-            asyncio.run(
-                supervise(
-                    configuration.installation_root,
-                    arguments.attempt_id,
-                    arguments.recovery_id,
-                    fence_only=arguments.mode == "fence",
-                )
-            )
+    if arguments.mode in {"fence", "recover"}:
+        operation = supervise(
+            configuration.installation_root,
+            arguments.identity,
+            arguments.closure_id,
+            fence_only=arguments.mode == "fence",
         )
-    )
+    elif arguments.mode == "attempt":
+        operation = recover_attempt(
+            configuration, arguments.identity, arguments.closure_id, arguments.reason
+        )
+    else:
+        operation = close_request(
+            configuration, arguments.identity, arguments.closure_id, arguments.reason
+        )
+    print(json.dumps(asyncio.run(operation)))
