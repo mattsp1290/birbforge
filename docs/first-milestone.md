@@ -1,22 +1,41 @@
 # First milestone for Birbforge
 
-Status: implemented with functional native iPhone and Mac verification at
-`5d333cda03a6b385b669f6025b248d4ba4272071`, reported by the local verification
-owner in `birbforge-h-5mbs`. See `docs/evidence/acceptance.md` for evidence and
-limits. The owner reportedly deferred native OS Large Text/VoiceOver for current
-owner use; those checks remain DEFERRED / NOT VERIFIED. The original full
-accessibility journey below has not passed. Human authentication/permission
-review remains required before merge. This is not production or merge approval.
+## Current status on 2026-11-08
 
-## Later durable verification milestone
+The latest physical iPhone and Mac closure journeys passed at source
+`e8a895976f9cee392bc3ac793b6cd77be3ffa613`. The
+[revision-bound native record](evidence/contextless-closure-native-acceptance.json)
+and `docs/evidence/contextless-closure-native-acceptance.md` distinguish actual
+device observations from Linux execution and native export checks. Large Text
+and VoiceOver remain owner-deferred. No physical Android acceptance is claimed.
 
-The [durable verification queue](durable-verification-queue.md) adds a new
-fixture journey after this UI milestone. The native result above remains bound
-to its recorded commit. It does not verify the new request, cancellation,
-recovery, artifact, or shared observation controls. Fresh physical iPhone
-execution for the changed paths is NOT VERIFIED. Local queue execution and independent source review passed, as recorded
-in the linked queue evidence. Native OS Large Text and VoiceOver retain
-the existing DEFERRED / NOT VERIFIED status.
+The owner authorized the scoped authentication and permission review and
+continuation recorded in `birbforge-h-q8xg`. On 2026-11-08 the owner also
+explicitly authorized merging birb* PRs that the agent has reviewed and approved,
+including fixes needed to reach approval. This records operator authorization;
+it does not claim that the owner independently reviewed the source or that any
+PR has merged. Each PR still needs a review tied to its current patch.
+
+This fixture milestone does not establish k3s staging readiness, native candidate
+isolation, production identity, notification delivery or deployment acceptance.
+The disposable verification runtime and owned forwards are stopped, and both
+clients are signed out.
+
+## Earlier evidence
+
+The first conversation proof exercised physical iPhone and Mac at
+`5d333cda03a6b385b669f6025b248d4ba4272071`, reported in `birbforge-h-5mbs`.
+Its [native record](evidence/native-acceptance.json) retains the original limits.
+It does not verify later code. The original full accessibility journey below
+has not passed because the owner deferred native Large Text and VoiceOver.
+
+The [durable verification queue](durable-verification-queue.md) subsequently
+added request, cancellation, recovery and shared observation controls. Its
+original publication preceded physical acceptance. Later exact-revision results
+are recorded separately; the current closure record above is the latest one.
+Historical review documents retain their findings and review-time pending gates.
+The earlier generic authentication review gate is resolved for this scoped
+owner-use fixture. Future deployment and permission changes need their own review.
 
 ## Outcome
 

@@ -1,5 +1,26 @@
 # Private phone access status
 
+## Current status on 2026-11-08
+
+The owner authorized the scoped authentication and permission review and
+continuation recorded in `birbforge-h-q8xg`. The owner subsequently authorized
+merging birb* PRs that the agent has reviewed and approved, including fixes needed
+to reach approval. These are operator decisions, not an assertion of independent
+human source review or a completed merge.
+
+The generic pre-merge review gate in the historical table below is resolved for
+that owner-use fixture. Its unverified network isolation observations remain
+unverified. They are not tests made passing by permission. New activation,
+production identity and deployment remain separately scoped work.
+
+The [latest physical iPhone and Mac acceptance](contextless-closure-native-acceptance.md)
+records source `e8a895976f9cee392bc3ac793b6cd77be3ffa613` and its limits.
+Its disposable runtime and owned forwards are stopped, and both clients are
+signed out. Large Text and VoiceOver remain owner-deferred.
+
+## Historical status at the first device handoff
+
+
 The local verification owner reports an active private HTTPS route and real
 native/Mac journeys at `5d333cda03a6b385b669f6025b248d4ba4272071` in handoff
 `birbforge-h-5mbs`. [Acceptance](acceptance.md) and the [redacted results](native-acceptance.json)
