@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+repo=$PWD
+dependency=$(cat .local/dependency-path)
+exec "$dependency/.venv/bin/python" -I "$repo/scripts/verification_runtime.py" "$repo" "$@"

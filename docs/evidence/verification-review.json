@@ -1,0 +1,141 @@
+{
+  "checked_at": "2026-11-06T20:37:18.322245+00:00",
+  "review_method": "Fresh Claude CLI processes, safe mode, no tools, explicit source supplied. Process-local Anthropic API key, auth token and base URL removed. Supported claude.ai Max subscription auth confirmed; no paid API fallback.",
+  "execution": "Reviewer ran no tests. Execution results are separate reports.",
+  "reviews": [
+    {
+      "stage": "design",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "scope": "Explicitly supplied design and grounding only; no tools, source review or independently executed tests",
+      "is_error": false,
+      "review_text_sha256": "3561082ccfeb6d0d5bb87d752c8180ff5d837a19d4ffccf1275c728c21bf6243"
+    },
+    {
+      "stage": "source",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "scope": "Explicit supplied source, pinned producer source and author-reported test claims; no tools or independently executed tests",
+      "review_text_sha256": "b8a1a3bbd8badbe8b5caacc06f19504c0b5c545d84009e29fd0fad5ba9dcee88",
+      "supplied_source_sha256": {
+        "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+        "server/verification.ts": "6482ae0d4eee3fb8d8c03832909d8ec15b4c08b3849da3dac9804873d2292cba",
+        "server/verification-contract.ts": "78c1e1d9487facc5458aa9638176ad7e971d30b2327850295e5162adcae03060",
+        "app/App.tsx": "c4217ec1e9a400a64f951665af24474bdef2c1ff3b1118ed542c9f227fe749c2",
+        "app/src/controller.ts": "1253aca4d0386fe521fd29affc8411d361e160af4651457d91c6fdf88d705bf6",
+        "app/src/verification.ts": "d5a5ffe1ec9ed2b3389b58661da611a1216f12470572bfc3e98ed62e784c81dd",
+        "app/src/verification-contract.ts": "794f2952ca7ef98cfb2b626b28433c91062d7ebfcc3c74370fe73c4f151f1232",
+        "scripts/guest.py": "b3ba90e2fe8a4883c2684cdcb3ac5766d0390a35d8b4ac127cb4a6a2727fb752",
+        "scripts/verification_runtime.py": "6ede3aae96b2baed24e89ff01979844181e76bebe62da35d15d066c521036deb",
+        "scripts/verification_http_proof.py": "bb687c67d803eda0d8714acf0dbbb4d424ff321f5a253a95d874ad41db99d40d",
+        "scripts/verification-browser.mjs": "546a252d5e301059aa279b6dd50c20dc71264136f8d56dc30bc75d348550d9bb",
+        "tests/verification-client.test.ts": "b5fdf22ec615b74a3d21b72dfb82218677ff24e5878fb7a202ade96ca4022865",
+        "tests/verification-contract.test.ts": "502a1b1f8b543e4c2a37d3e98da1a32657407d73de044214794dac059eb17071",
+        "docs/durable-verification-queue.md": "7ba5fe143040976f64646e79205965b32105cce6c0ce7578c846cd126924fe8c",
+        "verification/supervisor.py": "13790f696324a593cd1709eec8f858e94cf5879f53f5e777baec42b947d63743",
+        "verification/diagnostics.py": "f300df3be81b97f2f3bd1bc593dc03176a9616f826fda3bdd9904b18fc02b7e5",
+        "verification/adapter.py": "3056d1eb7966d81f0b34a051c3c3d562fe336f85d3a87da199b0f5a2b46addc1",
+        "verification/__init__.py": "e79851bd0d281b0264c9abc02fb5dd15d832acfb6e23ada6cf701bcd7aa46b6b",
+        "verification/producer.py": "86736d70775bc81fcc0e516956a9ebd4085b0e0ab9915dcc22d9875c2ff91f36",
+        "verification/model.py": "a7014c17fe29dd52bab985cceb159a0e97c147a661cfdc16f9dfaaab2477e63a",
+        "verification/workflow.py": "7e5c229e1cd37beb7199979f976c3767bf72b49938f4bdd5e88467c2e48873bf",
+        "verification/__main__.py": "c41d361fc339722b50dc34a4d9a54db0221721028a94fc98fca2eab82538a932",
+        "tests/verification_python/test_temporal.py": "06c00967bc8af55a6bed84af6428df76af323bfdc17135c6605af75db282e8ee",
+        "tests/verification_python/test_queue.py": "0d039a797684dd82ae7b38edf4abdbe45bba7c96f4b2b548886c48a97a563b3a"
+      }
+    },
+    {
+      "stage": "closure",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "scope": "Explicit supplied source and decision trail; no transcript or tools; no independent tests",
+      "review_text_sha256": "16ef87e8c2eccbcc7dc7fd0f155167df739b75e678c2df5e666fafa01e9b9f2a",
+      "supplied_source_sha256": {
+        "app/App.tsx": "c4217ec1e9a400a64f951665af24474bdef2c1ff3b1118ed542c9f227fe749c2",
+        "app/src/contract.ts": "99a3bc4a2319b906a59dc07abaeec0bac257c0615563cf443cd3c5d6404a58e6",
+        "app/src/controller.ts": "1253aca4d0386fe521fd29affc8411d361e160af4651457d91c6fdf88d705bf6",
+        "app/src/transport.ts": "f1d05991fb7fc14b2fba399a8d2378510d7dc8305a545ba72eafff922d5feb90",
+        "app/src/verification-contract.ts": "a3991052d55eedfb19186c3901b17ef823c7138fac2b8d6a1729b9839c2210be",
+        "app/src/verification.ts": "7e5cc626ee6d1b04139c27c2ffdee67d88b4a994f683e57f65fd492262601649",
+        "docs/durable-verification-queue.md": "12ffc54d90341538902fcb1aaa0ef2a46bd272a7578bce2e886ef9191527d810",
+        "scripts/guest.py": "b3ba90e2fe8a4883c2684cdcb3ac5766d0390a35d8b4ac127cb4a6a2727fb752",
+        "scripts/verification-browser.mjs": "f9ae3ebce4a97f1f586c6b6891b6d4325316573f34c09c31d736f3ae896a89cc",
+        "scripts/verification-contracts.mjs": "a6bb64d16ff8d50519da65234eff925111f212b7dbc382922dbc53527d1ffc29",
+        "scripts/verification-dev": "c9cbba7e6471d869147af0951341d5ec836e93550d16dc18ad4de1b704f657cf",
+        "scripts/verification_http_proof.py": "0a18534b77199f05c2d89b2882e9ad932bc9eb6e91a077bcede2f9bcaae5d48b",
+        "scripts/verification_runtime.py": "a53a0cf0219666be34257d79250dbbd271be6db64fedae4422d0d2b33035e014",
+        "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+        "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+        "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
+        "server/verification-contract.ts": "78c1e1d9487facc5458aa9638176ad7e971d30b2327850295e5162adcae03060",
+        "server/verification.ts": "853c7e80faced755a719abb0ce4c91447dcb5139b5c60cc49fa8abd3fe7e3ae6",
+        "tests/private-access.test.ts": "3412397653c8014f9788b8c3956505596535286617eb986a7d0b042e2437a4ad",
+        "tests/runtime.test.ts": "3305535a5f940e8d66a90c874f6f2b81ea3b78ab9361b10b37b678529c0f5fe3",
+        "tests/verification-client.test.ts": "25caefce8f140a7ea741a178e801569166784e897158de597a6f857a335ca6f0",
+        "tests/verification-contract.test.ts": "f372ed00518ac139479790cee6620796d698d9a2791d7ca555891a222fa0b807",
+        "tests/verification_python/test_queue.py": "222f41f90241a43c831b09ada7493c93293d45fbc95fdbdd9afd5f14f1a490ad",
+        "tests/verification_python/test_temporal.py": "609a0d4fd6febdd7ab19a2d9443deb9be1c7cb55a71ec426541780e185855ac1",
+        "verification/__init__.py": "e79851bd0d281b0264c9abc02fb5dd15d832acfb6e23ada6cf701bcd7aa46b6b",
+        "verification/__main__.py": "db1ac0e9e6d3874b178f1f0a212bb531a2e98e69760fc03988caf458bbf11bcb",
+        "verification/adapter.py": "38b867fb1449dd03c6170c39a04c3a5b5f7fd3ca2ac02b26e93d124a12d57b2e",
+        "verification/diagnostics.py": "e354e76f607a5969da9e294b36302457e769a29b7fdeb86ece44928b8089dba9",
+        "verification/model.py": "2b4d491a3c5657576942356b9f96b23fd17b1b939ecad80dd56a93937780f89f",
+        "verification/producer.py": "9170d038ab7f361944955af50af00a0b9914af26a730a1d543b88ac9644b53ca",
+        "verification/supervisor.py": "edb7e2cd88b046930865379e741ca11d676fc75c7dacb8bdbd8ceee027104100",
+        "verification/workflow.py": "18f1f51eae9653a30f0e3febf7515687d751094967b53617f6e23555cf636685"
+      }
+    },
+    {
+      "stage": "final",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "scope": "Focused supplied final delta, newly supplied adapter tests and decision trail. No tools, transcript or independent execution.",
+      "review_text_sha256": "64624868511b85274155cd5f82bdede87717eaadf90e34f85b0a5941e47ba915",
+      "supplied_source_sha256": {
+        "app/App.tsx": "0ad301eaa0269317ffd409db5495d47823fa915e125c2ca90d95d0fa4783fdc1",
+        "app/src/verification.ts": "9996a2284edf1adf69c6583cb8b86199b8a24d59fc8048a47434dd9eb1130db8",
+        "app/src/verification-contract.ts": "a3991052d55eedfb19186c3901b17ef823c7138fac2b8d6a1729b9839c2210be",
+        "server/verification.ts": "fe7d02f2cab4fa114f662f32d2db062162c07d91b71dabde6fd83f6d90be38cd",
+        "scripts/verification-browser.mjs": "aae35816762684fc26fa754a2d505efae6f079df52ebf58f78c35936844a5add",
+        "verification/supervisor.py": "0b290c141e8111fa6642d21e7458353edbd22df4237dda35109bf1ef149ee2d7",
+        "tests/verification-client.test.ts": "2107992ac799aad217c57fb6a51febc570d981a6c6577e6408a7ecd0087e0f30",
+        "tests/verification_python/test_queue.py": "cda4adf97ca86fa68f3707b940ac2219cae2212a8ecd4e7d533394022f1f21a2",
+        "tests/verification_python/test_adapter.py": "147a422539a3efde0b14faf4b3a67c2b1bbab7537dad3ff8ba12e9c6819872ed",
+        "docs/durable-verification-queue.md": "755003630e1eb4f9c9a35ec30905cc94e429c0efec44e906a6a2290c48098a14"
+      }
+    },
+    {
+      "stage": "binding",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "is_error": false,
+      "scope": "N1-N3 observation attachment, launcher/browser source binding, and private failure evidence; supplied five files only; no execution",
+      "review_text_sha256": "b8e7f36afaf300186498083953cb555decb19859e93d00ce4e976bed8ad04128",
+      "supplied_source_sha256": {
+        "app/src/verification.ts": "3479dfbfdd58bc24564fd49f84c4cf65a49dfcf91ae1d728fc1abd380467bb34",
+        "scripts/verification_runtime.py": "f189507f3d16c49a14b71d513644e2737a29f85b68dd3c618a37be43014bde24",
+        "scripts/verification-browser.mjs": "3a7a769e2b747d5d310e6bb3af7893ba77e8e7a82517884eb28d3157c2b04664",
+        "tests/verification-client.test.ts": "402b78f9d4b1b98d567708a2816325e4da576e7e64e6457b3bc97549a335165d",
+        "app/App.tsx": "0ad301eaa0269317ffd409db5495d47823fa915e125c2ca90d95d0fa4783fdc1"
+      }
+    }
+  ],
+  "disposition": "Source closure and focused final review found no High/Medium defects in the bounded local fixture. Binding review caught a browser harness Response.ok method/property error; its exact recommended status assertion was applied and the real browser rerun passed.",
+  "accepted_limits": [
+    "Unknown dispatch with no acquired attempt and acquired attempt without context remain blocked; require bounded producer target-fence handoff.",
+    "Same-user supervisor key is not process isolation; finite queue admits 128 lifetime requests.",
+    "One installer shutdown hang has bounded cleanup but no established root cause.",
+    "Browser source/served-byte hashes bracket execution; web export ran before launcher. Producer identities are checked separately by guest setup and source manifests.",
+    "One scheduled observation may continue after a manually rejected credential while displaying offline; no false green gate.",
+    "Binding precheck failures before the browser try block retain stderr rather than structured failure JSON."
+  ],
+  "native_phone": "PENDING; Large Text and VoiceOver remain deferred"
+}

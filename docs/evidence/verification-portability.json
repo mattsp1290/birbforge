@@ -1,0 +1,68 @@
+{
+  "checked_at": "2026-11-06T20:15:07.137282+00:00",
+  "host": "Darwin arm64",
+  "selected_execution": "Existing Colima Linux ARM64 guest, unchanged pinned producer exports; no source overlays",
+  "docker_probe": {
+    "image": "python@sha256:a58daefb915e1e03ad48f3ca4df8832065412c5c35cacb9d39f4229184de12b6",
+    "host": "Darwin arm64",
+    "engine": "Linux arm64",
+    "bind_mount_bytes_match": true,
+    "attached_cli_sigkill_wait": -9,
+    "container_running_after_cli_loss": true,
+    "supervisor_forced_removal": true,
+    "subsequent_inspect_absent": true,
+    "scope": "Disposable container only; not producer activity or durable queue acceptance",
+    "probe_correction": "Initial probe used generic inspect and incorrectly expected capitalized No such. Final probe uses producer container inspect command and exact absence signature."
+  },
+  "native_temporal_probe": {
+    "health": "SERVING",
+    "termination_signal": "SIGTERM",
+    "wait_exit_code": 0,
+    "port_closed": true,
+    "db_persisted": true,
+    "scope": "Native Temporal server only. No verification workflow executed."
+  },
+  "native_tools": [
+    {
+      "url": "https://nodejs.org/dist/v22.22.3/node-v22.22.3-darwin-arm64.tar.gz",
+      "checksums_url": "https://nodejs.org/dist/v22.22.3/SHASUMS256.txt",
+      "sha256": "0da7ff74ef8611328c8212f17943368713a2ad953fb7d89a8c8a0eae87c23207",
+      "version": "v22.22.3",
+      "host": "Darwin/arm64"
+    },
+    {
+      "url": "https://github.com/temporalio/cli/releases/download/v1.10.0/temporal_cli_1.10.0_darwin_arm64.tar.gz",
+      "checksums_url": "https://github.com/temporalio/cli/releases/download/v1.10.0/checksums.txt",
+      "sha256": "40a76ef7d525e6195b083e4cd50b184cc3bb242fea7f8dda2b9a8698ecbb7379",
+      "version": "temporal version 1.10.0 (Server 1.32.2, UI 2.56.1)",
+      "host": "Darwin/arm64"
+    }
+  ],
+  "linux_node": {
+    "version": "22.23.3",
+    "image": "node@sha256:363e1587494626837fa7f9a23bdb453d13b0ff3c67c705c2805cfc69c2d2fad7"
+  },
+  "producer_baseline": {
+    "revision": "a70315a276837ffdde32049fdb77670a3468e151",
+    "hashes_verified_before_and_after": 29,
+    "execution": "Linux ARM64 guest on this Mac",
+    "setup_overlay": null,
+    "pytest_exit": 0,
+    "passed": 14,
+    "seconds": 29.39,
+    "junit_sha256": "1b305eb96bb522c5b97a2cdb48706d31424e0b7a8ff28c0ccd2048707b947292"
+  },
+  "colima_repair": {
+    "normal_stop_start": true,
+    "original_container_records_retained": 130,
+    "running_before": 122,
+    "manual_container_starts": 0,
+    "profile_unchanged": true,
+    "root_cause": "Unestablished; shell and containerd I/O symptoms ceased after ordinary owner-authorized restart"
+  },
+  "physical_iphone": "No physical iPhone listed on this host; simulators not exercised",
+  "limits": [
+    "Native Temporal health probe is not queue execution evidence.",
+    "Mac-hosted Linux is not Darwin activity execution or k3s fencing."
+  ]
+}

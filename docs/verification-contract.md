@@ -1,8 +1,15 @@
 # Verification contract: Birbforge, Birbcrew, and Birbverify
 
-Status: design proposal, November 5, 2026. Repository roles, k3s staging, and
-queuing against shared staging are agreed. The detailed contract below is a
-proposal for review, not implemented functionality or a selected wire format.
+Status: broad design proposal, November 5, 2026. Repository roles, k3s staging,
+and queuing against shared staging are agreed. The detailed contract below is
+a proposal wherever it exceeds the pinned producer contract.
+
+The November 6 [durable verification queue](durable-verification-queue.md)
+milestone adds the first concrete Birbforge queue around the unchanged pinned
+Birbverify producer in a synthetic fixture. Its reference defines the selected
+wire boundary and one-attempt semantics. Local execution and independent source
+review evidence are recorded in that reference. This proposal does not establish real staging
+admission or native phone acceptance.
 
 ## The promise
 
@@ -35,8 +42,10 @@ implementation choices to prove.
 
 ## Request: what Birbforge supplies
 
-Requests are versioned, immutable records. A retry creates another attempt
-under the same request; a changed candidate or plan creates a new request.
+Requests are versioned, immutable records. Multiple execution attempts under
+one request remain a future proposal. The pinned producer permits one attempt
+and returns the original immutable terminal result on identical replay. A
+changed candidate or plan creates a new request.
 
 | Field group | Required meaning |
 | --- | --- |
@@ -138,10 +147,12 @@ same as cancellation acknowledged; unresolved processes retain the reservation
 or quarantine until reconciled.
 
 Worker loss does not prove application failure. A demonstrated assertion
-failure remains in history even if a later attempt passes. The proposed default
-is bounded automatic retry for transient infrastructure failures; assertion
-failures go to the owner for repair or explicit flaky-test investigation.
-Every retry carries its reason and links to prior attempts.
+failure remains in history. Bounded automatic retry is a future proposal, not
+pinned producer behavior. The current queue does not automatically retry
+execution. An uncertain attempt requires producer reconciliation and, where
+needed, a separate supervisor recovery receipt. Recovery preserves the original
+manifest. Assertion failures go to the owner for repair or explicit flaky-test
+investigation.
 
 Admission with the same idempotency key and identical payload returns the same
 request. Reusing the key with a different payload is an error. External effects
@@ -232,7 +243,7 @@ are acceptance scenarios for implementation, not tests claimed to have run.
 ## Decisions still needed
 
 - Temporal worker placement and the runtime used by each verification worker.
-- Concrete request/result schema and compatibility rules.
+- Broader request/result compatibility beyond the pinned fixture contract.
 - Private artifact storage, retention and native-worker isolation.
 - Repository policy location, trusted revision and review procedure.
 - Pilot acceptance details and full staging readiness.

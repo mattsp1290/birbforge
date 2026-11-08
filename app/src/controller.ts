@@ -3,6 +3,7 @@ import type { Message } from '@ag-ui/core';
 import { MessageSchema } from '@ag-ui/core/schemas';
 import { z } from 'zod/v4';
 import { Snapshot, type Conversation, type Decision, type Prompt } from './contract';
+import {VerificationClient} from './verification';
 
 export type ViewState = {
   connection: 'offline' | 'connecting' | 'connected';
@@ -20,7 +21,10 @@ export class ConversationClient {
   private generation = 0;
   private listeners = new Set<() => void>();
   private value: ViewState = {connection: 'offline', conversation: null, messages: [], notice: '', pendingPrompt: null};
-  constructor(readonly url: string, private token: string, readonly id: string, private transport: HttpAgentFetchFn = (url, init) => globalThis.fetch(url, init)) {}
+  readonly verification: VerificationClient;
+  constructor(readonly url: string, private token: string, readonly id: string, private transport: HttpAgentFetchFn = (url, init) => globalThis.fetch(url, init)) {
+    this.verification = new VerificationClient({url, token, conversationId: id, transport});
+  }
   getSnapshot = () => this.value;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   private patch(patch: Partial<ViewState>) {
@@ -58,6 +62,7 @@ export class ConversationClient {
   }
   async refresh() { this.accept(Snapshot.parse(await this.request(`/${this.id}`))); }
   disconnect() {
+    this.verification.disconnect();
     this.generation++;
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
@@ -73,6 +78,7 @@ export class ConversationClient {
       const snapshot = Snapshot.parse(await this.request(`/${this.id}`));
       if (generation !== this.generation) return;
       this.accept(snapshot);
+      void this.verification.connect();
       const agent = new HttpAgent({
         url: `${this.url}/api/conversations/${this.id}/events`, threadId: this.id,
         headers: {Authorization: `Bearer ${this.token}`}, fetch: this.transport,
