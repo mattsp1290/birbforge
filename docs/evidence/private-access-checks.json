@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-06T14:34:51.281Z",
+  "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+  "nodeVersion": "v22.23.3",
+  "target": "Linux TLS proxy fixture and actual pinned disposable producer; not live NetBird or native iPhone",
+  "tlsVerification": "Fixture CA trusted only by this test client; untrusted chain and hostname rejected",
+  "conversationId": "30ba28c6-9f54-4662-9258-2af3e8f47d25",
+  "requestId": "30ba28c6-9f54-4662-9258-2af3e8f47d25/ce394388-3774-4c75-8fe6-84d0145965cf/next-step",
+  "version": 1,
+  "inputPosts": 1,
+  "decisions": 1,
+  "disconnectedStreams": 1,
+  "sseObserverFinalPhase": "idle",
+  "checks": [
+    "exact Host and HTTPS Origin",
+    "socket source checked; forwarded identity ignored",
+    "401 invalid auth and 404 stranger",
+    "one accepted raced decision and explicit 409 conflict",
+    "disconnect preserves durable wait; reconnect converges authoritative state"
+  ],
+  "liveNetBird": "NOT VERIFIED",
+  "nativePhone": "NOT VERIFIED",
+  "macBrowserOnNewRevision": "NOT VERIFIED"
+}

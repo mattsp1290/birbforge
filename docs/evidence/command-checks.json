@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-06T14:34:53.659Z",
+  "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+  "nodeVersion": "v22.23.3",
+  "mode": "deterministic runtime with client transport fault injection",
+  "conversationId": "e19b8ed8-36b6-487d-a694-39af88425a99",
+  "inputs": 1,
+  "decisions": 1,
+  "finalPhase": "cancelled",
+  "checks": [
+    "lost accepted-input acknowledgement retained original request identity",
+    "accepted input followed by failed GET remained accepted",
+    "accepted decision followed by failed GET remained accepted",
+    "explicit cancellation reached persisted cancelled phase",
+    "definitively rejected goal released the pending editor"
+  ]
+}

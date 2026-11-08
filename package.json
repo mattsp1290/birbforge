@@ -1,0 +1,33 @@
+{
+  "name": "birbforge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "tsx --tsconfig tsconfig.node.json --test tests/*.test.ts",
+    "gateway": "tsx --tsconfig tsconfig.node.json server/main.ts",
+    "web": "expo start --web --localhost",
+    "export:web": "expo export --platform web",
+    "export:native": "expo export --platform ios --platform android --no-bytecode"
+  },
+  "main": "app/index.ts",
+  "dependencies": {
+    "@ag-ui/client": "1.0.4",
+    "@ag-ui/core": "1.0.4",
+    "@expo/metro-runtime": "~55.0.0",
+    "expo": "~55.0.0",
+    "expo-crypto": "~55.0.19",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.10",
+    "react-native-web": "~0.21.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "~19.2.0",
+    "typescript": "~5.9.2",
+    "tsx": "^4.20.0",
+    "@playwright/test": "^1.56.0"
+  }
+}

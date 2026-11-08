@@ -1,0 +1,130 @@
+Dependencies are up to date
+
+> check
+> tsc --noEmit
+
+
+> export:native
+> expo export --platform ios --platform android --no-bytecode
+
+Bytecode makes the app startup faster, disabling bytecode is highly discouraged and should only be used for debugging purposes.
+Starting Metro Bundler
+
+iOS app/index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Android app/index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+iOS Bundled 575ms app/index.ts (1104 modules)
+Android Bundled 586ms app/index.ts (53 modules)
+
+› ios bundles (1):
+_expo/static/js/ios/index-31af5715a48b9e70043e141611750b20.js (2MB)
+
+› android bundles (1):
+_expo/static/js/android/index-abdfb0dcb03a79a4c7be6e05e9c3037a.js (2MB)
+
+› Files (1):
+metadata.json (242B)
+
+Exported: dist
+
+> export:web
+> expo export --platform web
+
+Starting Metro Bundler
+
+Web app/index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 239ms app/index.ts (526 modules)
+
+› web bundles (1):
+_expo/static/js/web/index-59b697c293cd63e6e87268aa34bbc3dd.js (1.2MB)
+
+› Files (2):
+index.html (1.2KB)
+metadata.json (49B)
+
+Exported: dist
+
+> test
+> tsx --tsconfig tsconfig.node.json --test tests/*.test.ts
+
+TAP version 13
+# Subtest: private proxy configuration rejects public, wildcard, ambiguous and readable settings
+ok 1 - private proxy configuration rejects public, wildcard, ambiguous and readable settings
+  ---
+  duration_ms: 2.50233
+  type: 'test'
+  ...
+# Agent execution failed: Error: aborted
+#     at TLSSocket.socketCloseListener (node:_http_client:535:19)
+#     at TLSSocket.emit (node:events:531:35)
+#     at node:net:347:12
+#     at TCP.done (node:internal/tls/wrap:748:7) {
+#   code: 'ECONNRESET'
+# }
+# Agent execution failed: Error: aborted
+#     at TLSSocket.socketCloseListener (node:_http_client:535:19)
+#     at TLSSocket.emit (node:events:531:35)
+#     at node:net:347:12
+#     at TCP.done (node:internal/tls/wrap:748:7) {
+#   code: 'ECONNRESET'
+# }
+# Subtest: trusted HTTPS proxy preserves authorization, action identity and AG-UI convergence
+ok 2 - trusted HTTPS proxy preserves authorization, action identity and AG-UI convergence
+  ---
+  duration_ms: 3882.168848
+  type: 'test'
+  ...
+# Agent execution failed: Error: aborted
+#     at TLSSocket.socketCloseListener (node:_http_client:535:19)
+#     at TLSSocket.emit (node:events:531:35)
+#     at node:net:347:12
+#     at TCP.done (node:internal/tls/wrap:748:7) {
+#   code: 'ECONNRESET'
+# }
+# Agent execution failed: Error: aborted
+#     at TLSSocket.socketCloseListener (node:_http_client:535:19)
+#     at TLSSocket.emit (node:events:531:35)
+#     at node:net:347:12
+#     at TCP.done (node:internal/tls/wrap:748:7) {
+#   code: 'ECONNRESET'
+# }
+# Subtest: launcher starts both policies only after validated private configuration
+ok 3 - launcher starts both policies only after validated private configuration
+  ---
+  duration_ms: 352.585295
+  type: 'test'
+  ...
+# Subtest: pinned runtime accepts one decision and converges through real official AG-UI clients
+ok 4 - pinned runtime accepts one decision and converges through real official AG-UI clients
+  ---
+  duration_ms: 3468.934143
+  type: 'test'
+  ...
+# Subtest: lost acknowledgements retain identity and failed refreshes do not undo accepted commands
+ok 5 - lost acknowledgements retain identity and failed refreshes do not undo accepted commands
+  ---
+  duration_ms: 2875.802417
+  type: 'test'
+  ...
+# Agent execution failed: Error: Fixture connection interrupted
+#     at cutStream (<repository>/tests/runtime.test.ts:162:28)
+#     at TestContext.<anonymous> (<repository>/tests/runtime.test.ts:183:5)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: a stream transport failure and failed reconnect GET recover without resubmitting
+ok 6 - a stream transport failure and failed reconnect GET recover without resubmitting
+  ---
+  duration_ms: 4098.279825
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10656.048195
+Built 15 self-contained HTML pages and 3 SVG diagrams.
+PASS: 15 pages; local links, fragment targets, unique IDs, headings, image labels and offline assets.
+Public credential scan and private-key self-test passed for 101 repository files

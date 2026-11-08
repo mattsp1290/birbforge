@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+revision=88b219c18adeb352d2f291f099ede990a3190a58
+source=${BIRBCREW_SOURCE:-../birbcrew}
+mkdir -p .local
+git -C "$source" cat-file -e "$revision^{commit}"
+root=$(mktemp -d /tmp/birbforge-dependency-XXXXXX)
+git -C "$source" archive --output="$root/source.tar" "$revision"
+tar -xf "$root/source.tar" -C "$root"
+(cd "$root" && scripts/setup)
+printf '%s\n' "$revision" > "$root/.birbforge-revision"
+python3 scripts/check-dependency.py "$root"
+printf '%s\n' "$root" > .local/dependency-path

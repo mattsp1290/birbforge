@@ -1,7 +1,12 @@
 # First milestone for Birbforge
 
-Status: draft owner brief. Execution awaits the owner's launch and the Birbcrew
-contract proof. This file does not claim an implemented UI or action API.
+Status: implemented with functional native iPhone and Mac verification at
+`5d333cda03a6b385b669f6025b248d4ba4272071`, reported by the local verification
+owner in `birbforge-h-5mbs`. See `docs/evidence/acceptance.md` for evidence and
+limits. The owner reportedly deferred native OS Large Text/VoiceOver for current
+owner use; those checks remain DEFERRED / NOT VERIFIED. The original full
+accessibility journey below has not passed. Human authentication/permission
+review remains required before merge. This is not production or merge approval.
 
 ## Outcome
 
