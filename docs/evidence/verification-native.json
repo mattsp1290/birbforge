@@ -1,0 +1,166 @@
+{
+  "scope": "birbforge-qxkc: physical native fixture acceptance; no merge or deployment",
+  "observed_at_utc": "2026-11-07T01:18:00Z/2026-11-07T01:33:00Z",
+  "local_date": "2026-11-06 America/New_York",
+  "product_revision": "6b46dac2931225e0739e9deb047e48b956bff8fc",
+  "native_fixture_revision": "88a8182346c380bd15f4b7b2ec7f442f81dbd130",
+  "runtime": "Mac-hosted Linux guest; real pinned producer activity and target",
+  "clients": "Physical iPhone 16 Pro signed Release native fixture through iPhone Mirroring; Mac Chrome browser",
+  "source_binding": {
+    "source_hashes_rechecked": 44,
+    "signed_app_file_hashes_rechecked": 39,
+    "mismatches": 0,
+    "production_app_server_queue_diff_from_product_revision": "empty"
+  },
+  "producer_pins": {
+    "birbcrew": "88b219c18adeb352d2f291f099ede990a3190a58",
+    "birbverify": "a70315a276837ffdde32049fdb77670a3468e151"
+  },
+  "journeys": [
+    {
+      "journey": "shared_admission",
+      "status": "PASS \u2014 historical plus fresh admission",
+      "observation": "Prior h-kz1m proved shared native admission and conversation/inbox. Fresh native admission in this run produced the same request on Mac. Fresh shared admission was response-suppression request 1d75d4a8-fd63-4fa1-ac65-af47829b0141."
+    },
+    {
+      "journey": "cancellation",
+      "status": "PASS \u2014 qualified combined evidence",
+      "observation": "Physical requested frame f25f6236 occurred with heartbeat timeout; later producer reconciliation recorded outcome=cancelled and cancellation=acknowledged with confirmed stop/cleanup. Separate unpaused f70994ef recorded outcome=cancelled, cancellation=acknowledged, reason=cancellation_acknowledged, termination=confirmed, cleanup=complete and environment_release=released; phone and Mac showed acknowledged. Temporal completed the activity without timeout. These are separate runs, not a single clean requested-to-acknowledged screen recording."
+    },
+    {
+      "journey": "automatic_reconnect",
+      "status": "PASS \u2014 prior exact-product-revision evidence",
+      "observation": "Preserved h-kz1m background/route reconnect proof at 6b46dac; not represented as a fresh repeat of the full earlier journey. Full reconnect was not re-exercised on the 88a8182 test build; the earlier production client source is unchanged."
+    },
+    {
+      "journey": "lost_admission_acknowledgement",
+      "status": "PASS \u2014 fixture transport fault",
+      "observation": "Physical phone used actual expo/fetch; fixture suppressed one validated HTTP 200 response and briefly held observations. Pending original ID reconciled to passed after automatic observation release. Native POST count one; one target apply operation. This is app-facing response suppression, not packet loss or cross-reload persistence."
+    },
+    {
+      "journey": "supervisor_recovery",
+      "status": "PASS \u2014 known acquired attempt",
+      "observation": "Actual activity worker SIGKILL, heartbeat timeout, quarantine and inconclusive original manifest. Separately authorized trusted coordinator invoked supervisor stop/cleanup/release. Physical phone and Mac displayed free environment, separate recovery receipt, unchanged inconclusive result and no eligibility. No supervisor capability added to phone."
+    },
+    {
+      "journey": "historical_outcome_current_eligibility",
+      "status": "PASS \u2014 prior plus recovery",
+      "observation": "Prior h-kz1m proved changed-candidate invalidation. Fresh recovery kept original inconclusive result ineligible while environment became free."
+    },
+    {
+      "journey": "forged_native_action",
+      "status": "PASS \u2014 bounded extra-authority field",
+      "observation": "Actual native admission with added actor field received HTTP 400. Phone showed rejection; server request/revision and target effects unchanged. Prior invalid/stranger native credential results remain historical; not exhaustive attack coverage."
+    }
+  ],
+  "unsuccessful_attempts": [
+    {
+      "request": "5c83fb37-e117-4302-97c3-581b09524e35",
+      "observation": "Paused worker timed out; requested phone frame missed. Not clean cancellation proof."
+    },
+    {
+      "request": "f25f6236-4e7c-4fe3-bd81-1367bd6f0d25",
+      "observation": "Requested frame captured; worker heartbeat timeout. Used only for requested/uncertain rendering and later confirmed reconciliation."
+    },
+    {
+      "request": "6387ec4a-7309-4d33-93d4-e0cd9f577353",
+      "observation": "Completed passed before cancel was pressed. Not cancellation proof."
+    }
+  ],
+  "review": {
+    "route": "Independent Claude subscription CLI",
+    "coverage": "Supplied fixture and coordinator source review with closure; no independent runtime execution",
+    "runtime_executor": "This chat operated actual devices and fixture; audit reads are by the same executor",
+    "evidence_interpretation": "Independent supplied-report and Temporal event review found no hard blocker, requested explicit cancelled outcome and typecheck exit evidence. Both confirmed; historical versus current fixture-build coverage clarified. No independent device execution.",
+    "evidence_review_model": "claude-fable-5-1"
+  },
+  "audit": {
+    "forged_request_no_state_or_effect_change": true,
+    "recovery_original_request_and_manifest_unchanged": true,
+    "recovery_manifest_canonical_sha256": "de38a5b58631b827720897dd47e72b2160210152f0eef40ab297e64189cfec66",
+    "recovery_quarantine_then_confirmed_release": true,
+    "ordinary_cancellation_no_temporal_timeout": true
+  },
+  "private_evidence_sha256": {
+    "fixture-build-binding.json": "ca25305d715c5c8a1937c537a39ba9d2082bd850c78ffe89470c4bd73b8fd745",
+    "final-build-audit.json": "72149031b45047f703b7c18406b5c5fd5ba4875168da2da1587e1252271e5941",
+    "driver-tests-reviewed.tap": "998ea2a40b037a99f88cdd3222518947edb6ec52b8f8d5e1ae4ba5904cb4efa2",
+    "typecheck-reviewed.log": "edb0084172bd41fd84c2d83ca5d108aa78e5933be1a4eb8d5cac58300583a5fb",
+    "fixture-typecheck-reviewed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal-build-exclusion.json": "d8b182ae8b11916f2ac195dc38c6b5c5ed5fb8876d26f8737284bc4b188cc4c9",
+    "native-install-reviewed.json": "96a57c0ea17c5abb0a9df426bd55b1a691f9b2e0b316022c26973fdccf5c788f",
+    "code-review.json": "67cb9cc9d30b5773376da376448c967b8e8908a7017614369b3fc1cfe8c3f579",
+    "closure-review.json": "1fd83391f6e1b7800a6ea0cd2a83cadeda6cc2cf501057098696c6f4fef64353",
+    "cleanup-closure.json": "8b02512dccbf7066bcd691d4e84f3eab5663ac7b6368b341ac42a69e3fce8c1f",
+    "baseline-snapshot.json": "31adfcef95d25f55fd949cc89a19f0964eb107938b18a88b5e382a2c8edc1c21",
+    "baseline-target.json": "1865593a7812d01c611ecac3c29934e5ecf6bf0da88ee69497e1f1e355e59844",
+    "lost-admission-pending.png": "8c740104b831df2e23b2f3320ca084da764d3a95d55c107ce8a334fa9725c902",
+    "lost-admission-receipt.png": "def9cb3122fca2ceadc001bedc1fe21ed0be030c846574f9c5f2c13e35dd26af",
+    "lost-admission-post-count.png": "1369c35e634e277f7bc173137b88820956f4f17e7696bf59a9270259e0b8ce88",
+    "lost-admission-reconciled.png": "24970719f6fee82aeb640210fd13c45315d6a3ccb329495ac2564d680f1a0aca",
+    "lost-admission-request.png": "f76da71d19497f587fa60aabec880ca5e4ce92005573c5bba7ed83a72614904a",
+    "lost-admission-server.json": "517f292336a9974d7db1e971952be0e9eb85c21ad69580f84ad7a82686b8080a",
+    "before-forge-target.json": "88e0280de61546cb5fb7f03524792118f8c127b245512765cf69d3f7d210b687",
+    "forged-action-rejected.png": "dda4c77be8abb29173d2ae6aa945cac63ec7f2e0faa1fa30abe4fc6e70ff7a0b",
+    "forged-action-receipt.png": "70a729f091e19455f4cf58129cf0d714d34a4e203395e12ecbb4334e3974af4a",
+    "after-forge-snapshot.json": "5541254f09e6e29a2da646acc7b159cc2670b3d2661f447e785ae084066823c1",
+    "after-forge-target.json": "88e0280de61546cb5fb7f03524792118f8c127b245512765cf69d3f7d210b687",
+    "cancellation-result.json": "567ea9faa8e8009146c8c8d8050a9389d3ac165ad55560311947b69ee49d4198",
+    "cancellation2-result.json": "9f2cb7291c2c3279984c27abc309c86511964dce9fa7e8e7c2ff4c12bd07f72e",
+    "cancel2-frame3.png": "afecff048d0c2d702fd87d96fff7b0f6c53e3cdbaf07e49ffb7fc2a452f5f6d4",
+    "cancellation3-result.json": "58fa622f21aa7e109b3f22c8f84f3d88869665080ebb096faf72c1314a5f2805",
+    "cancellation-premise.md": "a07c2b061182b02505b4d515d5b8da6f20ef41127e6566b4dc670c4835a4d888",
+    "clean-cancel-frame1.png": "e809c480d63c0290b4ca5c6d00150007c7510d5d34d98d506e434e4f29cbf7fc",
+    "clean-cancel-frame3.png": "5590ec09f5b4bcee8e9d0651fac4cb0eb20f1b34d3d042c7aa729127f5754ade",
+    "clean-cancel-result.json": "28c796350834cad8f47d65c9c38aa0fa8eea943835e0ec8e625bc7368401c985",
+    "request-activity-history.json": "71a5791b07627c12b0ae2987f08134d196512c6e8a13a433c2e81fc7d2de1ad2",
+    "history-chain.json": "81fc3690a201050eb1b6cd682baa65f171217b145820b3044c55772518f5e831",
+    "recovery-acquired.json": "8f7bc26282a0992d6aeee7cb6cc9588aca8dddae24febba7cdc5c1d0863008c5",
+    "recovery-worker-killed.json": "74246fdb4ede3ba0192f6c2080ac48237991d3bec1aa1feef0879183475697b0",
+    "recovery-fenced.json": "ddde3297baca36e841162fe2becb47160c53220b8d7e023bc6a37b73fc1d9a22",
+    "recovery-before.json": "586c2f4e47169931d2138660e7ab24f2dfe65d9702f0a9fd0d71d3e056c42c29",
+    "recovery-environment-before.png": "aa7272f257ca2ba6745615fda2b6aec3a59e164fdee7fd73806eb064e8568539",
+    "recovery-request-inconclusive.png": "7242e06980ca40979cd46f69ab719860484c78c0a83d46e4d3e66e35b8218f5a",
+    "recovery-complete.json": "8410ac9cb69b4b5a601a8287ac728a101ab2b080141b955c1a23cebb490198d0",
+    "recovery-after.json": "b467436ae8d121839051de0f22997e97569f6d31e632f2104fa9f329a01e8509",
+    "recovery-target-after.json": "0eb49715f5be443fceddb9522f370fb81168fe12387a7b1123253ec1235401e4",
+    "recovery-phone-free-confirmed.png": "0d4695d5ae25f9c691dfc3add0ed0eb45cdd815a8b7446bb44e49e2f769a1e90",
+    "recovery-phone-history.png": "abb22a55ac928b484124069e87c3ccc348a9aaf8032e778db224ec27c728efc4",
+    "recovery-phone-receipt.png": "35c2eddf4388e52165a1acae9e865d9638d9c627a003e578e1f80dfedb44ffd3",
+    "recovery-mac-inbox-scoped.txt": "130647204772d6540f9004f0542a9be7f70e0d6a07f33189faffbf7ce0b7a202",
+    "target-artifact-audit.json": "b1202a1cd9bcde8c59288200c8395fc92f9f19d3ef01372cc7382bd8414c97d2",
+    "state-comparison-audit.json": "eece1a49bb2ca11934cead81ac9b83948a435583be8aa079f7617287118badc1",
+    "phone-signed-out.png": "f1a63cd5634d6d0280c9b4870b54b9db9e22e17ae49e1a96d970e2af22e4850b",
+    "mac-signed-out.txt": "1796ca7212eb2979a9ff63782791a7ba4edbed8eda51c67cc8928d6d60c84f21",
+    "final-stopped.json": "0f49045ea2a9805be9d2e0911e64281831b9ac1dc4295acc7db3ea2d6c78e043",
+    "local-listeners-closed.json": "7db6de454bed4ed07b1f5a46fa8a75d50d9112042c4ed35223dbd4268ef71744",
+    "cleanup-readback.json": "05e7a53925d2235d4b25ef3b3a08329b162743086d7b14c52b882aa81c5745ef",
+    "target-artifacts/dd701b6fce0d2dbaff8306e0409ed1ce34f8a19a1c66ad99e2f2595171c8e0c8": "dd701b6fce0d2dbaff8306e0409ed1ce34f8a19a1c66ad99e2f2595171c8e0c8",
+    "target-artifacts/784aec32256abd6ea972aac65b5469c10d11b5003d4ea086c54376c11ab2a69a": "784aec32256abd6ea972aac65b5469c10d11b5003d4ea086c54376c11ab2a69a",
+    "target-artifacts/91e6d59fc1cba0c0a86f1d848885e4e08e569240e11409a6bd073f25190c724d": "91e6d59fc1cba0c0a86f1d848885e4e08e569240e11409a6bd073f25190c724d",
+    "acceptance-review.json": "201968e20f9c406111c68dc17870815fb853c0ed0a8e32073eef69d523b8a0bf",
+    "typecheck-exit-audit.json": "6c9633e7cdff0564b1dec51f0ad33ed662065bf41c98d38457492512137865f4",
+    "acceptance-review-resolution.md": "ca32c5fbac3c486258b66bbdd27078f18e47877db83bcdb756d83842afeea102"
+  },
+  "cleanup": {
+    "both_clients_signed_out": true,
+    "owned_runtime_stopped": true,
+    "owned_containers_confirmed_absent": 7,
+    "temporary_forward_listeners_closed": true,
+    "persistent_network_or_account_changes": false,
+    "read_only_followup": "Exact container-name queries, guest listeners, runtime session-file absence and local forward listeners independently read back by the executing agent after teardown."
+  },
+  "limitations": [
+    "Native OS Large Text and VoiceOver owner-deferred",
+    "Known-context recovery only; unknown dispatch/missing context remains birbforge-s0sc",
+    "No k3s staging, native candidate isolation, production identity, real PR actions or deployment acceptance",
+    "Admission reply suppression exercised; cancellation reply-loss control was not exercised",
+    "Evidence from separate cancellation runs is not a clean single-run transient-state recording"
+  ],
+  "typecheck_exit_audit": {
+    "repository": 0,
+    "native_fixture": 0,
+    "node": "v26.6.0",
+    "purpose": "Closure recheck with explicit exit codes; earlier Node 22 build/test evidence remains separate."
+  }
+}

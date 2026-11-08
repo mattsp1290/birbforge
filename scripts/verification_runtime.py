@@ -71,10 +71,24 @@ class VerificationRuntime:
         return process.returncode
 
     def start_gateway(self):
-        return self.start('gateway', [str(self.repo / '.local/bin/node'), '--import', 'tsx', 'server/main.ts'], {
+        ready_file = self.root / f'gateway-ready-{self.generations.get("gateway", 0) + 1}.json'
+        environment = {
             'BIRBFORGE_CLIENT_CONFIG': str(self.root / 'clients.json'),
             'BIRBFORGE_PORT': str(self.port), 'TSX_TSCONFIG_PATH': str(self.repo / 'tsconfig.node.json'),
-        })
+            'BIRBFORGE_READY_FILE': str(ready_file),
+        }
+        if os.environ.get('BIRBFORGE_PROXY_CONFIG'):
+            environment['BIRBFORGE_PROXY_CONFIG'] = os.environ['BIRBFORGE_PROXY_CONFIG']
+        process = self.start('gateway', [str(self.repo / '.local/bin/node'), '--import', 'tsx', 'server/main.ts'], environment)
+
+        def ready():
+            if any(process.poll() is not None for process in self.processes.values()):
+                raise RuntimeError(f'A fixture process exited; inspect {self.root}')
+            return ready_file.exists() and httpx.get(self.url).status_code == 200
+
+        wait_for(ready, 'verification gateway')
+        self.proxy_origin = json.loads(ready_file.read_text())['proxyOrigin']
+        return process
 
     def start_queue(self):
         return self.start('queue', [str(self.python), '-m', 'verification', 'worker', str(self.config_path)])
@@ -118,18 +132,12 @@ class VerificationRuntime:
         })
         self.start_gateway()
 
-        def ready():
-            if any(process.poll() is not None for process in self.processes.values()):
-                raise RuntimeError(f'A fixture process exited; inspect {self.root}')
-            return httpx.get(self.url).status_code == 200
-
-        wait_for(ready, 'verification gateway')
         if self.running_source() != self.source_hashes:
             raise RuntimeError('Source or web build changed during fixture startup')
         session = {'fixture_root': str(self.root), 'producer_fixture_root': str(self.crew.root), 'url': self.url, 'tokens': self.crew.tokens,
                    'queue_config': str(self.config_path), 'installation_root': str(self.installation),
                    'producer_python': str(self.python), 'namespace': self.namespace,
-                   'running_source_sha256': self.source_hashes}
+                   'running_source_sha256': self.source_hashes, 'proxy_origin': self.proxy_origin}
         write_private(self.repo / '.local/verification-session.json', session)
         return session
 

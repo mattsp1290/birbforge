@@ -1,7 +1,10 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The pinned fixture queue, immutable results, recovery, and evidence gates."><title>04 · Durable verification · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link selected" aria-current="page" href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Durable queue evidence pending.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>04 · Durable verification</h1><p class="lead">The pinned fixture queue, immutable results, recovery, and evidence gates.</p></div><article><p>Status on November 6, 2026. This milestone adds Birbforge&#39;s first durable
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The pinned fixture queue, immutable results, recovery, and evidence gates."><title>04 · Durable verification · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link selected" aria-current="page" href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>04 · Durable verification</h1><p class="lead">The pinned fixture queue, immutable results, recovery, and evidence gates.</p></div><article><p>Status on November 6, 2026. This milestone adds Birbforge&#39;s first durable
 environment queue and shared verification view. The local execution checks and independent source review passed.
-Changed physical iPhone journeys remain pending. The earlier native acceptance
-record covers the first UI milestone only.</p>
+Physical iPhone fixture acceptance is now recorded for product revision
+<code>6b46dac</code>, using the separate native test build at <code>88a8182</code>. The
+<a href="#physical-iphone-acceptance">cancellation qualification and current results</a>
+below distinguish fresh checks from earlier evidence. Native OS accessibility
+checks remain owner-deferred; real staging remains unverified.</p>
 <p>This is an isolated, synthetic Linux Docker fixture. It grants no staging,
 production, PR, or merge authority. The broader
 <a href="verification-contract.html">verification contract</a> remains a proposal wherever
@@ -187,7 +190,7 @@ allowlisted JSON log envelopes; request and attempt identities are attributes,
 not metric labels. Artifact failures are deduplicated per request and capped at
 64 KiB per fixture. The cap may omit later diagnostics; authoritative state and
 eligibility do not depend on these logs. No exporter is enabled.</p>
-<h2 id="acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone<a class="anchor" href="#acceptance-evidence-for-this-milestone" aria-label="Link to Acceptance evidence for this milestone">#</a></h2><p>The following statuses apply to this milestone&#39;s final revision. Historical
+<h2 id="acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone<a class="anchor" href="#acceptance-evidence-for-this-milestone" aria-label="Link to Acceptance evidence for this milestone">#</a></h2><p>The following statuses describe the initial delivery at <code>7b8e1a5</code>. Historical
 <a href="first-milestone.html">first UI milestone</a> evidence does not satisfy these checks.</p>
 <div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
 <thead>
@@ -245,4 +248,79 @@ Git. Public reports contain sanitized identities, digests, observations, and
 the precise revision exercised. No live model, private notes hub, external
 telemetry exporter, network reconfiguration, or production access belongs to
 this fixture.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a></nav></aside></body></html>
+<h2 id="private-route-launcher-follow-up">Private route launcher follow-up<a class="anchor" href="#private-route-launcher-follow-up" aria-label="Link to Private route launcher follow-up">#</a></h2><p>The native owner reported signed iPhone build/install/launch and Mac-only
+checks at <code>7b8e1a5</code>, with all seven native journeys blocked by the private route.
+The queue launcher had discarded <code>BIRBFORGE_PROXY_CONFIG</code> and accepted default
+listener readiness without the optional proxy backend.</p>
+<p>Implementation <code>2893bf3d68b7e582c5bd641b3bd272afc81e56da</code> forwards the explicit optional
+configuration to the gateway and waits for a fresh all-listener readiness
+receipt on every start. Existing Host, Origin, authentication and owner-only
+file checks remain unchanged. The <a href="evidence/verification-proxy-followup.json">follow-up evidence</a>
+records eight launcher tests, ten HTTP scenarios and independent Claude closure.
+The <a href="evidence/verification-proxy-browser.json">Mac browser rerun</a> used the default
+loopback UI while both listeners were active. Proxy AG-UI observations used raw
+SSE; the official client checks used the default listener.</p>
+<p>These tests do not verify the external HTTPS service or native transport.
+Continue with the updated exact-revision native handoff in <code>docs/mac-iphone-verification.md</code>.
+At that launcher-only checkpoint all seven native journeys remained NOT VERIFIED.
+The physical acceptance below supersedes that status. Large Text and VoiceOver
+remain deferred. Original delivery reports above remain historical; the follow-up
+<a href="evidence/verification-proxy-binding.json">content binding</a> records the new source.</p>
+<h2 id="physical-iphone-acceptance">Physical iPhone acceptance<a class="anchor" href="#physical-iphone-acceptance" aria-label="Link to Physical iPhone acceptance">#</a></h2><p>On November 6, 2026 (local time; November 7 UTC), the owner Mac and a physical
+iPhone exercised the remaining queue controls against the isolated fixture.
+The <a href="evidence/verification-native.json">native evidence record</a> binds the
+results to product revision <code>6b46dac2931225e0739e9deb047e48b956bff8fc</code> and
+native fixture revision <code>88a8182346c380bd15f4b7b2ec7f442f81dbd130</code>.
+The application, controller, gateway and queue sources are unchanged between
+those revisions. The separate test entry point adds explicit transport fault
+controls; normal native bundles exclude them.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<thead>
+<tr>
+<th>Journey</th>
+<th>Evidence and limit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Shared admission, automatic reconnect, historical outcome versus current eligibility</td>
+<td>Earlier physical checks at the same product revision remain valid. Fresh admission and recovery also appeared on the Mac. The earlier full journeys were not all rerun.</td>
+</tr>
+<tr>
+<td>Lost admission acknowledgement</td>
+<td>The native fixture withheld one validated HTTP 200 response and temporarily held observations. The phone showed the original pending request, then reconciled to its passed result automatically. One native POST and one target operation were recorded. This tests app-facing reply loss, not dropped network packets or persistence across app reload.</td>
+</tr>
+<tr>
+<td>Cancellation</td>
+<td>The phone&#39;s requested state was captured during an activity heartbeat timeout. A separate ordinary, unpaused cancellation showed acknowledged on phone and Mac, with confirmed stop, complete cleanup and no Temporal timeout. These separate runs establish the state distinction; they are not one clean requested-to-acknowledged screen recording.</td>
+</tr>
+<tr>
+<td>Known-attempt supervisor recovery</td>
+<td>Actual worker loss left an inconclusive result and quarantined environment. A separate trusted supervisor confirmed stop and cleanup. Phone and Mac then showed a free environment and separate recovery receipt while the original request and manifest remained unchanged and ineligible.</td>
+</tr>
+<tr>
+<td>Forged native action</td>
+<td>The real native transport sent an extra authority field. HTTP 400 and the phone rejection matched unchanged server requests and target effects. Earlier invalid/stranger credential checks remain historical; this is bounded rejection coverage.</td>
+</tr>
+</tbody></table></div>
+<p>Two paused cancellation attempts exceeded the activity heartbeat deadline; a
+third request finished before cancellation was pressed. These are recorded as
+unsuccessful timing attempts, not ordinary cancellation passes. The false
+assumption was that a ten-second pause could not exhaust a fifteen-second
+heartbeat deadline: the heartbeat was already aging before the pause.</p>
+<p>The closing audit rechecked 44 source hashes, 39 signed-app file hashes and
+three target artifact objects, with no mismatches. It compared authoritative
+before/after state and followed Temporal history across Continue-As-New.
+Independent Claude reviewed the fixture and private coordinator source and
+closed its findings. It did not independently execute the device journeys.
+The executing agent operated the real phone and browser and performed the
+read-only evidence audit; those are not two independent executions.</p>
+<p>Both clients were signed out. The disposable runtime, its seven containers
+and temporary forwards were stopped. Screenshots, credentials, runtime
+configuration and raw evidence stay outside Git; the public record contains
+digests and bounded observations.</p>
+<p>This closes the scoped physical-phone acceptance work. Native OS Large Text
+and VoiceOver remain explicitly deferred. Unknown dispatch or missing-context
+recovery, actual k3s staging, native candidate isolation, artifact access and
+retention, and production identity remain separate gates. No merge or
+deployment is authorized by this evidence.</p>
+</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a><a href="#private-route-launcher-follow-up">Private route launcher follow-up</a><a href="#physical-iphone-acceptance">Physical iPhone acceptance</a></nav></aside></body></html>

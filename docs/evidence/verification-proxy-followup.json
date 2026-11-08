@@ -1,0 +1,200 @@
+{
+  "checked_at": "2026-11-06T21:49:12.299163+00:00",
+  "base_commit": "7b8e1a5c2c1c99dfc0b47312c1bbaa74484a1efb",
+  "reported_native_handoff": {
+    "id": "birbforge-h-wuok",
+    "scope": "Owner-reported signed Release build, installation/launch and Mac-only checks at base commit. This agent read the scoped Beans handoff; did not independently repeat the physical device run.",
+    "native_journeys": "All seven remain NOT VERIFIED",
+    "large_text_voiceover": "DEFERRED"
+  },
+  "launcher_tests": {
+    "passed": 8,
+    "failed": 0,
+    "names": [
+      "test_proxy_ready_on_start_and_restart",
+      "test_default_listener_without_proxy",
+      "test_invalid_proxy_never_publishes_readiness[permissions]",
+      "test_invalid_proxy_never_publishes_readiness[origin]",
+      "test_invalid_proxy_never_publishes_readiness[missing]",
+      "test_invalid_proxy_never_publishes_readiness[occupied]",
+      "test_failed_restart_does_not_reuse_ready_receipt[permissions]",
+      "test_failed_restart_does_not_reuse_ready_receipt[occupied]"
+    ],
+    "junit_sha256": "70c1d3a95253792c54fa2860c10a1e16a619a9ba80c66b24580364069810457f",
+    "stdout_sha256": "08b912231a1145400cef5ce6bd9258805cec61bc2d2cf8ede76903aee11c2190",
+    "failing_before": "Proxy connection refused after default listener returned 200. Later test changes removed the redundant default wait and strengthened negative cases.",
+    "before_stdout_sha256": "2a9fbdd951c9718867439d7c337036128b2d519e4bc7eddbb3c56350b86d0b9a"
+  },
+  "http": {
+    "checked_at": "2026-11-06T21:46:03.740270+00:00",
+    "mode": "real HTTP deterministic isolated fixture",
+    "namespace": "bfq-421fd09573f04bdda077395154e99c03",
+    "checks": [
+      {
+        "check": "authenticated_owned_conversation_and_strict_command_boundary"
+      },
+      {
+        "check": "official_agui_reconnect_is_observation_only",
+        "observations": 2
+      },
+      {
+        "check": "request_projection_and_cancellation_are_bound_to_owned_conversation",
+        "request_id": "03c44602-3e3e-450e-9add-9b8371a2fea4"
+      },
+      {
+        "check": "unread_http_acknowledgement_retry_and_gateway_restart_preserve_one_request_one_effect",
+        "request_id": "03c44602-3e3e-450e-9add-9b8371a2fea4",
+        "attempt_id": "03c44602-3e3e-450e-9add-9b8371a2fea4-a80b2388745a146e",
+        "effects": 1
+      },
+      {
+        "check": "real_target_lost_operation_reply_is_reconciled",
+        "request_id": "03c44602-3e3e-450e-9add-9b8371a2fea4"
+      },
+      {
+        "check": "current_candidate_approval_policy_and_artifact_freshness_invalidate_gate_without_rewriting_manifest",
+        "request_id": "03c44602-3e3e-450e-9add-9b8371a2fea4",
+        "invalidations": 6
+      },
+      {
+        "check": "terminal_cancel_is_too_late_and_preserves_passed_manifest",
+        "request_id": "03c44602-3e3e-450e-9add-9b8371a2fea4"
+      },
+      {
+        "check": "queued_cancel_never_dispatches_and_running_cancel_waits_for_real_cleanup",
+        "request_id": "070fd4e3-9f7d-4b3d-b43e-357e1d7f0987",
+        "attempt_id": "070fd4e3-9f7d-4b3d-b43e-357e1d7f0987-47afcd22a847c041",
+        "queued_request_id": "f4bab1ae-bd66-41f4-ad1b-c447a39f36d1",
+        "race_statuses": [
+          200,
+          409
+        ]
+      },
+      {
+        "check": "real_synthetic_assertion_failure_preserves_failed_outcome",
+        "request_id": "0403c1cc-6131-4f87-9371-4add941141e7",
+        "attempt_id": "0403c1cc-6131-4f87-9371-4add941141e7-883634160d5973ec",
+        "outcome": "failed"
+      },
+      {
+        "check": "strict_proxy_backend_real_activity_and_shared_authority",
+        "request_id": "b14aa695-880a-4161-99e2-c6bf091cc435",
+        "attempt_id": "b14aa695-880a-4161-99e2-c6bf091cc435-b2d584f963d8495c",
+        "observer_connections": 2,
+        "result": "passed",
+        "invalid_auth": 401,
+        "wrong_host": 403,
+        "wrong_origin": 403,
+        "stranger": 404,
+        "forged_result": 400,
+        "terminal_cancel": "too_late",
+        "external_https_route": "NOT VERIFIED",
+        "native_phone": "NOT VERIFIED"
+      }
+    ],
+    "source_sha256": {
+      "verification/__init__.py": "e79851bd0d281b0264c9abc02fb5dd15d832acfb6e23ada6cf701bcd7aa46b6b",
+      "verification/__main__.py": "db1ac0e9e6d3874b178f1f0a212bb531a2e98e69760fc03988caf458bbf11bcb",
+      "verification/adapter.py": "38b867fb1449dd03c6170c39a04c3a5b5f7fd3ca2ac02b26e93d124a12d57b2e",
+      "verification/diagnostics.py": "e354e76f607a5969da9e294b36302457e769a29b7fdeb86ece44928b8089dba9",
+      "verification/model.py": "2b4d491a3c5657576942356b9f96b23fd17b1b939ecad80dd56a93937780f89f",
+      "verification/producer.py": "9170d038ab7f361944955af50af00a0b9914af26a730a1d543b88ac9644b53ca",
+      "verification/supervisor.py": "0b290c141e8111fa6642d21e7458353edbd22df4237dda35109bf1ef149ee2d7",
+      "verification/workflow.py": "18f1f51eae9653a30f0e3febf7515687d751094967b53617f6e23555cf636685",
+      "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+      "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
+      "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+      "server/verification.ts": "fe7d02f2cab4fa114f662f32d2db062162c07d91b71dabde6fd83f6d90be38cd",
+      "server/verification-contract.ts": "78c1e1d9487facc5458aa9638176ad7e971d30b2327850295e5162adcae03060",
+      "app/src/verification-contract.ts": "a3991052d55eedfb19186c3901b17ef823c7138fac2b8d6a1729b9839c2210be",
+      "scripts/verification_runtime.py": "dbed7459f331b4fc0cc14d3532fb735cc6527fccb6285fca87c891a92e91f8b2",
+      "scripts/verification_http_proof.py": "f354bc354c9b485db7274f1f19abef58f0b43e63764d5c2c302f0cc0ff69e95c"
+    },
+    "result": "passed",
+    "cleanup": true,
+    "versions": {
+      "python": "3.13.12",
+      "pydantic-ai-slim": "2.66.0",
+      "pydantic": "2.14.3",
+      "ag-ui-protocol": "1.0.0",
+      "temporalio": "1.35.0",
+      "psycopg": "3.3.8",
+      "fastapi": "0.162.0",
+      "uvicorn": "0.54.0",
+      "opentelemetry-sdk": "1.45.2",
+      "httpx-sse": "0.4.3",
+      "temporal": "temporal version 1.10.0 (Server 1.32.2, UI 2.56.1)",
+      "postgres": "postgres (PostgreSQL) 17.6",
+      "bn": "bn v0.3.0"
+    },
+    "observation_count": 73,
+    "private_report_sha256": "2de9c61f4fbd0e2ddf6abb94013ec96cdff73a8d76bd21a296596c6dda1f8a42"
+  },
+  "browser_report": "verification-proxy-browser.json",
+  "typecheck": "passed",
+  "web_export": "passed before runtime boot",
+  "web_export_stdout_sha256": "bbf70084e60cc4ed59f8bacf8578cec670eec9ea998c3960a5a2922553535e71",
+  "native_source": "App, package lock and native configuration unchanged from base. No new native execution claimed.",
+  "host_mounted_config": "Private host-mounted configuration passed guest ownership/mode validation. Both listeners became ready; private session recorded the synthetic origin.",
+  "review": {
+    "method": "Fresh Claude CLI safe-mode processes with tools disabled and explicit source supplied. Process-local API key, auth token and base URL removed; claude.ai Max subscription confirmed. No reviewer execution or paid fallback.",
+    "passes": [
+      {
+        "stage": "claude",
+        "models": [
+          "claude-opus-5-5"
+        ],
+        "is_error": false,
+        "exit_code": 0,
+        "review_sha256": "6d73c9f03f45db243f44d0b39a27f24a031ef55d33c72b48481178d3473276ee",
+        "supplied_source_sha256": {
+          "scripts/verification_runtime.py": "dbed7459f331b4fc0cc14d3532fb735cc6527fccb6285fca87c891a92e91f8b2",
+          "scripts/verification_http_proof.py": "c2fa404b2fee9c6283ad9961ec85e3668924740a3e41cda951569a8d998f9097",
+          "tests/test_verification_launcher.py": "59c592c9ee6c54c0164d569c7dffe8ab20e6cc9598e8e86f083424b3b4b19dc3",
+          "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
+          "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+          "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+          "scripts/guest.py": "b3ba90e2fe8a4883c2684cdcb3ac5766d0390a35d8b4ac127cb4a6a2727fb752"
+        }
+      },
+      {
+        "stage": "claude-closure",
+        "models": [
+          "claude-opus-5-5"
+        ],
+        "is_error": false,
+        "exit_code": 0,
+        "review_sha256": "5214d90a83696bd378c715d5880bb06ad04e95be72a95eb0f195ff3219e96822",
+        "supplied_source_sha256": {
+          "scripts/verification_runtime.py": "dbed7459f331b4fc0cc14d3532fb735cc6527fccb6285fca87c891a92e91f8b2",
+          "scripts/verification_http_proof.py": "f354bc354c9b485db7274f1f19abef58f0b43e63764d5c2c302f0cc0ff69e95c",
+          "scripts/verification-dev": "c9cbba7e6471d869147af0951341d5ec836e93550d16dc18ad4de1b704f657cf",
+          "tests/test_verification_launcher.py": "38f238d853fd47103b2a9b67c34ef958f28ac795abc89bb466dc3b3cfb01424c",
+          "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
+          "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+          "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d",
+          "docs/host-execution.md": "026b52d878aa71b7bd352d40f8811798ddc1fc03fd084d1dda5b53a34ebfdfde",
+          "docs/private-phone-access.md": "5b85526df18878819916835df9833ad6a16c9c903a1f49559e9bc6e5ab683a99"
+        }
+      }
+    ],
+    "disposition": "No blocking defect. Closure accepted launcher fix after source hash expansion and occupied-port restart coverage. Final ten-scenario HTTP and browser runs subsequently passed."
+  },
+  "limits": [
+    "External HTTPS/TLS, service target/peer-port route and all seven native journeys remain NOT VERIFIED.",
+    "Proxy AG-UI check used two raw SSE event streams. Official HttpAgent runs were on the default listener. Rejected forged outcome field, not forwarded-header spoofing.",
+    "A first full HTTP run failed an unrecorded row-equality comparison after its original nine scenarios passed. Exact differing field is unknown. Focused rerun passed; convergence now preserves both rows and checks immutable manifest plus nondecreasing revision. Remaining sequential equality assertions may false-fail if revisions advance.",
+    "The browser startup hash set omits the unchanged shell wrapper; final delivery binding records its hash separately.",
+    "Trusted same-user process environment isolation is not claimed. Producer subprocesses may inherit the optional proxy path.",
+    "Original contextless uncertainty and deployment gates remain unchanged."
+  ],
+  "source_sha256": {
+    "scripts/verification_runtime.py": "dbed7459f331b4fc0cc14d3532fb735cc6527fccb6285fca87c891a92e91f8b2",
+    "scripts/verification_http_proof.py": "f354bc354c9b485db7274f1f19abef58f0b43e63764d5c2c302f0cc0ff69e95c",
+    "scripts/verification-dev": "c9cbba7e6471d869147af0951341d5ec836e93550d16dc18ad4de1b704f657cf",
+    "tests/test_verification_launcher.py": "38f238d853fd47103b2a9b67c34ef958f28ac795abc89bb466dc3b3cfb01424c",
+    "server/main.ts": "9bb3a81ee9dba8a38b60726ce22435490f132620d6615b45e60278fe886c9ab4",
+    "server/access.ts": "2f78033bf45fb10ae564f4c6abef1e56e7f4eef8fd8419e5b7c9902efaa61f78",
+    "server/gateway.ts": "75fb3eaf0291dcde20e0f0625031d792db0ce2eb7d99498b4c2c91819f25614d"
+  }
+}

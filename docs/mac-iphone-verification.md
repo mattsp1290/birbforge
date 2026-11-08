@@ -1,10 +1,17 @@
 # Verify the same conversation on Mac and iPhone
 
-The durable verification queue changes native controls and transport paths.
-Fresh host observations for this milestone found no available physical iPhone.
-Its changed native journey is NOT VERIFIED. Use the exact-revision queue
-handoff below before extending any native acceptance claim. Native OS Large
-Text and VoiceOver remain DEFERRED / NOT VERIFIED.
+Physical queue acceptance is recorded for product revision
+`6b46dac2931225e0739e9deb047e48b956bff8fc`, using the explicit native fixture
+build at `88a8182346c380bd15f4b7b2ec7f442f81dbd130`. Read the
+[current results and cancellation qualification](durable-verification-queue.md#physical-iphone-acceptance)
+and [evidence binding](evidence/verification-native.json) before repeating a
+journey. Native OS Large Text and VoiceOver remain DEFERRED / NOT VERIFIED.
+
+The procedure below is the original exact-revision queue handoff. At that
+checkpoint the recovery host lacked a phone, and the first owner attempt was
+blocked by the private route. Those historical limitations are superseded by
+the recorded physical checks, not by the launcher fix alone. For transport
+fault injection, use the separate [native fixture entry point](../tests/native-fixture/README.md).
 
 The local owner exercised functional device journeys at
 5d333cda03a6b385b669f6025b248d4ba4272071. [Current acceptance](evidence/acceptance.md)
@@ -18,13 +25,13 @@ commit in the private Beans handoff. Do not test a moving branch tip.
 ## Verify the queue at its final revision
 
 The reviewed and exercised implementation commit is
-`b448af803b62a178e463918e7080ebfa6f087219`. The later delivery commit changes only
+`2893bf3d68b7e582c5bd641b3bd272afc81e56da`. The later delivery commit changes only
 documentation and evidence binding. Test this immutable implementation revision,
 not a moving branch tip.
 
 ```sh
-BIRBFORGE_REVISION=b448af803b62a178e463918e7080ebfa6f087219
-git fetch origin integration/durable-verification-queue-recovery
+BIRBFORGE_REVISION=2893bf3d68b7e582c5bd641b3bd272afc81e56da
+git fetch origin fix/verification-private-route
 git worktree add --detach "$BIRBFORGE_MAC_CHECKOUT" "$BIRBFORGE_REVISION"
 cd "$BIRBFORGE_MAC_CHECKOUT"
 git rev-parse HEAD
@@ -32,6 +39,11 @@ npm ci
 npx expo install --check
 npm run check
 ```
+
+The retained signed build belongs to the earlier delivery. App, lockfile and
+native configuration are unchanged by this launcher fix. The native owner may
+reuse it only after binding those files and its retained artifact hashes to the
+new revision. Build/install success alone does not satisfy any journey.
 
 Use the existing Mac Node and native toolchain. Follow the prerequisite and
 signed Release-build steps below. A historical binary, Darwin version probe,
@@ -47,8 +59,17 @@ git worktree add --detach "$BIRBFORGE_RUNTIME_CHECKOUT" "$BIRBFORGE_REVISION"
 cd "$BIRBFORGE_RUNTIME_CHECKOUT"
 scripts/guest-setup --root "$BIRBFORGE_PRIVATE_RUNTIME_ROOT"
 scripts/guest -- scripts/npm run export:web
-scripts/guest -- scripts/verification-dev
+scripts/guest -- env BIRBFORGE_PROXY_CONFIG="$BIRBFORGE_PRIVATE_PROXY_CONFIG" scripts/verification-dev
 ```
+
+Before starting, have the route owner select an existing authorized service
+and a free owned backend port. Set `BIRBFORGE_PRIVATE_PROXY_CONFIG` to its
+absolute owner-only configuration path visible in the guest. The [guest
+instructions](host-execution.md#optional-existing-private-https-route) explain
+why the variable must be set inside the guest command. This source fix neither
+creates nor verifies a live route. Verify TLS, endpoint identity and the expected
+unauthenticated 401 from `/api/conversations` through the existing HTTPS route
+before transferring fresh owner credentials. Keep route details private.
 
 Use the launcher's selected loopback port and private
 `.local/verification-session.json`. Transfer its credentials with the private
@@ -71,6 +92,7 @@ Retain the original conversation journeys, then capture these queue transitions.
 | Unavailable acknowledgement | Preserve the original pending action and reconcile with refresh and the same command identity. Do not report success from a timeout |
 | Historical result | After the trusted host recovery procedure, show the unchanged original manifest and the separate recovery receipt alongside current environment state |
 | Evidence gate | Show a passed historical outcome with a now-ineligible reason when the controlled fixture invalidates required artifacts or candidate freshness |
+| Native rejection and usability | Exercise invalid credentials, stranger access and forged action fields from the native path, then capture ordinary native control use. Mac diagnostics do not satisfy this journey; OS Large Text and VoiceOver remain deferred |
 
 Record the exact tested commit, native build provenance, device and OS,
 browser, timestamps, and sanitized identities. Keep native logs, private route
