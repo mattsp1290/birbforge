@@ -25,6 +25,14 @@ export function DeliveryPanel({client, conversationId}: {client: DeliveryClient;
         {button('Approve goal and start', () => {void client.act('approve', randomUUID());})}
         {button('Reject goal', () => {void client.act('reject', randomUUID());})}
       </View>}
+      {stage.kind === 'changes_requested' && snapshot.cancellation === 'none' && <>
+        <Text style={styles.body}>Check saved evidence for a known classification error. If confirmed, run another independent review of this same candidate. This does not approve or publish it.</Text>
+        {stage.classification_check === 'checking'
+          ? <Text accessibilityLiveRegion="polite" style={styles.status}>Checking saved review evidence.</Text>
+          : button('Check review classification', () => {void client.act('retry_review', randomUUID());})}
+        {stage.classification_check === 'not_eligible' && <Text style={styles.body}>The saved review is not eligible for classification recovery. Its outcome is unchanged.</Text>}
+        {stage.classification_check === 'evidence_unconfirmed' && <Text style={styles.body}>Saved evidence could not confirm this classification. Its outcome is unchanged.</Text>}
+      </>}
       {stage.kind === 'uncertain' && stage.reason === 'review_inconclusive' && snapshot.cancellation === 'none' && button('Retry independent review', () => {void client.act('retry_review', randomUUID());})}
       {['authoring', 'reviewing', 'publishing'].includes(stage.kind) && snapshot.cancellation === 'none' && button('Request cancellation', () => {void client.act('cancel', randomUUID());})}
     </>}
