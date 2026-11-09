@@ -42,6 +42,26 @@ class DeliveryWorkflow:
     def transition(self, stage):
         self.stage = stage
         self.revision += 1
+        self.log_transition()
+
+    def log_transition(self):
+        workflow.logger.info(
+            "delivery_transition",
+            extra={
+                "delivery_transition": {
+                    "event": "delivery_transition",
+                    "workflow_id": self.installation["workflow_id"],
+                    "delivery_id": str(self.approved.delivery_id)
+                    if self.approved
+                    else None,
+                    "conversation_id": self.conversation,
+                    "goal_record_id": self.offer.goal_ref.record_id,
+                    "revision": self.revision,
+                    "stage": self.stage["kind"],
+                    "cancellation": self.cancellation,
+                }
+            },
+        )
 
     @workflow.update
     def command(self, raw: dict):
@@ -119,6 +139,7 @@ class DeliveryWorkflow:
                 return {"ok": False, "status": 409, "code": "not_cancellable"}
             self.cancellation = "requested"
             self.revision += 1
+            self.log_transition()
             if self.active:
                 self.active.cancel()
         self.commands[identity] = normalized
