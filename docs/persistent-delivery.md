@@ -44,3 +44,13 @@ python -m pytest tests/delivery_python -q
 The Temporal test starts an isolated local development server. Set `TEMPORAL_TEST_SERVER` to an installed Temporal CLI binary if it is not `/opt/homebrew/bin/temporal`. It runs the real delivery workflow and restarts its worker while a test activity remains active. Provider activity doubles establish workflow behavior, not live Codex or Claude execution.
 
 Real subscription execution, draft publication, persistent cluster restart, and current physical-phone acceptance require separate installation evidence. Fixture verification is disabled and these checks do not establish Birbverify staging eligibility.
+
+## Build the pilot image
+
+The Dockerfile takes immutable `NODE_IMAGE` and `CREW_IMAGE` build arguments. Use a Node 22 Debian slim image compatible with the pinned Python 3.13 Birbcrew image. The build exports the web application and includes the Birbcrew execution contract through the base image. It excludes host dependencies, private configuration, credentials, and local evidence from the build context. The runtime defaults to UID/GID 10001 and needs private configuration files readable by that identity.
+
+```sh
+docker build --build-arg NODE_IMAGE="$NODE_IMAGE" --build-arg CREW_IMAGE="$CREW_IMAGE" -t "$FORGE_IMAGE" .
+```
+
+`python -m delivery health /config/delivery.json` queries the fixed workflow without changing it. Successful queries establish workflow service availability. They do not establish subscription authentication, authoring-worker readiness, or end-to-end delivery.
