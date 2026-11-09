@@ -1,4 +1,6 @@
 import asyncio
+import json
+import logging
 import sys
 
 from birbcrew.execution.contract import digest
@@ -8,6 +10,25 @@ from temporalio.worker import Worker
 
 from delivery.model import connect, load
 from delivery.workflow import DeliveryWorkflow
+
+
+class DeliveryLogFormatter(logging.Formatter):
+    def format(self, record):
+        transition = getattr(record, "delivery_transition", None)
+        return (
+            json.dumps(transition, separators=(",", ":"))
+            if transition
+            else super().format(record)
+        )
+
+
+def configure_workflow_logging():
+    handler = logging.StreamHandler()
+    handler.setFormatter(DeliveryLogFormatter())
+    logger = logging.getLogger("temporalio.workflow")
+    logger.handlers = [handler]
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
 
 
 async def main():
@@ -47,6 +68,7 @@ async def main():
             timeout=5,
         )
     elif mode == "worker":
+        configure_workflow_logging()
         await Worker(
             client, task_queue=config.workflow_task_queue, workflows=[DeliveryWorkflow]
         ).run()

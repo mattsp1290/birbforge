@@ -9,6 +9,12 @@ from birbcrew.execution.contract import GoalOffer
 from delivery.workflow import DeliveryWorkflow
 
 
+@pytest.fixture(autouse=True)
+def workflow_logging_without_runtime():
+    with patch("delivery.workflow.workflow.logger.info"):
+        yield
+
+
 def offer():
     text = "Document one restart procedure."
     return GoalOffer(
