@@ -1,0 +1,17 @@
+**
+!Dockerfile
+!.dockerignore
+!package.json
+!package-lock.json
+!app.json
+!metro.config.cjs
+!tsconfig.json
+!tsconfig.node.json
+!app
+!app/**
+!server
+!server/**
+!delivery
+!delivery/**
+**/__pycache__
+**/*.pyc

@@ -4,6 +4,7 @@ import { MessageSchema } from '@ag-ui/core/schemas';
 import { z } from 'zod/v4';
 import { Snapshot, type Conversation, type Decision, type Prompt } from './contract';
 import {VerificationClient} from './verification';
+import {DeliveryClient} from './delivery';
 
 export type ViewState = {
   connection: 'offline' | 'connecting' | 'connected';
@@ -22,7 +23,9 @@ export class ConversationClient {
   private listeners = new Set<() => void>();
   private value: ViewState = {connection: 'offline', conversation: null, messages: [], notice: '', pendingPrompt: null};
   readonly verification: VerificationClient;
+  readonly delivery: DeliveryClient;
   constructor(readonly url: string, private token: string, readonly id: string, private transport: HttpAgentFetchFn = (url, init) => globalThis.fetch(url, init)) {
+    this.delivery = new DeliveryClient({url, token, conversationId: id, transport});
     this.verification = new VerificationClient({url, token, conversationId: id, transport});
   }
   getSnapshot = () => this.value;
@@ -63,6 +66,7 @@ export class ConversationClient {
   async refresh() { this.accept(Snapshot.parse(await this.request(`/${this.id}`))); }
   disconnect() {
     this.verification.disconnect();
+    this.delivery.disconnect();
     this.generation++;
     if (this.timer) clearTimeout(this.timer);
     this.timer = null;
@@ -78,7 +82,8 @@ export class ConversationClient {
       const snapshot = Snapshot.parse(await this.request(`/${this.id}`));
       if (generation !== this.generation) return;
       this.accept(snapshot);
-      void this.verification.connect();
+      if (snapshot.mode === 'approved-goal') this.delivery.connect();
+      else void this.verification.connect();
       const agent = new HttpAgent({
         url: `${this.url}/api/conversations/${this.id}/events`, threadId: this.id,
         headers: {Authorization: `Bearer ${this.token}`}, fetch: this.transport,
@@ -90,7 +95,7 @@ export class ConversationClient {
           const recovered = /^(Connection lost|Cannot connect|Stream ended)/.test(this.value.notice);
           this.patch({connection: 'connected', ...(recovered ? {notice: ''} : {})});
           if (event.type === 'STATE_SNAPSHOT') {
-            this.accept(Snapshot.parse({...z.record(z.string(), z.unknown()).parse(event.snapshot), messages: agent.messages}));
+            this.accept(Snapshot.parse({mode: snapshot.mode, ...z.record(z.string(), z.unknown()).parse(event.snapshot), messages: agent.messages}));
           }
           if (event.type === 'RUN_ERROR') this.patch({notice: 'Stream ended. Reconnecting to authoritative state.'});
         },

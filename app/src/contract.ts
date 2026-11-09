@@ -16,6 +16,7 @@ export const HumanRequest = z.object({
   tool_call_id: z.string(), resolution: Choice.nullable(),
 });
 export const Snapshot = z.object({
+  mode: z.enum(['proof', 'approved-goal']).default('proof'),
   id: z.string().uuid(), revision: z.number().int().nonnegative(),
   phase: z.enum(['idle', 'running', 'waiting', 'cancelled', 'failed']),
   cursor: z.number().int().nonnegative(),

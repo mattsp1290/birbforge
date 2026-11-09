@@ -8,6 +8,7 @@ import { z } from 'zod/v4';
 import { Snapshot, Decision, Prompt } from '../app/src/contract';
 import type { ListenerPolicy, ProxySettings } from './access';
 import { VerificationConfig, serveVerification } from './verification';
+import {DeliveryConfig, serveDelivery} from './delivery';
 
 export const GatewayConfig = z.object({
   url: z.string().url().refine(value => {
@@ -16,6 +17,10 @@ export const GatewayConfig = z.object({
   }),
   tokens: z.record(z.string(), z.string().min(32)),
   verification: VerificationConfig.optional(),
+  mode: z.enum(['proof', 'approved-goal']).default('proof'),
+  delivery: DeliveryConfig.optional(),
+}).superRefine((config, context) => {
+  if (config.mode === 'approved-goal' && (!config.delivery || config.verification)) context.addIssue({code: 'custom', message: 'Approved goal mode requires delivery and disables fixture verification'});
 });
 
 async function body(request: IncomingMessage) {
@@ -50,6 +55,7 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     }
     if (!request.url?.startsWith('/') || request.url.startsWith('//')) return send(400, 'invalid_path');
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
+    if (url.pathname === '/healthz' && request.method === 'GET' && !url.search) return send(200, 'ready');
     if (!url.pathname.startsWith('/api/')) {
       if (!webRoot || request.method !== 'GET') return send(404, 'not_found');
       const root = resolve(webRoot);
@@ -73,6 +79,14 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     if (request.headers.origin !== undefined && request.headers.origin !== allowedOrigin) {
       return send(403, 'origin_rejected');
     }
+    const delivery = /^\/api\/conversations\/([0-9a-f-]{36})\/delivery(?:\/(command|events))?$/.exec(url.pathname);
+    if (delivery && !url.search) {
+      const [, conversationId, action] = delivery;
+      if (!z.string().uuid().safeParse(conversationId).success) return send(400, 'invalid_conversation');
+      return serveDelivery({config: config.mode === 'approved-goal' ? config.delivery : undefined, producerUrl: config.url,
+        credential: credential.token, principal: credential.principal, conversationId, action,
+        request, response, readBody: () => body(request)});
+    }
     const verification = /^\/api\/conversations\/([0-9a-f-]{36})\/verification(?:\/(cancel|events))?$/.exec(url.pathname);
     if (verification && !url.search) {
       const [, conversationId, action] = verification;
@@ -85,8 +99,9 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     if (!match || url.search) return send(404, 'not_found');
     const [, cid, action] = match;
     if (cid && !z.string().uuid().safeParse(cid).success) return send(400, 'invalid_conversation');
+    if (config.mode === 'approved-goal' && action && ['inputs', 'decision', 'cancel'].includes(action)) return send(409, 'use_delivery_command');
     const method = request.method;
-    if (method !== (cid && !action ? 'GET' : 'POST')) return send(405, 'method_not_allowed');
+    if (method !== (cid && !action ? 'GET' : !cid && request.method === 'GET' ? 'GET' : 'POST')) return send(405, 'method_not_allowed');
     let payload: unknown;
     try {
       if (method === 'POST') {
@@ -111,7 +126,13 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
         body: method === 'POST' ? JSON.stringify(payload) : undefined, signal: abort.signal,
       });
       if (upstream.ok && (!action || !cid)) {
-        const snapshot = Snapshot.parse(await upstream.json());
+        if (!cid && method === 'GET') {
+          const conversations = z.array(z.object({id: z.string().uuid(), revision: z.number().int().nonnegative()}).strict()).parse(await upstream.json());
+          response.writeHead(200, {'Content-Type': 'application/json'});
+          response.end(JSON.stringify(conversations));
+          return;
+        }
+        const snapshot = Snapshot.parse({...z.record(z.string(), z.unknown()).parse(await upstream.json()), mode: config.mode});
         response.writeHead(upstream.status, {'Content-Type': 'application/json'});
         response.end(JSON.stringify(snapshot));
         return;
