@@ -29,7 +29,8 @@ export function DeliveryPanel({client, conversationId}: {client: DeliveryClient;
     </>}
     {snapshot.cancellation !== 'none' && <Text testID="delivery-cancellation" style={styles.status}>Cancellation · {snapshot.cancellation}. A request does not confirm the worker stopped.</Text>}
     {'candidate' in stage && <Text selectable style={styles.muted}>Candidate · {stage.candidate.head_commit}</Text>}
-    {'review' in stage && <Text style={styles.body}>Independent review · {stage.review.disposition.replaceAll('_', ' ')}</Text>}
+    {'review' in stage && <><Text style={styles.body}>Independent review · {stage.review.disposition.replaceAll('_', ' ')}</Text><Text selectable style={styles.body}>{stage.review.summary}</Text></>}
+    <Text style={styles.muted}>Staging and native candidate verification have not run.</Text>
     {'reason' in stage && <Text style={styles.body}>{stage.reason.replaceAll('_', ' ')}</Text>}
     {stage.kind === 'draft_ready' && button(`Open draft PR #${stage.draft.number}`, () => {void Linking.openURL(stage.draft.url);}, false)}
     {state.pending && button('Retry unchanged delivery action', () => {void client.retry();}, state.sending)}
