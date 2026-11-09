@@ -1,7 +1,9 @@
 import React, {useEffect, useState, useSyncExternalStore} from 'react';
 import {AccessibilityInfo, AppState, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
+import {z} from 'zod/v4';
 import {ConversationClient} from './src/controller';
+import {DeliveryPanel} from './src/DeliveryPanel';
 import {transport} from './src/transport';
 import type {Choice} from './src/contract';
 import type {VerificationClient} from './src/verification';
@@ -113,6 +115,7 @@ function VerificationPanel({client, large}: {client: VerificationClient; large: 
 }
 function Workspace({client, leave}: {client: ConversationClient; leave: () => void}) {
   const state = useSyncExternalStore(client.subscribe, client.getSnapshot);
+  const delivery = useSyncExternalStore(client.delivery.subscribe, client.delivery.getSnapshot);
   const [surface, setSurface] = useState<'conversation' | 'inbox'>('conversation');
   const [goal, setGoal] = useState('');
   const [busy, setBusy] = useState(false);
@@ -146,15 +149,16 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
     if (Platform.OS === 'ios' && state.notice) AccessibilityInfo.announceForAccessibility(state.notice);
   }, [state.notice]);
   const snapshot = state.conversation;
+  const pilot = snapshot?.mode === 'approved-goal';
   const request = snapshot?.human;
   const terminal = snapshot?.phase === 'cancelled' || snapshot?.phase === 'failed';
   const decide = (choice: Choice) => {
     if (request) void act(() => client.resolve({request_id: request.id, version: request.version, choice}));
   };
   return <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
-    <Text style={styles.eyebrow}>BIRBFORGE / LOCAL PROOF</Text>
+    <Text style={styles.eyebrow}>{pilot ? 'BIRBFORGE / PRIVATE PILOT' : 'BIRBFORGE / LOCAL PROOF'}</Text>
     <Text accessibilityRole="header" style={styles.title}>One goal. Wherever you are.</Text>
-    <Text style={styles.muted}>A synthetic coding decision. No merge or production authority.</Text>
+    <Text style={styles.muted}>{pilot ? 'Approve one goal. Follow its reviewed draft PR across devices.' : 'A synthetic coding decision. No merge or production authority.'}</Text>
     <View style={styles.card}>
       <Text style={styles.label}>Conversation identity</Text>
       <Text testID="conversation-id" selectable style={styles.identity}>{client.id}</Text>
@@ -169,10 +173,10 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
     </View>
     <View style={styles.row}>
       <Button label="Conversation" selected={surface === 'conversation'} onPress={() => setSurface('conversation')} />
-      <Button label={`Inbox (${request ? 1 : 0})`} selected={surface === 'inbox'} onPress={() => setSurface('inbox')} />
+      <Button label={`Inbox (${pilot ? delivery.snapshot?.stage.kind === 'awaiting_approval' ? 1 : 0 : request ? 1 : 0})`} selected={surface === 'inbox'} onPress={() => setSurface('inbox')} />
     </View>
     <Text accessibilityRole="header" style={styles.heading}>{surface === 'conversation' ? 'Goal conversation' : 'Your decision inbox'}</Text>
-    {surface === 'conversation' && <>
+    {!pilot && surface === 'conversation' && <>
       {snapshot?.inputs.map(input => <View key={input.request_id} style={styles.card}>
         <Text style={styles.label}>YOUR GOAL · {input.outcome}</Text>
         <Text style={styles.muted}>Goal accepted by the coworker.</Text>
@@ -184,7 +188,7 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
       </View>)}
       {!snapshot?.inputs.length && <Text style={styles.muted}>Begin a goal below. The coworker will ask for one next step.</Text>}
     </>}
-    {request ? <View testID="decision-card" style={styles.decision}>
+    {!pilot && (request ? <View testID="decision-card" style={styles.decision}>
       <Text style={styles.eyebrow}>YOUR INPUT IS NEEDED</Text>
       <Text accessibilityRole="header" style={[styles.heading, large && styles.large]}>What should the coworker do next?</Text>
       <Text style={[styles.body, large && styles.large]}>Choose a synthetic next step for this coding fixture.</Text>
@@ -193,10 +197,10 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
         <Button label="Inspect fixture" disabled={busy || terminal} onPress={() => decide('inspect')} />
         <Button label="Test fixture" disabled={busy || terminal} onPress={() => decide('test')} />
       </View>
-    </View> : <View style={styles.card}><Text style={styles.body}>{snapshot?.decisions.length ? `Decision recorded · ${snapshot.decisions.at(-1)?.resolution}` : 'No pending input.'}</Text></View>}
-    <VerificationPanel client={client.verification} large={large} />
+    </View> : <View style={styles.card}><Text style={styles.body}>{snapshot?.decisions.length ? `Decision recorded · ${snapshot.decisions.at(-1)?.resolution}` : 'No pending input.'}</Text></View>)}
+    {pilot ? <DeliveryPanel client={client.delivery} conversationId={client.id} /> : <VerificationPanel client={client.verification} large={large} />}
     <Text accessibilityLiveRegion="polite" style={styles.notice}>{state.notice}</Text>
-    {surface === 'conversation' && <View style={styles.card}>
+    {!pilot && surface === 'conversation' && <View style={styles.card}>
       <Text style={styles.label}>A goal for your coworker</Text>
       <TextInput accessibilityLabel="Goal" placeholder="Describe the synthetic coding task" placeholderTextColor="#99a6a3"
         value={state.pendingPrompt?.text ?? goal} onChangeText={setGoal} multiline editable={!state.pendingPrompt && !busy && !terminal}
@@ -207,8 +211,8 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
         })} />
       <Text style={styles.muted}>{snapshot?.inputs.length ?? 0} of 4 inputs used. Reconnect never sends a goal.</Text>
     </View>}
-    <Text style={styles.muted}>Fixture context · {snapshot?.context.project ?? 'loading'} · {snapshot?.context.notes.map(note => note.key).join(', ')}</Text>
-    {!terminal && <Button label={confirmCancel ? 'Confirm cancel conversation' : 'Cancel conversation'} disabled={busy}
+    {!pilot && <Text style={styles.muted}>Fixture context · {snapshot?.context.project ?? 'loading'} · {snapshot?.context.notes.map(note => note.key).join(', ')}</Text>}
+    {!pilot && !terminal && <Button label={confirmCancel ? 'Confirm cancel conversation' : 'Cancel conversation'} disabled={busy}
       onPress={() => confirmCancel ? void act(() => client.cancel()) : setConfirmCancel(true)} />}
   </ScrollView>;
 }
@@ -217,9 +221,21 @@ export default function App() {
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [client, setClient] = useState<ConversationClient | null>(null);
+  const [conversations, setConversations] = useState<{id: string; revision: number}[]>([]);
   const [pendingCreateId, setPendingCreateId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  async function listConversations() {
+    setBusy(true); setNotice('');
+    try {
+      const base = new URL(endpoint);
+      if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('Invalid endpoint');
+      const response = await transport(base.origin + '/api/conversations', {method: 'GET', headers: {Authorization: `Bearer ${token.trim()}`}, signal: AbortSignal.timeout(15000)});
+      if (!response.ok) throw new Error('Conversation access rejected');
+      setConversations(z.array(z.object({id: z.string().uuid(), revision: z.number().int()})).parse(await response.json()));
+    } catch {setNotice('Could not list conversations. Check your endpoint and credential.');}
+    finally {setBusy(false);}
+  }
   async function open(create: boolean) {
     setBusy(true); setNotice('');
     let next: ConversationClient | null = null;
@@ -232,7 +248,7 @@ export default function App() {
       next = new ConversationClient(base.origin, token.trim(), conversationId, transport);
       if (create) await next.create();
       else { await next.refresh(); await next.connect(); }
-      setClient(next); setToken(''); setPendingCreateId(null);
+      setClient(next); setToken(''); setPendingCreateId(null); setConversations([]);
     } catch { next?.disconnect(); setNotice('Could not open this conversation. Check the endpoint, credential, and identity.'); }
     finally { setBusy(false); }
   }
@@ -242,17 +258,19 @@ export default function App() {
       <Text accessibilityRole="header" style={styles.title}>Pick up the conversation.</Text>
       <Text style={styles.body}>Your goal and pending decisions stay together across devices.</Text>
       <View style={styles.card}>
-        <Text style={styles.label}>Private development endpoint</Text>
+        <Text style={styles.label}>Private endpoint</Text>
         <TextInput accessibilityLabel="Endpoint" autoCapitalize="none" autoCorrect={false} value={endpoint} onChangeText={setEndpoint} style={styles.input} />
-        <Text style={styles.label}>Owner test credential</Text>
+        <Text style={styles.label}>Owner credential</Text>
         <TextInput accessibilityLabel="Owner test credential" secureTextEntry autoCapitalize="none" autoCorrect={false} value={token} onChangeText={setToken} style={styles.input} />
         <Button label={pendingCreateId ? "Retry new conversation" : "New conversation"} disabled={busy || !token.trim()} onPress={() => void open(true)} />
+        <Button label="Find my conversations" disabled={busy || !token.trim()} onPress={() => {void listConversations();}} />
+        {conversations.map(conversation => <Button key={conversation.id} label={`Select conversation ${conversation.id}`} disabled={busy} onPress={() => setId(conversation.id)} />)}
         <Text style={styles.label}>Or continue a conversation identity</Text>
         <TextInput accessibilityLabel="Conversation identity" autoCapitalize="none" autoCorrect={false} value={id} onChangeText={setId} style={styles.input} />
         <Button label="Continue conversation" disabled={busy || !token.trim() || !id.trim()} onPress={() => void open(false)} />
       </View>
       <Text style={styles.notice}>{notice}</Text>
-      <Text style={styles.muted}>Disposable local proof. Credentials remain in memory until sign-out. Use only existing authorized private access.</Text>
+      <Text style={styles.muted}>Credentials remain in memory until sign-out. Use your authorized private endpoint.</Text>
     </ScrollView>}</View>;
 }
 const styles = StyleSheet.create({
