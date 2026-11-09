@@ -39,6 +39,10 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
   const hashes = Object.entries(config.tokens).map(([principal, token]) => ({
     principal, token, hash: createHash('sha256').update(token).digest(),
   }));
+  const authentication = policy.kind === 'privateProxy' ? policy.settings.authentication : undefined;
+  const owner = authentication?.kind === 'private-single-owner'
+    ? hashes.find(entry => entry.principal === authentication.principal) : undefined;
+  if (authentication?.kind === 'private-single-owner' && !owner) throw new Error('Private owner credential is not configured');
   return async (request, response) => {
     response.setHeader('Cache-Control', 'no-store');
     response.setHeader('X-Content-Type-Options', 'nosniff');
@@ -71,14 +75,19 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
       } catch { send(404, 'not_found'); }
       return;
     }
-    const authorization = request.headers.authorization ?? '';
-    const digest = createHash('sha256').update(authorization.slice(7)).digest();
-    const credential = authorization.startsWith('Bearer ') && hashes.find(entry => timingSafeEqual(entry.hash, digest));
-    if (!credential) return send(401, 'authentication_required');
     const allowedOrigin = external?.origin ?? `http://${request.headers.host}`;
     if (request.headers.origin !== undefined && request.headers.origin !== allowedOrigin) {
       return send(403, 'origin_rejected');
     }
+    if (url.pathname === '/api/access' && request.method === 'GET' && !url.search) {
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({kind: owner ? 'private-single-owner' : 'bearer'}));
+      return;
+    }
+    const authorization = request.headers.authorization ?? '';
+    const digest = createHash('sha256').update(authorization.slice(7)).digest();
+    const credential = owner ?? (authorization.startsWith('Bearer ') && hashes.find(entry => timingSafeEqual(entry.hash, digest)));
+    if (!credential) return send(401, 'authentication_required');
     const delivery = /^\/api\/conversations\/([0-9a-f-]{36})\/delivery(?:\/(command|events))?$/.exec(url.pathname);
     if (delivery && !url.search) {
       const [, conversationId, action] = delivery;

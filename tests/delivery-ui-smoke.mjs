@@ -30,7 +30,8 @@ try {
     const request = route.request();
     const path = new URL(request.url()).pathname;
     let payload;
-    if (path.endsWith('/delivery/command')) {commands.push(request.postDataJSON().command_id); payload = state();}
+    if (path === '/api/access') payload = {kind: 'bearer'};
+    else if (path.endsWith('/delivery/command')) {commands.push(request.postDataJSON().command_id); payload = state();}
     else if (path.endsWith('/events')) {
       const snapshot = path.includes('/delivery/') ? {delivery: state()} : conversation();
       const events = [{type: 'RUN_STARTED', threadId: id, runId: 'smoke'}, {type: 'STATE_SNAPSHOT', snapshot}, {type: 'RUN_FINISHED', threadId: id, runId: 'smoke'}];

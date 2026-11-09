@@ -26,7 +26,7 @@ The gateway retains loopback binding and its exact HTTPS proxy origin policy. `G
 ## Use the pilot
 
 1. Open the private endpoint in the installed phone app or browser.
-2. Enter the owner credential and create a conversation, or use **Find my conversations** to select an existing identity.
+2. Select one of the five recent conversations, or create a new one. Explicit private single-owner installations need no client credential. Bearer installations still require their owner credential.
 3. Read the installed goal and its allowed paths. Select **Approve goal and start** to authorize that exact offer.
 4. Observe authoring, independent review, and draft publication in either view.
 5. Open the draft PR from the completed card. This pilot never merges or deploys a job's PR.
@@ -54,3 +54,9 @@ docker build --build-arg NODE_IMAGE="$NODE_IMAGE" --build-arg CREW_IMAGE="$CREW_
 ```
 
 `python -m delivery health /config/delivery.json` queries the fixed workflow without changing it. Successful queries establish workflow service availability. They do not establish subscription authentication, authoring-worker readiness, or end-to-end delivery.
+
+## Retry an inconclusive review
+
+**Retry independent review** requests a new numbered attempt for the same candidate after a confirmed terminal inconclusive review. It preserves the author result and previous review. It does not repeat the author, change the approved goal or retry a substantive rejection. An interrupted reviewer or an unconfirmed activity remains uncertain and requires operator reconciliation.
+
+Upgrade Crew first, then Forge. The compatibility test replays a frozen pre-retry workflow history before exercising the new command and worker restart. This proves the recorded legacy history shape, not every possible operational failure.

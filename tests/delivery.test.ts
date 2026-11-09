@@ -24,7 +24,7 @@ test('AG-UI delivery observation never executes an action and disconnect does no
   const paths: string[] = [];
   let ready: () => void = () => {};
   const observed = new Promise<void>(resolve => {ready = resolve;});
-  const client = new DeliveryClient({url: 'http://127.0.0.1', token: 'private', conversationId: conversation,
+  const client = new DeliveryClient({url: 'http://127.0.0.1', access: {kind: 'bearer', token: 'private'}, conversationId: conversation,
     transport: async (url, init) => {
       paths.push(String(url));
       assert.equal(init?.method, 'POST');

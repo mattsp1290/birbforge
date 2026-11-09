@@ -186,3 +186,117 @@ def test_observation_is_read_only_and_cancel_does_not_claim_terminal():
     )
     assert instance.snapshot()["cancellation"] == "requested"
     assert instance.stage["kind"] == "authoring"
+
+
+def test_explicit_review_retry_is_idempotent_and_never_reauthors():
+    instance = installed()
+    approved = approve(instance)
+    calls = []
+
+    async def activity(name, value):
+        calls.append((name, value.model_dump(mode="json")))
+        if "author" in name:
+            return {"status": "candidate", "candidate": candidate(instance)}
+        if "review" in name:
+            receipt = review()
+            receipt["disposition"] = (
+                "inconclusive" if value.review_attempt == 0 else "approved"
+            )
+            if value.review_attempt:
+                receipt["review_attempt"] = value.review_attempt
+            return receipt
+        return {
+            "status": "draft_ready",
+            "repository_id": instance.offer.repository_id,
+            "head_commit": "c" * 40,
+            "base_branch": "main",
+            "provider": "github",
+            "number": 42,
+            "url": "https://github.com/mattsp1290/birbforge/pull/42",
+            "draft": True,
+        }
+
+    instance.activity = activity
+    asyncio.run(instance.deliver())
+    assert instance.stage == {"kind": "uncertain", "reason": "review_inconclusive"}
+    retry = command(instance, "retry_review", conversation=approved["conversation_id"])
+    stale = {**retry, "body": {**retry["body"], "expected_revision": 0}}
+    assert instance.command(stale)["code"] == "stale_offer_or_revision"
+    assert instance.command(retry) == {"ok": True}
+    assert instance.command(retry) == {"ok": True}
+    assert instance.review_attempt == 1
+    assert (
+        instance.command(
+            command(instance, "retry_review", conversation=approved["conversation_id"])
+        )["code"]
+        == "review_not_retryable"
+    )
+    from birbcrew.execution.contract import ExecutionInput
+
+    asyncio.run(
+        instance.review_and_publish(
+            ExecutionInput(
+                operation_id=instance.approved.delivery_id,
+                approved_goal=instance.approved,
+            ),
+            instance.candidate,
+        )
+    )
+    assert [name for name, _ in calls] == [
+        "birbcrew.author_goal.v1",
+        "birbcrew.review_candidate.v1",
+        "birbcrew.review_candidate.v1",
+        "birbcrew.publish_draft.v1",
+    ]
+    assert "review_attempt" not in calls[1][1]
+    assert calls[2][1]["review_attempt"] == calls[3][1]["review_attempt"] == 1
+    assert calls[2][1]["candidate"] == calls[1][1]["candidate"]
+    assert instance.stage["kind"] == "draft_ready"
+
+
+def test_substantive_review_cannot_be_retried():
+    instance = installed()
+    approved = approve(instance)
+    instance.transition(
+        {
+            "kind": "changes_requested",
+            "candidate": candidate(instance),
+            "review": review(),
+        }
+    )
+    assert (
+        instance.command(
+            command(instance, "retry_review", conversation=approved["conversation_id"])
+        )["code"]
+        == "review_not_retryable"
+    )
+
+
+def test_interrupted_review_never_offers_or_accepts_retry():
+    instance = installed()
+    approved = approve(instance)
+    calls = []
+
+    async def activity(name, value):
+        calls.append(name)
+        if "author" in name:
+            return {"status": "candidate", "candidate": candidate(instance)}
+        return {
+            **review(),
+            "disposition": "inconclusive",
+            "findings_digest": "0" * 64,
+            "evidence_ref": "execution/old/review-interrupted",
+        }
+
+    instance.activity = activity
+    asyncio.run(instance.deliver())
+    assert instance.snapshot()["stage"] == {
+        "kind": "uncertain",
+        "reason": "review_interrupted_requires_recovery",
+    }
+    assert instance.command(
+        command(instance, "retry_review", conversation=approved["conversation_id"])
+    )["code"] == "review_not_retryable"
+    assert not instance.retry_review_requested
+    assert instance.review_attempt == 0
+    assert calls == ["birbcrew.author_goal.v1", "birbcrew.review_candidate.v1"]

@@ -16,9 +16,9 @@ async function wait(predicate: () => boolean, label: string) {
 
 test('pinned runtime accepts one decision and converges through real official AG-UI clients', async () => {
   const id = randomUUID();
-  const a = new ConversationClient(session.url, session.tokens.owner, id);
-  const b = new ConversationClient(session.url, session.tokens.owner, id);
-  const stranger = new ConversationClient(session.url, session.tokens.stranger, id);
+  const a = new ConversationClient(session.url, {kind: 'bearer', token: session.tokens.owner}, id);
+  const b = new ConversationClient(session.url, {kind: 'bearer', token: session.tokens.owner}, id);
+  const stranger = new ConversationClient(session.url, {kind: 'bearer', token: session.tokens.stranger}, id);
   const events: string[] = [];
   try {
     await a.create();
@@ -37,7 +37,7 @@ test('pinned runtime accepts one decision and converges through real official AG
     await assert.rejects(stranger.refresh(), error => error instanceof ActionError && error.status === 404);
     stranger.getSnapshot().conversation = a.getSnapshot().conversation;
     await assert.rejects(stranger.resolve({request_id: request.id, version: request.version, choice: 'inspect'}), error => error instanceof ActionError && error.status === 404);
-    const invalid = new ConversationClient(session.url, 'invalid', id);
+    const invalid = new ConversationClient(session.url, {kind: 'bearer', token: 'invalid'}, id);
     await assert.rejects(invalid.request(`/${id}/decision`, {request_id: request.id, version: request.version, choice: 'test'}), error => error instanceof ActionError && error.status === 401);
     await assert.rejects(a.request(`/${id}/decision`, {request_id: request.id, version: request.version, choice: 'test', actor: 'owner'}), error => error instanceof ActionError && error.status === 400);
     events.push('stranger reads and decisions rejected; forged actor rejected');
@@ -82,7 +82,7 @@ test('lost acknowledgements retain identity and failed refreshes do not undo acc
   const id = randomUUID();
   let dropInputAcknowledgement = true;
   let failNextGet = false;
-  const client = new ConversationClient(session.url, session.tokens.owner, id, async (url, init) => {
+  const client = new ConversationClient(session.url, {kind: 'bearer', token: session.tokens.owner}, id, async (url, init) => {
     if (failNextGet && init.method === 'GET' && url.endsWith(`/${id}`)) {
       failNextGet = false;
       return new Response(JSON.stringify({code: 'fixture_refresh_failure'}), {status: 503});
@@ -144,7 +144,7 @@ test('a stream transport failure and failed reconnect GET recover without resubm
   let failGet = false;
   let cutStream: (() => void) | undefined;
   const id = randomUUID();
-  const client = new ConversationClient(session.url, session.tokens.owner, id, async (url, init) => {
+  const client = new ConversationClient(session.url, {kind: 'bearer', token: session.tokens.owner}, id, async (url, init) => {
     if (init.method === 'GET' && failGet && url.endsWith(`/${id}`)) {
       failGet = false; failedGets++;
       return new Response(JSON.stringify({code:'fixture_gateway_unavailable'}), {status:503});

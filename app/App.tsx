@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useSyncExternalStore} from 'react';
 import {AccessibilityInfo, AppState, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
-import {z} from 'zod/v4';
+import {discoverAccess, endpointOrigin, recentConversations, type AccessCapability, type ClientAccess} from './src/access';
 import {ConversationClient} from './src/controller';
 import {DeliveryPanel} from './src/DeliveryPanel';
 import {transport} from './src/transport';
@@ -162,13 +162,13 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
     <View style={styles.card}>
       <Text style={styles.label}>Conversation identity</Text>
       <Text testID="conversation-id" selectable style={styles.identity}>{client.id}</Text>
-      <Text style={styles.muted}>Open this identity on your other device with the same owner credential.</Text>
+      <Text style={styles.muted}>{client.access.kind === 'private-single-owner' ? 'Open this identity on your other device through your private network.' : 'Open this identity on your other device with the same owner credential.'}</Text>
       <Text testID="connection" style={styles.status}>{state.connection} · {snapshot?.phase ?? 'loading'} · revision {snapshot?.revision ?? 0}</Text>
       <View style={styles.row}>
         <Button label="Reconnect" onPress={() => void client.connect()} />
         <Button label="Disconnect" onPress={() => client.disconnect()} />
         <Button label={large ? 'Standard text' : 'Large text'} selected={large} onPress={() => setLarge(!large)} />
-        <Button label="Sign out" onPress={() => {client.disconnect(); leave();}} />
+        <Button label={client.access.kind === 'private-single-owner' ? 'Back to conversations' : 'Sign out'} onPress={() => {client.disconnect(); leave();}} />
       </View>
     </View>
     <View style={styles.row}>
@@ -217,7 +217,7 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
   </ScrollView>;
 }
 export default function App() {
-  const [endpoint, setEndpoint] = useState(Platform.OS === 'web' ? globalThis.location?.origin ?? 'http://127.0.0.1:8787' : 'http://127.0.0.1:8787');
+  const [endpoint, setEndpoint] = useState(Platform.OS === 'web' ? globalThis.location?.origin ?? 'http://127.0.0.1:8787' : process.env.EXPO_PUBLIC_BIRBFORGE_ENDPOINT ?? 'http://127.0.0.1:8787');
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
   const [client, setClient] = useState<ConversationClient | null>(null);
@@ -225,52 +225,83 @@ export default function App() {
   const [pendingCreateId, setPendingCreateId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
-  async function listConversations() {
-    setBusy(true); setNotice('');
-    try {
-      const base = new URL(endpoint);
-      if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('Invalid endpoint');
-      const response = await transport(base.origin + '/api/conversations', {method: 'GET', headers: {Authorization: `Bearer ${token.trim()}`}, signal: AbortSignal.timeout(15000)});
-      if (!response.ok) throw new Error('Conversation access rejected');
-      setConversations(z.array(z.object({id: z.string().uuid(), revision: z.number().int()})).parse(await response.json()));
-    } catch {setNotice('Could not list conversations. Check your endpoint and credential.');}
-    finally {setBusy(false);}
+  const [discovery, setDiscovery] = useState<{endpoint: string; capability: AccessCapability} | null>(null);
+  const [discoveryAttempt, setDiscoveryAttempt] = useState(0);
+  const [discoveryNotice, setDiscoveryNotice] = useState('Checking private endpoint.');
+  useEffect(() => {
+    let current = true;
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 15000);
+    setDiscovery(null); setDiscoveryNotice('Checking private endpoint.');
+    void discoverAccess(endpoint, transport, abort.signal).then(async capability => {
+      if (!current) return;
+      setDiscovery({endpoint, capability}); setDiscoveryNotice('');
+      if (capability.kind === 'private-single-owner') {
+        try {
+          const recent = await recentConversations(endpoint, capability, transport, abort.signal);
+          if (current) setConversations(recent);
+        } catch {if (current) setNotice('Could not load recent conversations. Find my conversations will retry.');}
+      }
+    }).catch(() => {
+      if (current) setDiscoveryNotice('Could not check access. Check your endpoint and private network connection.');
+    }).finally(() => clearTimeout(timeout));
+    return () => {current = false; clearTimeout(timeout); abort.abort();};
+  }, [endpoint, discoveryAttempt]);
+  const capability = discovery && discovery.endpoint === endpoint ? discovery.capability : null;
+  const access: ClientAccess | null = capability?.kind === 'private-single-owner' ? capability
+    : capability?.kind === 'bearer' && token.trim() ? {kind: 'bearer', token: token.trim()} : null;
+  function changeEndpoint(value: string) {
+    setEndpoint(value); setDiscovery(null); setToken(''); setId(''); setConversations([]); setPendingCreateId(null); setNotice('');
   }
-  async function open(create: boolean) {
+  async function listConversations() {
+    if (!access) return;
+    setBusy(true); setNotice('');
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 15000);
+    try {
+      setConversations(await recentConversations(endpoint, access, transport, abort.signal));
+    } catch {setNotice('Could not list conversations. Check your connection and access.');}
+    finally {clearTimeout(timeout); setBusy(false);}
+  }
+  async function open(create: boolean, selectedId?: string) {
+    if (!access) return;
     setBusy(true); setNotice('');
     let next: ConversationClient | null = null;
     try {
-      const base = new URL(endpoint);
-      if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('Invalid endpoint');
-      const conversationId = create ? pendingCreateId ?? randomUUID() : id.trim();
+      const origin = endpointOrigin(endpoint);
+      const conversationId = create ? pendingCreateId ?? randomUUID() : selectedId ?? id.trim();
       if (create) {setPendingCreateId(conversationId); setId(conversationId);}
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(conversationId)) throw new Error('Invalid identity');
-      next = new ConversationClient(base.origin, token.trim(), conversationId, transport);
+      next = new ConversationClient(origin, access, conversationId, transport);
       if (create) await next.create();
       else { await next.refresh(); await next.connect(); }
       setClient(next); setToken(''); setPendingCreateId(null); setConversations([]);
-    } catch { next?.disconnect(); setNotice('Could not open this conversation. Check the endpoint, credential, and identity.'); }
+    } catch { next?.disconnect(); setNotice('Could not open this conversation. Check your connection and conversation access.'); }
     finally { setBusy(false); }
   }
-  return <View style={styles.root}>{client ? <Workspace client={client} leave={() => setClient(null)} /> :
+  return <View style={styles.root}>{client ? <Workspace client={client} leave={() => {setClient(null); setDiscoveryAttempt(value => value + 1);}} /> :
     <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
       <Text style={styles.eyebrow}>BIRBFORGE</Text>
       <Text accessibilityRole="header" style={styles.title}>Pick up the conversation.</Text>
       <Text style={styles.body}>Your goal and pending decisions stay together across devices.</Text>
       <View style={styles.card}>
         <Text style={styles.label}>Private endpoint</Text>
-        <TextInput accessibilityLabel="Endpoint" autoCapitalize="none" autoCorrect={false} value={endpoint} onChangeText={setEndpoint} style={styles.input} />
-        <Text style={styles.label}>Owner credential</Text>
-        <TextInput accessibilityLabel="Owner test credential" secureTextEntry autoCapitalize="none" autoCorrect={false} value={token} onChangeText={setToken} style={styles.input} />
-        <Button label={pendingCreateId ? "Retry new conversation" : "New conversation"} disabled={busy || !token.trim()} onPress={() => void open(true)} />
-        <Button label="Find my conversations" disabled={busy || !token.trim()} onPress={() => {void listConversations();}} />
-        {conversations.map(conversation => <Button key={conversation.id} label={`Select conversation ${conversation.id}`} disabled={busy} onPress={() => setId(conversation.id)} />)}
-        <Text style={styles.label}>Or continue a conversation identity</Text>
+        <TextInput accessibilityLabel="Endpoint" autoCapitalize="none" autoCorrect={false} value={endpoint} editable={!busy} onChangeText={changeEndpoint} style={styles.input} />
+        {!!discoveryNotice && <Text accessibilityLiveRegion="polite" style={styles.notice}>{discoveryNotice}</Text>}
+        {!capability && <Button label="Check endpoint" disabled={busy} onPress={() => setDiscoveryAttempt(value => value + 1)} />}
+        {capability?.kind === 'private-single-owner' && <Text style={styles.status}>Connected through your private network.</Text>}
+        {capability?.kind === 'bearer' && <><Text style={styles.label}>Owner credential</Text>
+        <TextInput accessibilityLabel="Owner test credential" secureTextEntry autoCapitalize="none" autoCorrect={false} value={token} onChangeText={setToken} style={styles.input} /></>}
+        <Button label={pendingCreateId ? "Retry new conversation" : "New conversation"} disabled={busy || !access} onPress={() => void open(true)} />
+        <Button label="Find my conversations" disabled={busy || !access} onPress={() => {void listConversations();}} />
+        {!!conversations.length && <Text style={styles.label}>Recent conversations</Text>}
+        {conversations.map(conversation => <Button key={conversation.id} label={`Open conversation ${conversation.id.slice(0, 8)}`} disabled={busy || !access} onPress={() => void open(false, conversation.id)} />)}
+        <Text style={styles.label}>Or enter another conversation identity</Text>
         <TextInput accessibilityLabel="Conversation identity" autoCapitalize="none" autoCorrect={false} value={id} onChangeText={setId} style={styles.input} />
-        <Button label="Continue conversation" disabled={busy || !token.trim() || !id.trim()} onPress={() => void open(false)} />
+        <Button label="Continue conversation" disabled={busy || !access || !id.trim()} onPress={() => void open(false)} />
       </View>
       <Text style={styles.notice}>{notice}</Text>
-      <Text style={styles.muted}>Credentials remain in memory until sign-out. Use your authorized private endpoint.</Text>
+      <Text style={styles.muted}>{capability?.kind === 'private-single-owner' ? 'Access follows your private network connection. Returning here does not sign out of that network.' : 'Credentials remain in memory until sign-out. Use your authorized private endpoint.'}</Text>
     </ScrollView>}</View>;
 }
 const styles = StyleSheet.create({

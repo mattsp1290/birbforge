@@ -75,7 +75,7 @@ async function fixtureServer() {
 test('one real accepted HTTP admission loses only its reply; the unmodified client reconciles without resubmission', async () => {
   const server = await fixtureServer();
   const driver = createFixtureTransport({upstream: fetch});
-  const client = new VerificationClient({url: server.url, token: 'private-test-token', conversationId, transport: driver.transport});
+  const client = new VerificationClient({url: server.url, access: {kind: 'bearer', token: 'private-test-token'}, conversationId, transport: driver.transport});
   try {
     await client.refresh();
     driver.arm({kind: 'lose-reply', action: 'admission'});
@@ -103,7 +103,7 @@ test('one real accepted HTTP admission loses only its reply; the unmodified clie
 test('accepted cancellation reconciles its original command identity after native-style reply suppression', async () => {
   const server = await fixtureServer();
   const driver = createFixtureTransport({upstream: fetch});
-  const client = new VerificationClient({url: server.url, token: 'private-test-token', conversationId, transport: driver.transport});
+  const client = new VerificationClient({url: server.url, access: {kind: 'bearer', token: 'private-test-token'}, conversationId, transport: driver.transport});
   try {
     await client.refresh();
     const requestId = randomUUID();
@@ -126,7 +126,7 @@ test('accepted cancellation reconciles its original command identity after nativ
 test('forged authority crosses real HTTP, returns the actual rejection, and leaves authoritative state unchanged', async () => {
   const server = await fixtureServer();
   const driver = createFixtureTransport({upstream: fetch});
-  const client = new VerificationClient({url: server.url, token: 'private-test-token', conversationId, transport: driver.transport});
+  const client = new VerificationClient({url: server.url, access: {kind: 'bearer', token: 'private-test-token'}, conversationId, transport: driver.transport});
   try {
     await client.refresh();
     const before = structuredClone(server.snapshot());
