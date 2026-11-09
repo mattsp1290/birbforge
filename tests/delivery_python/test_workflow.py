@@ -270,3 +270,33 @@ def test_substantive_review_cannot_be_retried():
         )["code"]
         == "review_not_retryable"
     )
+
+
+def test_interrupted_review_never_offers_or_accepts_retry():
+    instance = installed()
+    approved = approve(instance)
+    calls = []
+
+    async def activity(name, value):
+        calls.append(name)
+        if "author" in name:
+            return {"status": "candidate", "candidate": candidate(instance)}
+        return {
+            **review(),
+            "disposition": "inconclusive",
+            "findings_digest": "0" * 64,
+            "evidence_ref": "execution/old/review-interrupted",
+        }
+
+    instance.activity = activity
+    asyncio.run(instance.deliver())
+    assert instance.snapshot()["stage"] == {
+        "kind": "uncertain",
+        "reason": "review_interrupted_requires_recovery",
+    }
+    assert instance.command(
+        command(instance, "retry_review", conversation=approved["conversation_id"])
+    )["code"] == "review_not_retryable"
+    assert not instance.retry_review_requested
+    assert instance.review_attempt == 0
+    assert calls == ["birbcrew.author_goal.v1", "birbcrew.review_candidate.v1"]

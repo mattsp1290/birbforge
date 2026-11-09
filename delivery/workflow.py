@@ -226,7 +226,14 @@ class DeliveryWorkflow:
             )
             return
         if review.disposition == "inconclusive":
-            self.transition({"kind": "uncertain", "reason": "review_inconclusive"})
+            self.transition(
+                {
+                    "kind": "uncertain",
+                    "reason": "review_inconclusive"
+                    if review.can_retry
+                    else "review_interrupted_requires_recovery",
+                }
+            )
             return
         if review.disposition != "approved":
             self.transition(
