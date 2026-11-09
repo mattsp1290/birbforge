@@ -151,8 +151,8 @@ def test_receipts_bind_exact_approved_source(mismatch):
     assert len(calls) == {"candidate": 1, "review": 2, "publication": 3}[mismatch]
 
 
-@pytest.mark.parametrize("cancel", [False, True])
-def test_review_findings_and_cancellation_prevent_publication(cancel):
+@pytest.mark.parametrize("outcome", ["changes_requested", "cancel", "inconclusive"])
+def test_review_findings_and_cancellation_prevent_publication(outcome):
     instance = installed()
     approve(instance)
     calls = []
@@ -162,16 +162,18 @@ def test_review_findings_and_cancellation_prevent_publication(cancel):
         if "author" in name:
             return {"status": "candidate", "candidate": candidate(instance)}
         receipt = review()
-        if cancel:
+        if outcome == "cancel":
             instance.cancellation = "requested"
         else:
-            receipt["disposition"] = "changes_requested"
+            receipt["disposition"] = outcome
         return receipt
 
     instance.activity = activity
     asyncio.run(instance.deliver())
     assert len(calls) == 2
-    assert instance.stage["kind"] == ("blocked" if cancel else "changes_requested")
+    assert instance.snapshot()["stage"]["kind"] == (
+        "changes_requested" if outcome == "changes_requested" else "uncertain"
+    )
 
 
 def test_observation_is_read_only_and_cancel_does_not_claim_terminal():

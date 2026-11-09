@@ -167,7 +167,7 @@ class DeliveryWorkflow:
             raise ValueError("candidate_binding_mismatch")
         if self.cancellation == "requested":
             self.transition(
-                {"kind": "blocked", "reason": "cancelled_authoring_returned_candidate"}
+                {"kind": "uncertain", "reason": "cancelled_authoring_returned_candidate"}
             )
             return
         self.transition(
@@ -183,8 +183,11 @@ class DeliveryWorkflow:
             raise ValueError("review_binding_mismatch")
         if self.cancellation == "requested":
             self.transition(
-                {"kind": "blocked", "reason": "cancellation_requires_confirmation"}
+                {"kind": "uncertain", "reason": "cancellation_requires_confirmation"}
             )
+            return
+        if review.disposition == "inconclusive":
+            self.transition({"kind": "uncertain", "reason": "review_inconclusive"})
             return
         if review.disposition != "approved":
             self.transition(
