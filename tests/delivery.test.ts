@@ -65,3 +65,25 @@ test('running gateway rejects forged delivery authority and proof commands befor
     await new Promise<void>(resolve => server.close(() => resolve()));
   }
 });
+
+test('shared clients retain the rejected receipt throughout classification checks', () => {
+  const candidate = {repository_id: 'owner/repo', base_commit: 'a'.repeat(40), head_commit: 'b'.repeat(40),
+    branch: 'birbforge/pilot/example', changed_paths: ['docs/operator.md'], acceptance: {
+      acceptance_id: 'docs-check', outcome: 'passed', evidence_digest: 'e'.repeat(64), evidence_ref: 'private/ref',
+    }};
+  const review = {candidate_commit: candidate.head_commit, reviewer: 'claude-cli', disposition: 'changes_requested',
+    findings_digest: 'f'.repeat(64), evidence_ref: 'execution/example/review', summary: 'Original review outcome.'};
+  for (const classification_check of [undefined, 'checking', 'not_eligible', 'evidence_unconfirmed']) {
+    const parsed = DeliverySnapshot.parse({...snapshot, stage: {kind: 'changes_requested', candidate, review,
+      ...(classification_check ? {classification_check} : {})}});
+    assert.equal(parsed.stage.kind, 'changes_requested');
+    if (parsed.stage.kind === 'changes_requested') {
+      assert.equal(parsed.stage.review.disposition, 'changes_requested');
+      assert.equal(parsed.stage.review.summary, review.summary);
+      assert.equal(parsed.stage.classification_check, classification_check);
+    }
+  }
+  assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {
+    kind: 'changes_requested', candidate, review, classification_check: 'approved',
+  }}));
+});

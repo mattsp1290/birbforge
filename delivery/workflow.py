@@ -9,12 +9,14 @@ with workflow.unsafe.imports_passed_through():
     from birbcrew.execution.contract import (
         EXECUTION_RESULT,
         PUBLICATION_RESULT,
+        REVIEW_RECOVERY_RESULT,
         ApprovedGoal,
         ExecutionInput,
         GoalOffer,
         PublicationInput,
         ReviewInput,
         ReviewReceipt,
+        ReviewRecoveryInput,
         digest,
     )
 
@@ -38,6 +40,7 @@ class DeliveryWorkflow:
         self.candidate = None
         self.review_attempt = 0
         self.retry_review_requested = False
+        self.classification_request = None
 
     def transition(self, stage):
         self.stage = stage
@@ -116,21 +119,35 @@ class DeliveryWorkflow:
                 )
                 self.transition({"kind": "authoring"})
         elif command.action == "retry_review":
-            if (
-                kind != "uncertain"
-                or self.stage.get("reason") != "review_inconclusive"
-                or self.candidate is None
-                or self.cancellation != "none"
-            ):
+            if self.candidate is None or self.cancellation != "none":
                 return {"ok": False, "status": 409, "code": "review_not_retryable"}
-            self.review_attempt += 1
-            self.retry_review_requested = True
-            self.transition(
-                {
-                    "kind": "reviewing",
-                    "candidate": self.candidate.model_dump(mode="json"),
-                }
-            )
+            if kind == "changes_requested":
+                if self.classification_request is not None:
+                    return {"ok": False, "status": 409, "code": "review_check_pending"}
+                self.classification_request = ReviewRecoveryInput(
+                    previous=ReviewInput(
+                        operation_id=self.approved.delivery_id,
+                        approved_goal=self.approved,
+                        candidate=self.candidate,
+                        review_attempt=self.review_attempt,
+                    ),
+                    receipt=ReviewReceipt.model_validate(self.stage["review"]),
+                )
+                self.transition({**self.stage, "classification_check": "checking"})
+            elif (
+                kind == "uncertain"
+                and self.stage.get("reason") == "review_inconclusive"
+            ):
+                self.review_attempt += 1
+                self.retry_review_requested = True
+                self.transition(
+                    {
+                        "kind": "reviewing",
+                        "candidate": self.candidate.model_dump(mode="json"),
+                    }
+                )
+            else:
+                return {"ok": False, "status": 409, "code": "review_not_retryable"}
         else:
             if (
                 kind not in {"authoring", "reviewing", "publishing"}
@@ -302,6 +319,50 @@ class DeliveryWorkflow:
                 self.cancellation = "acknowledged"
             self.transition({"kind": published.status, "reason": published.reason})
 
+    async def check_review_classification(self):
+        request = self.classification_request
+        original = {
+            "kind": "changes_requested",
+            "candidate": request.previous.candidate.model_dump(mode="json"),
+            "review": request.receipt.model_dump(mode="json"),
+        }
+        try:
+            result = REVIEW_RECOVERY_RESULT.validate_python(
+                await self.activity("birbcrew.check_review_recovery.v1", request)
+            )
+            if result.kind != "legacy_approval_misclassified":
+                self.transition({**original, "classification_check": result.kind})
+                self.classification_request = None
+                return
+            if (
+                result.operation_id != request.previous.operation_id
+                or result.candidate_commit != request.previous.candidate.head_commit
+                or result.review_attempt != request.previous.review_attempt
+                or result.receipt_sha256 != digest(request.receipt)
+                or result.evidence_sha256 != request.receipt.findings_digest
+                or self.cancellation != "none"
+            ):
+                raise ValueError("review_recovery_binding_mismatch")
+        except (ActivityError, ValueError):
+            self.transition(
+                {**original, "classification_check": "evidence_unconfirmed"}
+            )
+            self.classification_request = None
+            return
+        self.classification_request = None
+        self.review_attempt = request.previous.review_attempt + 1
+        try:
+            await self.review_and_publish(
+                ExecutionInput(
+                    operation_id=self.approved.delivery_id, approved_goal=self.approved
+                ),
+                self.candidate,
+            )
+        except (ActivityError, ValueError):
+            self.transition(
+                {"kind": "uncertain", "reason": "review_recovery_requires_confirmation"}
+            )
+
     @workflow.run
     async def run(self, installation: dict):
         await workflow.wait_condition(lambda: self.stage["kind"] != "awaiting_approval")
@@ -313,7 +374,15 @@ class DeliveryWorkflow:
                     {"kind": "uncertain", "reason": "activity_or_receipt_unconfirmed"}
                 )
         while True:
-            await workflow.wait_condition(lambda: self.retry_review_requested)
+            await workflow.wait_condition(
+                lambda: (
+                    self.retry_review_requested
+                    or self.classification_request is not None
+                )
+            )
+            if self.classification_request is not None:
+                await self.check_review_classification()
+                continue
             self.retry_review_requested = False
             try:
                 await self.review_and_publish(
