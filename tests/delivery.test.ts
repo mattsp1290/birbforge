@@ -41,3 +41,27 @@ test('AG-UI delivery observation never executes an action and disconnect does no
   assert.equal(client.getSnapshot().snapshot?.stage.kind, 'awaiting_approval');
   assert.ok(paths.length > 0 && paths.every(path => path.endsWith('/delivery/events')));
 });
+
+test('running gateway rejects forged delivery authority and proof commands before dispatch', async () => {
+  const {gateway} = await import('../server/gateway');
+  const token = 'x'.repeat(40);
+  const server = gateway(GatewayConfig.parse({url: 'http://127.0.0.1:1', tokens: {owner: token}, mode: 'approved-goal',
+    delivery: {python: '/nonexistent-python-must-not-run', configuration: '/unused'}}));
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}`;
+  try {
+    const post = (path: string, body: unknown, credential = token) => fetch(base + path, {method: 'POST',
+      headers: {Authorization: `Bearer ${credential}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    const path = `/api/conversations/${conversation}/delivery/command`;
+    const command = {command_id: randomUUID(), expected_revision: 0, offer_sha256: 'd'.repeat(64), action: 'approve'};
+    assert.equal((await post(path, command, 'invalid')).status, 401);
+    assert.equal((await post(path, {...command, principal: 'owner'})).status, 400);
+    assert.equal((await post(`/api/conversations/${conversation}/inputs`, {request_id: randomUUID(), text: 'unsupported'})).status, 409);
+    assert.equal((await fetch(base + '/healthz')).status, 200);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>(resolve => server.close(() => resolve()));
+  }
+});
