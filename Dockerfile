@@ -17,6 +17,7 @@ COPY --from=web /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/npm
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 COPY --from=web /app/birbforge /app/birbforge
 COPY delivery /app/birbforge/delivery
+RUN chmod -R a+rX /app/birbforge
 WORKDIR /app/birbforge
 ENV PATH=/venv/bin:$PATH PYTHONUNBUFFERED=1
 USER 10001:10001
