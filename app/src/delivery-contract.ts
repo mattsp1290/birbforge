@@ -10,13 +10,13 @@ const GoalOffer = z.object({
 const Candidate = z.object({repository_id: z.string(), base_commit: Commit, head_commit: Commit,
   branch: z.string(), changed_paths: z.array(z.string()), acceptance: z.object({acceptance_id: z.string(),
     outcome: z.literal('passed'), evidence_digest: Digest, evidence_ref: z.string()}).strict()}).strict();
-const Review = z.object({candidate_commit: Commit, reviewer: z.literal('claude-cli'),
+const Review = z.object({candidate_commit: Commit, review_attempt: z.number().int().nonnegative().default(0), reviewer: z.literal('claude-cli'),
   disposition: z.enum(['approved', 'changes_requested', 'inconclusive']), findings_digest: Digest, evidence_ref: z.string(), summary: z.string().min(1).max(2000).default("Review details unavailable.")}).strict();
 const Draft = z.object({status: z.literal('draft_ready'), repository_id: z.string(), head_commit: Commit,
   base_branch: z.string(), provider: z.literal('github'), number: z.number().int().positive(),
   url: z.string().regex(/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/[0-9]+$/), draft: z.literal(true)}).strict();
 export const DeliveryCommand = z.object({command_id: z.string().uuid(), expected_revision: z.number().int().nonnegative(),
-  offer_sha256: Digest, action: z.enum(['approve', 'reject', 'cancel'])}).strict();
+  offer_sha256: Digest, action: z.enum(['approve', 'reject', 'cancel', 'retry_review'])}).strict();
 export const DeliverySnapshot = z.object({revision: z.number().int().nonnegative(), offer: GoalOffer, offer_sha256: Digest,
   conversation_id: z.string().uuid().nullable(), delivery_id: z.string().uuid().nullable(),
   cancellation: z.enum(['none', 'requested', 'acknowledged']), command_ids: z.array(z.string().uuid()),

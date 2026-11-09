@@ -256,10 +256,12 @@ export default function App() {
   async function listConversations() {
     if (!access) return;
     setBusy(true); setNotice('');
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 15000);
     try {
-      setConversations(await recentConversations(endpoint, access, transport, AbortSignal.timeout(15000)));
+      setConversations(await recentConversations(endpoint, access, transport, abort.signal));
     } catch {setNotice('Could not list conversations. Check your connection and access.');}
-    finally {setBusy(false);}
+    finally {clearTimeout(timeout); setBusy(false);}
   }
   async function open(create: boolean, selectedId?: string) {
     if (!access) return;

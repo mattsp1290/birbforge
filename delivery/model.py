@@ -29,7 +29,7 @@ class Command(Record):
     command_id: UUID
     expected_revision: int = Field(ge=0)
     offer_sha256: Digest
-    action: Literal["approve", "reject", "cancel"]
+    action: Literal["approve", "reject", "cancel", "retry_review"]
 
 
 class Intent(Record):

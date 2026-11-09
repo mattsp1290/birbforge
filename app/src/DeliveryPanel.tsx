@@ -25,6 +25,7 @@ export function DeliveryPanel({client, conversationId}: {client: DeliveryClient;
         {button('Approve goal and start', () => {void client.act('approve', randomUUID());})}
         {button('Reject goal', () => {void client.act('reject', randomUUID());})}
       </View>}
+      {stage.kind === 'uncertain' && stage.reason === 'review_inconclusive' && snapshot.cancellation === 'none' && button('Retry independent review', () => {void client.act('retry_review', randomUUID());})}
       {['authoring', 'reviewing', 'publishing'].includes(stage.kind) && snapshot.cancellation === 'none' && button('Request cancellation', () => {void client.act('cancel', randomUUID());})}
     </>}
     {snapshot.cancellation !== 'none' && <Text testID="delivery-cancellation" style={styles.status}>Cancellation · {snapshot.cancellation}. A request does not confirm the worker stopped.</Text>}

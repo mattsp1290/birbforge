@@ -35,6 +35,9 @@ class DeliveryWorkflow:
         self.commands = {}
         self.cancellation = "none"
         self.active = None
+        self.candidate = None
+        self.review_attempt = 0
+        self.retry_review_requested = False
 
     def transition(self, stage):
         self.stage = stage
@@ -92,6 +95,22 @@ class DeliveryWorkflow:
                     offer_sha256=self.offer_digest,
                 )
                 self.transition({"kind": "authoring"})
+        elif command.action == "retry_review":
+            if (
+                kind != "uncertain"
+                or self.stage.get("reason") != "review_inconclusive"
+                or self.candidate is None
+                or self.cancellation != "none"
+            ):
+                return {"ok": False, "status": 409, "code": "review_not_retryable"}
+            self.review_attempt += 1
+            self.retry_review_requested = True
+            self.transition(
+                {
+                    "kind": "reviewing",
+                    "candidate": self.candidate.model_dump(mode="json"),
+                }
+            )
         else:
             if (
                 kind not in {"authoring", "reviewing", "publishing"}
@@ -167,7 +186,20 @@ class DeliveryWorkflow:
             raise ValueError("candidate_binding_mismatch")
         if self.cancellation == "requested":
             self.transition(
-                {"kind": "uncertain", "reason": "cancelled_authoring_returned_candidate"}
+                {
+                    "kind": "uncertain",
+                    "reason": "cancelled_authoring_returned_candidate",
+                }
+            )
+            return
+        self.candidate = candidate
+        await self.review_and_publish(execution, candidate)
+
+    async def review_and_publish(self, execution, candidate):
+        if self.cancellation == "requested":
+            self.cancellation = "acknowledged"
+            self.transition(
+                {"kind": "cancelled", "reason": "cancelled_before_review_dispatch"}
             )
             return
         self.transition(
@@ -176,10 +208,17 @@ class DeliveryWorkflow:
         review = ReviewReceipt.model_validate(
             await self.activity(
                 "birbcrew.review_candidate.v1",
-                ReviewInput(**execution.model_dump(), candidate=candidate),
+                ReviewInput(
+                    **execution.model_dump(),
+                    candidate=candidate,
+                    review_attempt=self.review_attempt,
+                ),
             )
         )
-        if review.candidate_commit != candidate.head_commit:
+        if (
+            review.candidate_commit != candidate.head_commit
+            or review.review_attempt != self.review_attempt
+        ):
             raise ValueError("review_binding_mismatch")
         if self.cancellation == "requested":
             self.transition(
@@ -209,7 +248,10 @@ class DeliveryWorkflow:
             await self.activity(
                 "birbcrew.publish_draft.v1",
                 PublicationInput(
-                    **execution.model_dump(), candidate=candidate, review=review
+                    **execution.model_dump(),
+                    candidate=candidate,
+                    review=review,
+                    review_attempt=self.review_attempt,
                 ),
             )
         )
@@ -242,4 +284,18 @@ class DeliveryWorkflow:
                 self.transition(
                     {"kind": "uncertain", "reason": "activity_or_receipt_unconfirmed"}
                 )
-        await workflow.wait_condition(lambda: False)
+        while True:
+            await workflow.wait_condition(lambda: self.retry_review_requested)
+            self.retry_review_requested = False
+            try:
+                await self.review_and_publish(
+                    ExecutionInput(
+                        operation_id=self.approved.delivery_id,
+                        approved_goal=self.approved,
+                    ),
+                    self.candidate,
+                )
+            except (ActivityError, ValueError):
+                self.transition(
+                    {"kind": "uncertain", "reason": "activity_or_receipt_unconfirmed"}
+                )
