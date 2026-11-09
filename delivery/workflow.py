@@ -332,6 +332,7 @@ class DeliveryWorkflow:
             )
             if result.kind != "legacy_approval_misclassified":
                 self.transition({**original, "classification_check": result.kind})
+                self.classification_request = None
                 return
             if (
                 result.operation_id != request.previous.operation_id
@@ -342,7 +343,15 @@ class DeliveryWorkflow:
                 or self.cancellation != "none"
             ):
                 raise ValueError("review_recovery_binding_mismatch")
-            self.review_attempt = request.previous.review_attempt + 1
+        except (ActivityError, ValueError):
+            self.transition(
+                {**original, "classification_check": "evidence_unconfirmed"}
+            )
+            self.classification_request = None
+            return
+        self.classification_request = None
+        self.review_attempt = request.previous.review_attempt + 1
+        try:
             await self.review_and_publish(
                 ExecutionInput(
                     operation_id=self.approved.delivery_id, approved_goal=self.approved
@@ -350,12 +359,9 @@ class DeliveryWorkflow:
                 self.candidate,
             )
         except (ActivityError, ValueError):
-            self.review_attempt = request.previous.review_attempt
             self.transition(
-                {**original, "classification_check": "evidence_unconfirmed"}
+                {"kind": "uncertain", "reason": "review_recovery_requires_confirmation"}
             )
-        finally:
-            self.classification_request = None
 
     @workflow.run
     async def run(self, installation: dict):

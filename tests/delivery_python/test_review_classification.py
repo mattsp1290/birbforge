@@ -25,6 +25,7 @@ from delivery.workflow import DeliveryWorkflow
         "denied",
         "check_failed",
         "dispatch_failed",
+        "publication_failed",
         "wrong_binding",
     ],
 )
@@ -71,7 +72,13 @@ def test_legacy_classification_survives_race_lost_reply_and_worker_restart(outco
                     "evidence changed before dispatch", non_retryable=True
                 )
             receipt = review()
-            receipt["disposition"] = "changes_requested" if not attempt else outcome
+            receipt["disposition"] = (
+                "changes_requested"
+                if not attempt
+                else "approved"
+                if outcome == "publication_failed"
+                else outcome
+            )
             if attempt:
                 receipt["review_attempt"] = attempt
             return receipt
@@ -100,6 +107,8 @@ def test_legacy_classification_survives_race_lost_reply_and_worker_restart(outco
         @activity.defn(name="birbcrew.publish_draft.v1")
         async def publish(value: dict):
             publications.append(value)
+            if outcome == "publication_failed":
+                raise ApplicationError("publication reply lost", non_retryable=True)
             return {
                 "status": "draft_ready",
                 "repository_id": value["candidate"]["repository_id"],
@@ -236,6 +245,16 @@ def test_legacy_classification_survives_race_lost_reply_and_worker_restart(outco
                     elif outcome == "changes_requested":
                         assert final["stage"]["kind"] == "changes_requested"
                         assert final["stage"]["review"]["review_attempt"] == 1
+                    elif outcome in {"dispatch_failed", "publication_failed"}:
+                        assert final["stage"] == {
+                            "kind": "uncertain",
+                            "reason": "review_recovery_requires_confirmation",
+                        }
+                        assert not (
+                            await handle.execute_update(
+                                "command", command("retry_review", final)
+                            )
+                        )["ok"]
                     else:
                         assert final["stage"]["review"] == original
                         assert final["stage"]["kind"] == "changes_requested"
@@ -248,10 +267,17 @@ def test_legacy_classification_survives_race_lost_reply_and_worker_restart(outco
                     assert len(reviews) == (
                         2
                         if outcome
-                        in {"approved", "changes_requested", "dispatch_failed"}
+                        in {
+                            "approved",
+                            "changes_requested",
+                            "dispatch_failed",
+                            "publication_failed",
+                        }
                         else 1
                     )
-                    assert len(publications) == (1 if outcome == "approved" else 0)
+                    assert len(publications) == (
+                        1 if outcome in {"approved", "publication_failed"} else 0
+                    )
                     assert checks[0]["receipt"] == original
                     assert checks[0]["previous"]["candidate"] == reviews[0]["candidate"]
                     final_history = await handle.fetch_history()
