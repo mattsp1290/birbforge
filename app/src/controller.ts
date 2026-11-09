@@ -1,3 +1,4 @@
+import {authorizationHeaders, type ClientAccess} from './access';
 import { HttpAgent, type HttpAgentFetchFn } from '@ag-ui/client';
 import type { Message } from '@ag-ui/core';
 import { MessageSchema } from '@ag-ui/core/schemas';
@@ -24,9 +25,9 @@ export class ConversationClient {
   private value: ViewState = {connection: 'offline', conversation: null, messages: [], notice: '', pendingPrompt: null};
   readonly verification: VerificationClient;
   readonly delivery: DeliveryClient;
-  constructor(readonly url: string, private token: string, readonly id: string, private transport: HttpAgentFetchFn = (url, init) => globalThis.fetch(url, init)) {
-    this.delivery = new DeliveryClient({url, token, conversationId: id, transport});
-    this.verification = new VerificationClient({url, token, conversationId: id, transport});
+  constructor(readonly url: string, readonly access: ClientAccess, readonly id: string, private transport: HttpAgentFetchFn = (url, init) => globalThis.fetch(url, init)) {
+    this.delivery = new DeliveryClient({url, access, conversationId: id, transport});
+    this.verification = new VerificationClient({url, access, conversationId: id, transport});
   }
   getSnapshot = () => this.value;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
@@ -40,7 +41,7 @@ export class ConversationClient {
     try {
       const response = await this.transport(this.url + '/api/conversations' + path, {
         method: data === undefined ? 'GET' : 'POST',
-        headers: {Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json'},
+        headers: {...authorizationHeaders(this.access), 'Content-Type': 'application/json'},
         body: data === undefined ? undefined : JSON.stringify(data), signal: abort.signal,
       });
       const payload: unknown = await response.json();
@@ -86,7 +87,7 @@ export class ConversationClient {
       else void this.verification.connect();
       const agent = new HttpAgent({
         url: `${this.url}/api/conversations/${this.id}/events`, threadId: this.id,
-        headers: {Authorization: `Bearer ${this.token}`}, fetch: this.transport,
+        headers: {...authorizationHeaders(this.access)}, fetch: this.transport,
       });
       this.agent = agent;
       agent.subscribe({

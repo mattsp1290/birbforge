@@ -1,3 +1,4 @@
+import {authorizationHeaders, type ClientAccess} from './access';
 import {HttpAgent, type HttpAgentFetchFn} from '@ag-ui/client';
 import {z} from 'zod/v4';
 import {VerificationAdmission, VerificationCancellation, VerificationSnapshot} from './verification-contract';
@@ -27,7 +28,7 @@ export class VerificationClient {
   private credentialRejected = false;
   private attached = false;
   private readonly path: string;
-  constructor(private readonly options: {url: string; token: string; conversationId: string; transport?: HttpAgentFetchFn}) {
+  constructor(private readonly options: {url: string; access: ClientAccess; conversationId: string; transport?: HttpAgentFetchFn}) {
     this.path = `${options.url}/api/conversations/${options.conversationId}/verification`;
   }
   getSnapshot = () => this.value;
@@ -44,7 +45,7 @@ export class VerificationClient {
     try {
       const response = await this.transport(this.path + suffix, {
         method: body === undefined ? 'GET' : 'POST',
-        headers: {Authorization: `Bearer ${this.options.token}`, 'Content-Type': 'application/json'},
+        headers: {...authorizationHeaders(this.options.access), 'Content-Type': 'application/json'},
         body: body === undefined ? undefined : JSON.stringify(body), signal: abort.signal,
       });
       const value: unknown = await response.json();
@@ -118,7 +119,7 @@ export class VerificationClient {
       if (generation !== this.generation) return;
       let rejectedStatus: number | null = null;
       const agent = new HttpAgent({url: this.path + '/events', threadId: this.options.conversationId,
-        headers: {Authorization: `Bearer ${this.options.token}`}, fetch: async (url, init) => {
+        headers: {...authorizationHeaders(this.options.access)}, fetch: async (url, init) => {
           const response = await this.transport(url, init);
           if (!response.ok) rejectedStatus = response.status;
           return response;

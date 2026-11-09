@@ -135,8 +135,8 @@ test('trusted HTTPS proxy preserves authorization, action identity and AG-UI con
   const deniedPort = await listen(denied);
   const fetch = tlsFetch(ca);
   const id = randomUUID();
-  const a = new ConversationClient(origin, session.tokens.owner, id, fetch);
-  const b = new ConversationClient(origin, session.tokens.owner, id, fetch);
+  const a = new ConversationClient(origin, {kind: 'bearer', token: session.tokens.owner}, id, fetch);
+  const b = new ConversationClient(origin, {kind: 'bearer', token: session.tokens.owner}, id, fetch);
   const observer = new HttpAgent({url:origin+`/api/conversations/${id}/events`, threadId:id, headers:{Authorization:`Bearer ${session.tokens.owner}`}, fetch});
   let observedPhase = '';
   let observedDecisions = 0;
@@ -175,7 +175,7 @@ test('trusted HTTPS proxy preserves authorization, action identity and AG-UI con
     await b.refresh();
     assert.equal(b.getSnapshot().conversation?.phase,'waiting');
     await assert.rejects(a.request(`/${id}/decision`, {request_id:pending.id, version:0, choice:'test'}), error => error instanceof ActionError && error.status === 409);
-    const stranger = new ConversationClient(origin, session.tokens.stranger, id, fetch);
+    const stranger = new ConversationClient(origin, {kind: 'bearer', token: session.tokens.stranger}, id, fetch);
     await assert.rejects(stranger.request(`/${id}/decision`, {request_id:pending.id, version:pending.version, choice:'inspect'}), error => error instanceof ActionError && error.status === 404);
     const results = await Promise.allSettled([
       a.resolve({request_id:pending.id, version:pending.version, choice:'inspect'}),

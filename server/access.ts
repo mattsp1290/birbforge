@@ -11,6 +11,10 @@ const HttpsOrigin = z.string().url().refine(value => {
 export const ProxyConfig = z.object({
   port: z.number().int().min(1024).max(65535),
   origin: HttpsOrigin,
+  authentication: z.discriminatedUnion('kind', [
+    z.object({kind: z.literal('bearer')}).strict(),
+    z.object({kind: z.literal('private-single-owner'), principal: z.string().min(1)}).strict(),
+  ]).optional(),
 }).strict();
 export type ProxySettings = z.infer<typeof ProxyConfig>;
 export type ListenerPolicy = {kind: 'loopback'} | {kind: 'privateProxy'; settings: ProxySettings};

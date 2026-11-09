@@ -1,3 +1,4 @@
+import {authorizationHeaders, type ClientAccess} from './access';
 import {HttpAgent, type HttpAgentFetchFn} from '@ag-ui/client';
 import {z} from 'zod/v4';
 import {DeliveryCommand, DeliverySnapshot} from './delivery-contract';
@@ -10,7 +11,7 @@ export class DeliveryClient {
   private timer: ReturnType<typeof setTimeout> | null = null;
   private agent: HttpAgent | null = null;
   private readonly path: string;
-  constructor(private options: {url: string; token: string; conversationId: string; transport: HttpAgentFetchFn}) {
+  constructor(private options: {url: string; access: ClientAccess; conversationId: string; transport: HttpAgentFetchFn}) {
     this.path = `${options.url}/api/conversations/${options.conversationId}/delivery`;
   }
   getSnapshot = () => this.state;
@@ -31,7 +32,7 @@ export class DeliveryClient {
   connect() {this.disconnect(); void this.observe(this.generation);}
   private async observe(generation: number) {
     const agent = new HttpAgent({url: this.path + '/events', threadId: this.options.conversationId,
-      headers: {Authorization: `Bearer ${this.options.token}`}, fetch: this.options.transport});
+      headers: {...authorizationHeaders(this.options.access)}, fetch: this.options.transport});
     this.agent = agent;
     agent.subscribe({onEvent: ({event}) => {
       if (generation === this.generation && event.type === 'STATE_SNAPSHOT') this.accept(z.object({delivery: DeliverySnapshot}).parse(event.snapshot).delivery);
@@ -57,7 +58,7 @@ export class DeliveryClient {
     const timeout = setTimeout(() => abort.abort(), 30_000);
     try {
       const response = await this.options.transport(this.path + '/command', {method: 'POST',
-        headers: {Authorization: `Bearer ${this.options.token}`, 'Content-Type': 'application/json'},
+        headers: {...authorizationHeaders(this.options.access), 'Content-Type': 'application/json'},
         body: JSON.stringify(pending), signal: abort.signal});
       if (generation !== this.generation) return;
       if (response.ok) {this.accept(DeliverySnapshot.parse(await response.json())); this.patch({pending: null, notice: 'Action recorded.'});}
