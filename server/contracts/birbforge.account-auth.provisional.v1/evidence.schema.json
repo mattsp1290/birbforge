@@ -1,0 +1,182 @@
+{
+  "$defs": {
+    "KubernetesBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "target_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "cluster_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Cluster Uid",
+          "type": "string"
+        },
+        "namespace": {
+          "pattern": "^[a-z0-9]([a-z0-9.-]{0,251}[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "namespace_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Namespace Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "cluster_uid",
+        "namespace",
+        "namespace_uid"
+      ],
+      "title": "KubernetesBinding",
+      "type": "object"
+    },
+    "VerificationBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Sha256",
+          "type": "string"
+        },
+        "workflow_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Workflow Id",
+          "type": "string"
+        },
+        "candidate_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Candidate Revision",
+          "type": "string"
+        },
+        "authored_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Authored Revision",
+          "type": "string"
+        },
+        "beans_issue": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Beans Issue",
+          "type": "string"
+        },
+        "producer_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Producer Revision",
+          "type": "string"
+        },
+        "policy_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Policy Revision",
+          "type": "string"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "installation_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Installation Sha256",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/KubernetesBinding"
+        },
+        "image": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9./:_-]*@sha256:[0-9a-f]{64}$",
+          "title": "Image",
+          "type": "string"
+        },
+        "pod_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Pod Uid",
+          "type": "string"
+        },
+        "dispatched_at": {
+          "format": "date-time",
+          "title": "Dispatched At",
+          "type": "string"
+        },
+        "deadline": {
+          "format": "date-time",
+          "title": "Deadline",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "request_sha256",
+        "workflow_id",
+        "candidate_revision",
+        "authored_revision",
+        "beans_issue",
+        "producer_revision",
+        "policy_revision",
+        "plan_sha256",
+        "installation_sha256",
+        "target",
+        "image",
+        "pod_uid",
+        "dispatched_at",
+        "deadline"
+      ],
+      "title": "VerificationBinding",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "birbforge.promotion-evidence.v1",
+      "default": "birbforge.promotion-evidence.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "binding": {
+      "$ref": "#/$defs/VerificationBinding"
+    },
+    "result_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Sha256",
+      "type": "string"
+    },
+    "closure_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Closure Sha256",
+      "type": "string"
+    },
+    "issued_at": {
+      "format": "date-time",
+      "title": "Issued At",
+      "type": "string"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "evidence_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "binding",
+    "result_sha256",
+    "closure_sha256",
+    "issued_at",
+    "expires_at",
+    "evidence_id"
+  ],
+  "title": "PromotionEvidence",
+  "type": "object",
+  "$comment": "Provisional consumer-only bare-Pod contract. Not production authorization or producer integration evidence."
+}

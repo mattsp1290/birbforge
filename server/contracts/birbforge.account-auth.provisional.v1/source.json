@@ -1,0 +1,10 @@
+{
+  "status": "provisional-consumer-only",
+  "issue": "birbforge-vsrd",
+  "producer_dependency": "birbverify-bsmn",
+  "implementation": "verification/kubernetes_results.py",
+  "production_eligibility": false,
+  "profile": "existing-bare-pod-subject-only",
+  "producer_capability": "not-implemented-by-current-pin",
+  "authentication": "not-provided-by-schema-or-digests"
+}

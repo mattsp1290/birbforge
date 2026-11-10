@@ -4,6 +4,8 @@ Birbforge admits an approved request into one Temporal FIFO for a physical Kuber
 
 This is a bounded local account/auth target integration. The CLI trusts the operator who supplies the installed configuration. It does not authenticate arbitrary remote callers. A closed request means the target lifecycle ended. It does not mean application verification passed or authorize delivery. Every projected result remains delivery-ineligible.
 
+[Account/auth result contract groundwork](account-auth-results.md) defines provisional consumer validation. It is not connected to this queue and does not enable promotion.
+
 ## Authority and ownership
 
 `KubernetesAuthority` binds the physical cluster and namespace UIDs, target identity, approved Pod-template digest, producer revision, policy revision, candidate revision, image digest, and Beans issue revision. `installation_sha256` is the canonical digest of the producer's complete `KubernetesInstallation`. Admission can reference these values but cannot replace them. The Beans reference and hub commit are trusted operator inputs; this interface does not resolve or authenticate tracker records.

@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "verifier_identity": {
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+      "title": "Verifier Identity",
+      "type": "string"
+    },
+    "verifier_revision": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Verifier Revision",
+      "type": "string"
+    },
+    "reviewer_identity": {
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+      "title": "Reviewer Identity",
+      "type": "string"
+    },
+    "suite_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Suite Sha256",
+      "type": "string"
+    },
+    "max_age_seconds": {
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Max Age Seconds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "verifier_identity",
+    "verifier_revision",
+    "reviewer_identity",
+    "suite_sha256",
+    "max_age_seconds"
+  ],
+  "title": "VerificationProfile",
+  "type": "object",
+  "$comment": "Provisional consumer-only bare-Pod contract. Not production authorization or producer integration evidence."
+}

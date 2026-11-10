@@ -1,0 +1,355 @@
+{
+  "$defs": {
+    "ApplicationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "birbverify.account-auth.result.v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "operation_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "binding": {
+          "$ref": "#/$defs/VerificationBinding"
+        },
+        "verifier_identity": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Verifier Identity",
+          "type": "string"
+        },
+        "verifier_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Verifier Revision",
+          "type": "string"
+        },
+        "reviewer_identity": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Reviewer Identity",
+          "type": "string"
+        },
+        "suite_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Suite Sha256",
+          "type": "string"
+        },
+        "running_image": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9./:_-]*@sha256:[0-9a-f]{64}$",
+          "title": "Running Image",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "completed_at": {
+          "format": "date-time",
+          "title": "Completed At",
+          "type": "string"
+        },
+        "assertions": {
+          "items": {
+            "$ref": "#/$defs/AssertionOutcome"
+          },
+          "maxItems": 5,
+          "minItems": 5,
+          "title": "Assertions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "operation_id",
+        "binding",
+        "verifier_identity",
+        "verifier_revision",
+        "reviewer_identity",
+        "suite_sha256",
+        "running_image",
+        "started_at",
+        "completed_at",
+        "assertions"
+      ],
+      "title": "ApplicationResult",
+      "type": "object"
+    },
+    "AssertionOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "enum": [
+            "account_create",
+            "login_success",
+            "authenticated_identity",
+            "invalid_credentials_rejected",
+            "unauthenticated_access_rejected"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "unknown"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertion",
+        "outcome"
+      ],
+      "title": "AssertionOutcome",
+      "type": "object"
+    },
+    "KubernetesBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "target_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "cluster_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Cluster Uid",
+          "type": "string"
+        },
+        "namespace": {
+          "pattern": "^[a-z0-9]([a-z0-9.-]{0,251}[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "namespace_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Namespace Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "cluster_uid",
+        "namespace",
+        "namespace_uid"
+      ],
+      "title": "KubernetesBinding",
+      "type": "object"
+    },
+    "Pending": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "pending",
+          "default": "pending",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "Pending",
+      "type": "object"
+    },
+    "Recorded": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "recorded",
+          "default": "recorded",
+          "title": "Status",
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/ApplicationResult"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result",
+        "received_at"
+      ],
+      "title": "Recorded",
+      "type": "object"
+    },
+    "Unavailable": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "unavailable",
+          "default": "unavailable",
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "transport_unknown",
+            "invalid_result",
+            "cancelled"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "Unavailable",
+      "type": "object"
+    },
+    "VerificationBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Sha256",
+          "type": "string"
+        },
+        "workflow_id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Workflow Id",
+          "type": "string"
+        },
+        "candidate_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Candidate Revision",
+          "type": "string"
+        },
+        "authored_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Authored Revision",
+          "type": "string"
+        },
+        "beans_issue": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Beans Issue",
+          "type": "string"
+        },
+        "producer_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Producer Revision",
+          "type": "string"
+        },
+        "policy_revision": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Policy Revision",
+          "type": "string"
+        },
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "installation_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Installation Sha256",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/KubernetesBinding"
+        },
+        "image": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9./:_-]*@sha256:[0-9a-f]{64}$",
+          "title": "Image",
+          "type": "string"
+        },
+        "pod_uid": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$",
+          "title": "Pod Uid",
+          "type": "string"
+        },
+        "dispatched_at": {
+          "format": "date-time",
+          "title": "Dispatched At",
+          "type": "string"
+        },
+        "deadline": {
+          "format": "date-time",
+          "title": "Deadline",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "request_sha256",
+        "workflow_id",
+        "candidate_revision",
+        "authored_revision",
+        "beans_issue",
+        "producer_revision",
+        "policy_revision",
+        "plan_sha256",
+        "installation_sha256",
+        "target",
+        "image",
+        "pod_uid",
+        "dispatched_at",
+        "deadline"
+      ],
+      "title": "VerificationBinding",
+      "type": "object"
+    },
+    "Verifying": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "verifying",
+          "default": "verifying",
+          "title": "Status",
+          "type": "string"
+        },
+        "operation_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Operation Id",
+          "type": "string"
+        },
+        "binding": {
+          "$ref": "#/$defs/VerificationBinding"
+        }
+      },
+      "required": [
+        "operation_id",
+        "binding"
+      ],
+      "title": "Verifying",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "pending": "#/$defs/Pending",
+      "recorded": "#/$defs/Recorded",
+      "unavailable": "#/$defs/Unavailable",
+      "verifying": "#/$defs/Verifying"
+    },
+    "propertyName": "status"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Pending"
+    },
+    {
+      "$ref": "#/$defs/Verifying"
+    },
+    {
+      "$ref": "#/$defs/Recorded"
+    },
+    {
+      "$ref": "#/$defs/Unavailable"
+    }
+  ],
+  "title": "ApplicationState",
+  "$comment": "Provisional consumer-only bare-Pod contract. Not production authorization or producer integration evidence."
+}
