@@ -1,6 +1,20 @@
-# Historical Kubernetes queue acceptance
+# Reviewed Kubernetes queue acceptance
 
-These receipts are historical evidence for an earlier implementation of `birbforge-yrnb` against producer `birbverify-r5rh`. They do not establish acceptance of the current review fixes. A fresh proof from clean, unchanged consumer and producer revisions is pending. Temporal is the only scheduler. Beans remains the authored-work owner. No shared staging deployment or delivery authorization occurred.
+The final review fixes passed all three real Kubernetes journeys on clean, unchanged consumer revision `2d532285b7f35636009cac8a44165df655541bcb` and producer revision `bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd`. Every closure receipt names that same consumer revision. [Reviewed receipts](reviewed-receipts.json) contain the projected closures, exact source and image identities, source-integrity result, and artifact hashes.
+
+The restart, worker-loss and cancellation journeys passed in 278.96 seconds. Each exercised account authentication, admission denial, queued cancellation, coordinator restart and successor dispatch after release. The owned cluster was deleted and the private kubeconfig removed. Full private histories and logs remain in `.local/review-gauntlet/final-live`.
+
+Two independent standard reviews produced 21 fixed findings and one deferred item. The thermonuclear pass produced 15 fixed findings and two deferred items; the final follow-up verdict was **APPROVE**, with no blockers. Its upstream rubric is pinned to Cursor plugins revision `de8ee15dd1194627d21eb5fcd41cb1873208dabb`. Standard and thermonuclear checkpoints were separately committed and pushed at `a30fe901198f511fab9f35d31da81df622d6997e` and `2d532285b7f35636009cac8a44165df655541bcb`.
+
+Validation passed 90 Python tests, 51 portable JavaScript tests, TypeScript checking, Ruff, documentation checks and the packaged worker smoke check as UID 10001 without network access. Four opt-in Beans tests were skipped. Full `npm test` did not pass in this environment: three unchanged tests require a running conversation fixture and one requires a Linux Python export. Those tests are excluded from the portable subset.
+
+The image digest is `birbforge-yrnb@sha256:e6e7896c4ac2278ab086a12f0e066045418a0b5d18fa1d7fab419aecc28202e2`; its revision label matches the tested consumer. This is a local build, not a published image or deployment. Fresh installations are required for the revised experimental workflow state. The limits described below still apply.
+
+---
+
+## Historical Kubernetes queue acceptance
+
+These receipts are historical evidence for an earlier implementation of `birbforge-yrnb` against producer `birbverify-r5rh`. They do not establish acceptance of the current review fixes. The reviewed acceptance above supersedes them. Temporal is the only scheduler. Beans remains the authored-work owner. No shared staging deployment or delivery authorization occurred.
 
 ## Exact sources
 
