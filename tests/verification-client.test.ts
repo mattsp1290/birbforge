@@ -33,7 +33,7 @@ function events(value: VerificationSnapshot) {
   ];
   return new Response(frames.map(event => `data: ${JSON.stringify(event)}\n\n`).join(''), {headers: {'Content-Type': 'text/event-stream'}});
 }
-function client(transport: HttpAgentFetchFn) {return new VerificationClient({url: 'http://fixture', token: 'private-owner', conversationId, transport});}
+function client(transport: HttpAgentFetchFn) {return new VerificationClient({url: 'http://fixture', access: {kind: 'bearer', token: 'private-owner'}, conversationId, transport});}
 function deferred<T>() {
   let resolve: (value: T) => void = () => {throw new Error('Not initialized');};
   const promise = new Promise<T>(done => {resolve = done;});

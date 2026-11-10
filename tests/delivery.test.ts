@@ -1,0 +1,89 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {DeliveryCommand, DeliverySnapshot} from '../app/src/delivery-contract';
+import {GatewayConfig} from '../server/gateway';
+import {DeliveryClient} from '../app/src/delivery';
+
+const conversation = randomUUID();
+const snapshot = {revision: 0, offer: {offer_id: 'pilot', title: 'Write docs', goal_text: 'Write docs', repository_id: 'owner/repo',
+  base_commit: 'a'.repeat(40), policy_revision: 'b'.repeat(64), allowed_paths: ['docs/operator.md'], acceptance_id: 'docs-check',
+  goal_ref: {project: 'forge', record_id: 'one', revision: '1', content_sha256: 'c'.repeat(64)}}, offer_sha256: 'd'.repeat(64),
+  conversation_id: null, delivery_id: null, cancellation: 'none', command_ids: [], stage: {kind: 'awaiting_approval'}};
+
+test('delivery parses typed shared snapshots and rejects forged authority', () => {
+  assert.equal(DeliverySnapshot.parse(snapshot).stage.kind, 'awaiting_approval');
+  assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {kind: 'draft_ready'}}));
+  assert.throws(() => DeliveryCommand.parse({command_id: randomUUID(), expected_revision: 0, offer_sha256: 'd'.repeat(64), action: 'approve', principal: 'owner'}));
+  assert.throws(() => GatewayConfig.parse({url: 'http://127.0.0.1:8000', tokens: {}, mode: 'approved-goal'}));
+  assert.throws(() => GatewayConfig.parse({url: 'http://127.0.0.1:8000', tokens: {}, mode: 'approved-goal',
+    delivery: {python: '/python', configuration: '/config'}, verification: {python: '/python', configuration: '/config'}}));
+});
+
+test('AG-UI delivery observation never executes an action and disconnect does not cancel', async () => {
+  const paths: string[] = [];
+  let ready: () => void = () => {};
+  const observed = new Promise<void>(resolve => {ready = resolve;});
+  const client = new DeliveryClient({url: 'http://127.0.0.1', access: {kind: 'bearer', token: 'private'}, conversationId: conversation,
+    transport: async (url, init) => {
+      paths.push(String(url));
+      assert.equal(init?.method, 'POST');
+      return new Response([
+        {type: 'RUN_STARTED', threadId: conversation, runId: 'test'},
+        {type: 'STATE_SNAPSHOT', snapshot: {delivery: snapshot}},
+        {type: 'RUN_FINISHED', threadId: conversation, runId: 'test'},
+      ].map(event => `data: ${JSON.stringify(event)}\n\n`).join(''), {headers: {'Content-Type': 'text/event-stream'}});
+    }});
+  client.subscribe(() => {if (client.getSnapshot().snapshot) ready();});
+  client.connect();
+  await observed;
+  client.disconnect();
+  assert.equal(client.getSnapshot().snapshot?.stage.kind, 'awaiting_approval');
+  assert.ok(paths.length > 0 && paths.every(path => path.endsWith('/delivery/events')));
+});
+
+test('running gateway rejects forged delivery authority and proof commands before dispatch', async () => {
+  const {gateway} = await import('../server/gateway');
+  const token = 'x'.repeat(40);
+  const server = gateway(GatewayConfig.parse({url: 'http://127.0.0.1:1', tokens: {owner: token}, mode: 'approved-goal',
+    delivery: {python: '/nonexistent-python-must-not-run', configuration: '/unused'}}));
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+  const base = `http://127.0.0.1:${address.port}`;
+  try {
+    const post = (path: string, body: unknown, credential = token) => fetch(base + path, {method: 'POST',
+      headers: {Authorization: `Bearer ${credential}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    const path = `/api/conversations/${conversation}/delivery/command`;
+    const command = {command_id: randomUUID(), expected_revision: 0, offer_sha256: 'd'.repeat(64), action: 'approve'};
+    assert.equal((await post(path, command, 'invalid')).status, 401);
+    assert.equal((await post(path, {...command, principal: 'owner'})).status, 400);
+    assert.equal((await post(`/api/conversations/${conversation}/inputs`, {request_id: randomUUID(), text: 'unsupported'})).status, 409);
+    assert.equal((await fetch(base + '/healthz')).status, 200);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>(resolve => server.close(() => resolve()));
+  }
+});
+
+test('shared clients retain the rejected receipt throughout classification checks', () => {
+  const candidate = {repository_id: 'owner/repo', base_commit: 'a'.repeat(40), head_commit: 'b'.repeat(40),
+    branch: 'birbforge/pilot/example', changed_paths: ['docs/operator.md'], acceptance: {
+      acceptance_id: 'docs-check', outcome: 'passed', evidence_digest: 'e'.repeat(64), evidence_ref: 'private/ref',
+    }};
+  const review = {candidate_commit: candidate.head_commit, reviewer: 'claude-cli', disposition: 'changes_requested',
+    findings_digest: 'f'.repeat(64), evidence_ref: 'execution/example/review', summary: 'Original review outcome.'};
+  for (const classification_check of [undefined, 'checking', 'not_eligible', 'evidence_unconfirmed']) {
+    const parsed = DeliverySnapshot.parse({...snapshot, stage: {kind: 'changes_requested', candidate, review,
+      ...(classification_check ? {classification_check} : {})}});
+    assert.equal(parsed.stage.kind, 'changes_requested');
+    if (parsed.stage.kind === 'changes_requested') {
+      assert.equal(parsed.stage.review.disposition, 'changes_requested');
+      assert.equal(parsed.stage.review.summary, review.summary);
+      assert.equal(parsed.stage.classification_check, classification_check);
+    }
+  }
+  assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {
+    kind: 'changes_requested', candidate, review, classification_check: 'approved',
+  }}));
+});

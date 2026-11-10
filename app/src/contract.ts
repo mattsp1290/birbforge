@@ -15,7 +15,16 @@ export const HumanRequest = z.object({
   id: z.string(), version: z.number().int(), expected_responder: z.string(),
   tool_call_id: z.string(), resolution: Choice.nullable(),
 });
+export const ProjectContext = z.object({
+  schema_version: z.literal('birbcrew.project-context.v1'), project_id: z.string(), project_revision: z.string(), project_name: z.string(),
+  repositories: z.array(z.object({repository_id: z.string(), full_name: z.string(), url: z.string(), commit: z.string()})),
+  unavailable_sources: z.array(z.object({repository_id: z.string(), path: z.string(), reason: z.string()})).default([]),
+  unavailable_notes: z.array(z.object({key: z.string(), reason: z.string()})).default([]),
+  sources: z.array(z.object({repository_id: z.string(), commit: z.string(), path: z.string(), sha256: z.string(), text: z.string()})),
+});
 export const Snapshot = z.object({
+  mode: z.enum(['proof', 'approved-goal', 'project']).default('proof'),
+  kind: z.enum(['proof', 'project']).optional(), project_context: ProjectContext.nullable().optional(), context_sha256: z.string().nullable().optional(),
   id: z.string().uuid(), revision: z.number().int().nonnegative(),
   phase: z.enum(['idle', 'running', 'waiting', 'cancelled', 'failed']),
   cursor: z.number().int().nonnegative(),

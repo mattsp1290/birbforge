@@ -1,7 +1,12 @@
 import React, {useEffect, useState, useSyncExternalStore} from 'react';
 import {AccessibilityInfo, AppState, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
+import {discoverAccess, endpointOrigin, recentConversations, type AccessCapability, type ClientAccess} from './src/access';
 import {ConversationClient} from './src/controller';
+import {DeliveryPanel} from './src/DeliveryPanel';
+import {ProjectHome} from './src/ProjectHome';
+import {ProjectClient} from './src/projects';
+import {pendingChatStore} from './src/chat-pending';
 import {transport} from './src/transport';
 import type {Choice} from './src/contract';
 import type {VerificationClient} from './src/verification';
@@ -113,6 +118,7 @@ function VerificationPanel({client, large}: {client: VerificationClient; large: 
 }
 function Workspace({client, leave}: {client: ConversationClient; leave: () => void}) {
   const state = useSyncExternalStore(client.subscribe, client.getSnapshot);
+  const delivery = useSyncExternalStore(client.delivery.subscribe, client.delivery.getSnapshot);
   const [surface, setSurface] = useState<'conversation' | 'inbox'>('conversation');
   const [goal, setGoal] = useState('');
   const [busy, setBusy] = useState(false);
@@ -146,34 +152,57 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
     if (Platform.OS === 'ios' && state.notice) AccessibilityInfo.announceForAccessibility(state.notice);
   }, [state.notice]);
   const snapshot = state.conversation;
+  const pilot = snapshot?.mode === 'approved-goal';
+  const projectChat = snapshot?.kind === 'project';
+  const [projectStatus, setProjectStatus] = useState('');
+  useEffect(() => {
+    let active = true;
+    const context = snapshot?.project_context;
+    const check = () => {
+      if (context) void new ProjectClient(client.url, client.access).get(context.project_id).then(current => {
+        if (active) setProjectStatus(current.archived ? 'This project was removed from active use. History is preserved.' : current.revision !== context.project_revision ? 'This project has changed. This chat keeps its historical context. Start a new project chat to use current membership.' : 'This chat uses the current project revision.');
+      }).catch(() => {if (active) setProjectStatus('Current project status unavailable. Historical context is preserved.');});
+    };
+    check();
+    const timer = context ? setInterval(check, 15_000) : null;
+    return () => {active = false; if (timer) clearInterval(timer);};
+  }, [client, snapshot?.project_context?.project_revision]);
   const request = snapshot?.human;
   const terminal = snapshot?.phase === 'cancelled' || snapshot?.phase === 'failed';
   const decide = (choice: Choice) => {
     if (request) void act(() => client.resolve({request_id: request.id, version: request.version, choice}));
   };
   return <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
-    <Text style={styles.eyebrow}>BIRBFORGE / LOCAL PROOF</Text>
-    <Text accessibilityRole="header" style={styles.title}>One goal. Wherever you are.</Text>
-    <Text style={styles.muted}>A synthetic coding decision. No merge or production authority.</Text>
+    <Text style={styles.eyebrow}>{projectChat ? 'BIRBFORGE / PROJECT CHAT' : pilot ? 'BIRBFORGE / PRIVATE PILOT' : 'BIRBFORGE / LOCAL PROOF'}</Text>
+    <Text accessibilityRole="header" style={styles.title}>{projectChat ? snapshot.project_context?.project_name : 'One goal. Wherever you are.'}</Text>
+    <Text style={styles.muted}>{projectChat ? 'Discuss your project using versioned repository sources and scoped notes.' : pilot ? 'Approve one goal. Follow its reviewed draft PR across devices.' : 'A synthetic coding decision. No merge or production authority.'}</Text>
     <View style={styles.card}>
       <Text style={styles.label}>Conversation identity</Text>
       <Text testID="conversation-id" selectable style={styles.identity}>{client.id}</Text>
-      <Text style={styles.muted}>Open this identity on your other device with the same owner credential.</Text>
+      <Text style={styles.muted}>{client.access.kind === 'private-single-owner' ? 'Open this identity on your other device through your private network.' : 'Open this identity on your other device with the same owner credential.'}</Text>
       <Text testID="connection" style={styles.status}>{state.connection} · {snapshot?.phase ?? 'loading'} · revision {snapshot?.revision ?? 0}</Text>
       <View style={styles.row}>
         <Button label="Reconnect" onPress={() => void client.connect()} />
         <Button label="Disconnect" onPress={() => client.disconnect()} />
         <Button label={large ? 'Standard text' : 'Large text'} selected={large} onPress={() => setLarge(!large)} />
-        <Button label="Sign out" onPress={() => {client.disconnect(); leave();}} />
+        <Button label={projectChat ? 'Back to project' : client.access.kind === 'private-single-owner' ? 'Back to conversations' : 'Sign out'} onPress={() => {client.disconnect(); leave();}} />
       </View>
     </View>
-    <View style={styles.row}>
+    {projectChat && <View style={styles.card}>
+      <Text style={styles.notice}>{projectStatus}</Text>
+      <Text selectable style={styles.identity}>Project {snapshot.project_context?.project_id} · revision {snapshot.project_context?.project_revision}</Text>
+      {snapshot.project_context?.repositories.map(repo => <Text key={repo.repository_id} selectable style={styles.muted}>{repo.full_name} · {repo.commit}</Text>)}
+      {snapshot.project_context?.sources.map(source => <Text key={`${source.repository_id}/${source.path}`} selectable style={styles.muted}>Source {source.repository_id}/{source.path} · {source.sha256.slice(0, 12)}</Text>)}
+      {snapshot.project_context?.unavailable_sources.map(source => <Text key={`gap/${source.repository_id}/${source.path}`} style={styles.muted}>Unavailable source {source.repository_id}/{source.path} · {source.reason.replaceAll('_', ' ')}</Text>)}
+      <Text style={styles.muted}>Only the displayed frozen files and notes are available in this chat. Create a new chat to adopt changed membership. Implementation requires a separately prepared scope and explicit approval.</Text>
+    </View>}
+    {!projectChat && <View style={styles.row}>
       <Button label="Conversation" selected={surface === 'conversation'} onPress={() => setSurface('conversation')} />
-      <Button label={`Inbox (${request ? 1 : 0})`} selected={surface === 'inbox'} onPress={() => setSurface('inbox')} />
-    </View>
-    <Text accessibilityRole="header" style={styles.heading}>{surface === 'conversation' ? 'Goal conversation' : 'Your decision inbox'}</Text>
-    {surface === 'conversation' && <>
-      {snapshot?.inputs.map(input => <View key={input.request_id} style={styles.card}>
+      <Button label={`Inbox (${pilot ? delivery.snapshot?.stage.kind === 'awaiting_approval' ? 1 : 0 : request ? 1 : 0})`} selected={surface === 'inbox'} onPress={() => setSurface('inbox')} />
+    </View>}
+    <Text accessibilityRole="header" style={styles.heading}>{projectChat ? 'Project conversation' : surface === 'conversation' ? 'Goal conversation' : 'Your decision inbox'}</Text>
+    {!pilot && surface === 'conversation' && <>
+      {!projectChat && snapshot?.inputs.map(input => <View key={input.request_id} style={styles.card}>
         <Text style={styles.label}>YOUR GOAL · {input.outcome}</Text>
         <Text style={styles.muted}>Goal accepted by the coworker.</Text>
       </View>)}
@@ -182,9 +211,9 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
         <Text selectable style={[styles.body, large && styles.large]}>{message.role === 'tool' ? 'Fixture step completed.' : 'content' in message && typeof message.content === 'string' ? message.content : 'Coworker activity'}</Text>
         {'toolCalls' in message && message.toolCalls?.map(tool => <Text key={tool.id} style={styles.muted}>{tool.function.name === 'choose_next_step' ? 'Waiting for your next step' : 'Recording a synthetic work item'}</Text>)}
       </View>)}
-      {!snapshot?.inputs.length && <Text style={styles.muted}>Begin a goal below. The coworker will ask for one next step.</Text>}
+      {!snapshot?.inputs.length && <Text style={styles.muted}>{projectChat ? 'Ask a project question below.' : 'Begin a goal below. The coworker will ask for one next step.'}</Text>}
     </>}
-    {request ? <View testID="decision-card" style={styles.decision}>
+    {!pilot && !projectChat && (request ? <View testID="decision-card" style={styles.decision}>
       <Text style={styles.eyebrow}>YOUR INPUT IS NEEDED</Text>
       <Text accessibilityRole="header" style={[styles.heading, large && styles.large]}>What should the coworker do next?</Text>
       <Text style={[styles.body, large && styles.large]}>Choose a synthetic next step for this coding fixture.</Text>
@@ -193,66 +222,115 @@ function Workspace({client, leave}: {client: ConversationClient; leave: () => vo
         <Button label="Inspect fixture" disabled={busy || terminal} onPress={() => decide('inspect')} />
         <Button label="Test fixture" disabled={busy || terminal} onPress={() => decide('test')} />
       </View>
-    </View> : <View style={styles.card}><Text style={styles.body}>{snapshot?.decisions.length ? `Decision recorded · ${snapshot.decisions.at(-1)?.resolution}` : 'No pending input.'}</Text></View>}
-    <VerificationPanel client={client.verification} large={large} />
+    </View> : <View style={styles.card}><Text style={styles.body}>{snapshot?.decisions.length ? `Decision recorded · ${snapshot.decisions.at(-1)?.resolution}` : 'No pending input.'}</Text></View>)}
+    {pilot ? <DeliveryPanel client={client.delivery} conversationId={client.id} /> : projectChat ? null : <VerificationPanel client={client.verification} large={large} />}
     <Text accessibilityLiveRegion="polite" style={styles.notice}>{state.notice}</Text>
-    {surface === 'conversation' && <View style={styles.card}>
-      <Text style={styles.label}>A goal for your coworker</Text>
-      <TextInput accessibilityLabel="Goal" placeholder="Describe the synthetic coding task" placeholderTextColor="#99a6a3"
+    {!!snapshot?.failure && <Text accessibilityLiveRegion="polite" style={styles.notice}>{snapshot.failure.replaceAll('_', ' ')}</Text>}
+    {!pilot && surface === 'conversation' && <View style={styles.card}>
+      <Text style={styles.label}>{projectChat ? 'Message your project assistant' : 'A goal for your coworker'}</Text>
+      <TextInput accessibilityLabel={projectChat ? 'Project message' : 'Goal'} placeholder={projectChat ? 'Ask about the project or discuss a change' : 'Describe the synthetic coding task'} placeholderTextColor="#99a6a3"
         value={state.pendingPrompt?.text ?? goal} onChangeText={setGoal} multiline editable={!state.pendingPrompt && !busy && !terminal}
         style={[styles.input, styles.body, large && styles.large]} />
-      <Button label={state.pendingPrompt ? 'Retry same goal' : 'Send goal'} disabled={busy || terminal || !snapshot || (!state.pendingPrompt && (!goal.trim() || snapshot.inputs.length >= 4 || snapshot.phase !== 'idle'))}
+      <Button label={projectChat ? state.pendingPrompt ? 'Retry same message' : 'Send message' : state.pendingPrompt ? 'Retry same goal' : 'Send goal'} disabled={busy || terminal || !snapshot || (!state.pendingPrompt && (!goal.trim() || (!projectChat && snapshot.inputs.length >= 4) || snapshot.phase !== 'idle'))}
         onPress={() => void act(async () => {
           await client.submit(state.pendingPrompt ?? {request_id: randomUUID(), text: goal}); setGoal('');
         })} />
-      <Text style={styles.muted}>{snapshot?.inputs.length ?? 0} of 4 inputs used. Reconnect never sends a goal.</Text>
+      <Text style={styles.muted}>{projectChat ? `${snapshot?.inputs.length ?? 0} messages sent. Reconnect observes finalized history without resending.` : `${snapshot?.inputs.length ?? 0} of 4 inputs used. Reconnect never sends a goal.`}</Text>
     </View>}
-    <Text style={styles.muted}>Fixture context · {snapshot?.context.project ?? 'loading'} · {snapshot?.context.notes.map(note => note.key).join(', ')}</Text>
-    {!terminal && <Button label={confirmCancel ? 'Confirm cancel conversation' : 'Cancel conversation'} disabled={busy}
+    {!pilot && <Text style={styles.muted}>{projectChat ? 'Project notes' : 'Fixture context'} · {snapshot?.context.project ?? 'loading'} · {snapshot?.context.notes.map(note => note.key).join(', ')}</Text>}
+    {!pilot && !terminal && <Button label={confirmCancel ? 'Confirm cancel conversation' : 'Cancel conversation'} disabled={busy}
       onPress={() => confirmCancel ? void act(() => client.cancel()) : setConfirmCancel(true)} />}
   </ScrollView>;
 }
 export default function App() {
-  const [endpoint, setEndpoint] = useState(Platform.OS === 'web' ? globalThis.location?.origin ?? 'http://127.0.0.1:8787' : 'http://127.0.0.1:8787');
+  const [endpoint, setEndpoint] = useState(Platform.OS === 'web' ? globalThis.location?.origin ?? 'http://127.0.0.1:8787' : process.env.EXPO_PUBLIC_BIRBFORGE_ENDPOINT ?? 'http://127.0.0.1:8787');
   const [token, setToken] = useState('');
   const [id, setId] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [projectClient, setProjectClient] = useState<ProjectClient | null>(null);
   const [client, setClient] = useState<ConversationClient | null>(null);
+  const [conversations, setConversations] = useState<{id: string; revision: number}[]>([]);
   const [pendingCreateId, setPendingCreateId] = useState<string | null>(null);
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
-  async function open(create: boolean) {
+  const [discovery, setDiscovery] = useState<{endpoint: string; capability: AccessCapability} | null>(null);
+  const [discoveryAttempt, setDiscoveryAttempt] = useState(0);
+  const [discoveryNotice, setDiscoveryNotice] = useState('Checking private endpoint.');
+  useEffect(() => {
+    let current = true;
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 15000);
+    setDiscovery(null); setDiscoveryNotice('Checking private endpoint.');
+    void discoverAccess(endpoint, transport, abort.signal).then(async capability => {
+      if (!current) return;
+      setDiscovery({endpoint, capability}); setDiscoveryNotice('');
+      if (capability.kind === 'private-single-owner') {
+        try {
+          const recent = await recentConversations(endpoint, capability, transport, abort.signal);
+          if (current) setConversations(recent);
+        } catch {if (current) setNotice('Could not load recent conversations. Find my conversations will retry.');}
+      }
+    }).catch(() => {
+      if (current) setDiscoveryNotice('Could not check access. Check your endpoint and private network connection.');
+    }).finally(() => clearTimeout(timeout));
+    return () => {current = false; clearTimeout(timeout); abort.abort();};
+  }, [endpoint, discoveryAttempt]);
+  const capability = discovery && discovery.endpoint === endpoint ? discovery.capability : null;
+  const access: ClientAccess | null = capability?.kind === 'private-single-owner' ? capability
+    : capability?.kind === 'bearer' && token.trim() ? {kind: 'bearer', token: token.trim()} : null;
+  function changeEndpoint(value: string) {
+    setEndpoint(value); setDiscovery(null); setToken(''); setId(''); setConversations([]); setPendingCreateId(null); setNotice('');
+  }
+  async function listConversations() {
+    if (!access) return;
+    setBusy(true); setNotice('');
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 15000);
+    try {
+      setConversations(await recentConversations(endpoint, access, transport, abort.signal));
+    } catch {setNotice('Could not list conversations. Check your connection and access.');}
+    finally {clearTimeout(timeout); setBusy(false);}
+  }
+  async function open(create: boolean, selectedId?: string) {
+    if (!access) return;
     setBusy(true); setNotice('');
     let next: ConversationClient | null = null;
     try {
-      const base = new URL(endpoint);
-      if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('Invalid endpoint');
-      const conversationId = create ? pendingCreateId ?? randomUUID() : id.trim();
+      const origin = endpointOrigin(endpoint);
+      const conversationId = create ? pendingCreateId ?? randomUUID() : selectedId ?? id.trim();
       if (create) {setPendingCreateId(conversationId); setId(conversationId);}
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(conversationId)) throw new Error('Invalid identity');
-      next = new ConversationClient(base.origin, token.trim(), conversationId, transport);
+      next = new ConversationClient(origin, access, conversationId, transport, pendingChatStore(origin, conversationId));
       if (create) await next.create();
       else { await next.refresh(); await next.connect(); }
-      setClient(next); setToken(''); setPendingCreateId(null);
-    } catch { next?.disconnect(); setNotice('Could not open this conversation. Check the endpoint, credential, and identity.'); }
+      setClient(next); setToken(''); setPendingCreateId(null); setConversations([]);
+    } catch { next?.disconnect(); setNotice('Could not open this conversation. Check your connection and conversation access.'); }
     finally { setBusy(false); }
   }
-  return <View style={styles.root}>{client ? <Workspace client={client} leave={() => setClient(null)} /> :
+  return <View style={styles.root}>{client ? <Workspace client={client} leave={() => {setClient(null); setDiscoveryAttempt(value => value + 1);}} /> : projectClient ? <ProjectHome client={projectClient} initialProjectId={selectedProjectId} leave={() => {setProjectClient(null); setSelectedProjectId(null);}} openChat={async (conversationId, projectId) => {const next = new ConversationClient(endpointOrigin(endpoint), projectClient.access, conversationId, transport, pendingChatStore(endpoint, conversationId)); await next.refresh(); await next.connect(); setSelectedProjectId(projectId); setClient(next);}} /> :
     <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
       <Text style={styles.eyebrow}>BIRBFORGE</Text>
       <Text accessibilityRole="header" style={styles.title}>Pick up the conversation.</Text>
       <Text style={styles.body}>Your goal and pending decisions stay together across devices.</Text>
       <View style={styles.card}>
-        <Text style={styles.label}>Private development endpoint</Text>
-        <TextInput accessibilityLabel="Endpoint" autoCapitalize="none" autoCorrect={false} value={endpoint} onChangeText={setEndpoint} style={styles.input} />
-        <Text style={styles.label}>Owner test credential</Text>
-        <TextInput accessibilityLabel="Owner test credential" secureTextEntry autoCapitalize="none" autoCorrect={false} value={token} onChangeText={setToken} style={styles.input} />
-        <Button label={pendingCreateId ? "Retry new conversation" : "New conversation"} disabled={busy || !token.trim()} onPress={() => void open(true)} />
-        <Text style={styles.label}>Or continue a conversation identity</Text>
+        <Text style={styles.label}>Private endpoint</Text>
+        <TextInput accessibilityLabel="Endpoint" autoCapitalize="none" autoCorrect={false} value={endpoint} editable={!busy} onChangeText={changeEndpoint} style={styles.input} />
+        {!!discoveryNotice && <Text accessibilityLiveRegion="polite" style={styles.notice}>{discoveryNotice}</Text>}
+        {!capability && <Button label="Check endpoint" disabled={busy} onPress={() => setDiscoveryAttempt(value => value + 1)} />}
+        {capability?.kind === 'private-single-owner' && <Text style={styles.status}>Connected through your private network.</Text>}
+        {capability?.kind === 'bearer' && <><Text style={styles.label}>Owner credential</Text>
+        <TextInput accessibilityLabel="Owner test credential" secureTextEntry autoCapitalize="none" autoCorrect={false} value={token} onChangeText={setToken} style={styles.input} /></>}
+        <Button label="Projects" disabled={busy || !access} onPress={() => {if (access) setProjectClient(new ProjectClient(endpoint, access));}} />
+        <Button label={pendingCreateId ? "Retry new conversation" : "New conversation"} disabled={busy || !access} onPress={() => void open(true)} />
+        <Button label="Find my conversations" disabled={busy || !access} onPress={() => {void listConversations();}} />
+        {!!conversations.length && <Text style={styles.label}>Recent conversations</Text>}
+        {conversations.map(conversation => <Button key={conversation.id} label={`Open conversation ${conversation.id.slice(0, 8)}`} disabled={busy || !access} onPress={() => void open(false, conversation.id)} />)}
+        <Text style={styles.label}>Or enter another conversation identity</Text>
         <TextInput accessibilityLabel="Conversation identity" autoCapitalize="none" autoCorrect={false} value={id} onChangeText={setId} style={styles.input} />
-        <Button label="Continue conversation" disabled={busy || !token.trim() || !id.trim()} onPress={() => void open(false)} />
+        <Button label="Continue conversation" disabled={busy || !access || !id.trim()} onPress={() => void open(false)} />
       </View>
       <Text style={styles.notice}>{notice}</Text>
-      <Text style={styles.muted}>Disposable local proof. Credentials remain in memory until sign-out. Use only existing authorized private access.</Text>
+      <Text style={styles.muted}>{capability?.kind === 'private-single-owner' ? 'Access follows your private network connection. Returning here does not sign out of that network.' : 'Credentials remain in memory until sign-out. Use your authorized private endpoint.'}</Text>
     </ScrollView>}</View>;
 }
 const styles = StyleSheet.create({
