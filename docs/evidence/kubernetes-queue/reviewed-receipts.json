@@ -1,0 +1,1169 @@
+{
+  "artifact_sha256": {
+    "cluster_cleanup": "107bfbea25e7351314d1fe8a2e818108f756289f2d812c104ba5e8df013f48fe",
+    "live_junit": "e9fde7d3687a0e859699238396d14f3680f87bfb9d5d336decc6c557a4ef14ec",
+    "python_junit": "cfe6259b2c864fe93af5187a1d5a5d7b7f7fea48ab0a1fe25463ce12c9b4488b",
+    "source_integrity": "f91797d405c697713d1ceee931d2fb21c8a57da34c963e096df13cb91214f523"
+  },
+  "base_revision": "5b2ac99ebb636d9deb743bed9ff95052fe33b852",
+  "consumer_image": "birbforge-yrnb@sha256:e6e7896c4ac2278ab086a12f0e066045418a0b5d18fa1d7fab419aecc28202e2",
+  "implementation_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+  "journeys": [
+    {
+      "account_auth": {
+        "account_auth": "passed",
+        "pod_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c"
+      },
+      "admission_denial_observed": true,
+      "history_run_count": 6,
+      "history_sha256": "b5ad705ccf73b24124de6aa2c11328201ce061a55a59e26e1f8995e19160cbd3",
+      "projection": {
+        "ok": true,
+        "value": {
+          "requests": [
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "none",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "6e06cf429fc530c7042fdadeed96b10d65581af586f19500469935f9be2d293a",
+                    "expected_resource_version": "502",
+                    "object_uid": "cab8ff1d-746b-43fb-8a43-bcdc84e7bc0b",
+                    "resource_version": "519"
+                  },
+                  "create-pod": {
+                    "body_sha256": "138ce0b40391e4715149efdbf1318fd736f0eda9b3d5371259eaceff8b911154",
+                    "expected_resource_version": null,
+                    "object_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c",
+                    "resource_version": "520"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "b0e89d4d843877aa197f6257c8a2d3eee234808b7eb4e7fe1eba998432342a7d",
+                    "expected_resource_version": null,
+                    "object_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c",
+                    "resource_version": "533"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "e9cbb269def7e328b5ca9715afa91bc2d54a79cd8d313af213dcc05870f4bdf4",
+                    "expected_resource_version": null,
+                    "object_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c",
+                    "resource_version": "590"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "64080b3a10e32e096812358877085cf17538bfd1957337541138de2f26d7cda3",
+                    "expected_resource_version": "576",
+                    "object_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c",
+                    "resource_version": "587"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "27f592526a3bfd2e6da1f5e2eb09cc3f3958cf86342963b1bac8da51ff5473c3",
+                    "expected_resource_version": "519",
+                    "object_uid": "cab8ff1d-746b-43fb-8a43-bcdc84e7bc0b",
+                    "resource_version": "593"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "a70526a5ddcb8a1559cbe100408544bd9d8a1f105f506e64a4cf307db5b2db84",
+                "operations_sha256": "bc97fb70a6740580f73fd416a50e5699c6e9190a0d231521e404713f0296b1e6",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "267b5fbc-c363-4ebc-bf80-ccb4224a416c",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "completed",
+                "receipt_sha256": "36ca5fdd80b859c3a98c3ba88fdaeba46657536df8b5c59d215545006a56ba85",
+                "request_id": "0ed8501e-bf2a-46e0-a328-7ba2b5d94f7f",
+                "request_sha256": "b386a0e35df040a1855daed61c7eafa1549a545daf4881ff63229a1b13388db5",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-2b18f388",
+                  "namespace_uid": "ed8aae74-9b1d-4b50-8d59-d616fd42bab9",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:01Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:12:24Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:01Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:01Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:12:24Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://cdc66d5cc33052c066ca9f3c1c0593601a4bd2c0d8aae0cf547e13190abfba2c",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://cdc66d5cc33052c066ca9f3c1c0593601a4bd2c0d8aae0cf547e13190abfba2c",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:13:01Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:12:27Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.5",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.5"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:12:24Z"
+                }
+              },
+              "closure_trigger": "complete",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "0ed8501e-bf2a-46e0-a328-7ba2b5d94f7f",
+              "request_sha256": "b386a0e35df040a1855daed61c7eafa1549a545daf4881ff63229a1b13388db5",
+              "requested_closure_reason": "completed",
+              "revision": 5
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "acknowledged",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": null,
+              "closure_trigger": null,
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "cancelled_before_dispatch",
+              "request_id": "ccce7e23-9887-46c1-b655-f6f41f397a35",
+              "request_sha256": "2787b63b738f5003fbd0cf3dcf95ed70820194d0baff2e083a26e1d970081ffd",
+              "requested_closure_reason": null,
+              "revision": 2
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "none",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "643b1de69adff4a3aa3241da69bc02f377d34ab278c4e084ea686aeca0d9be3f",
+                    "expected_resource_version": "593",
+                    "object_uid": "cab8ff1d-746b-43fb-8a43-bcdc84e7bc0b",
+                    "resource_version": "595"
+                  },
+                  "create-pod": {
+                    "body_sha256": "f96a27f2b3f2414e7509c2cce598436fae56e7de717f6cd76cb530368cb772a8",
+                    "expected_resource_version": null,
+                    "object_uid": "03e166f6-215b-4a8c-8684-16a9abed64f6",
+                    "resource_version": "597"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "a1757b03c2bd9e39a38a92decd0c9b062dbd1f510afacaf556e52bde957ab5d4",
+                    "expected_resource_version": null,
+                    "object_uid": "03e166f6-215b-4a8c-8684-16a9abed64f6",
+                    "resource_version": "605"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "72ee05bfb03cafe0e738c8ae9d17f21e6aa69447107abe610ab9566827ddf3d3",
+                    "expected_resource_version": null,
+                    "object_uid": "03e166f6-215b-4a8c-8684-16a9abed64f6",
+                    "resource_version": "660"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "da2c5a3baf537a814836e45624b4b85d499d965a9dbc3fca54254cf05338b968",
+                    "expected_resource_version": "649",
+                    "object_uid": "03e166f6-215b-4a8c-8684-16a9abed64f6",
+                    "resource_version": "658"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "658b88899a62bbde1ea0ac66a90a3bc37b1279b1dd075cec6a997d6511e66d99",
+                    "expected_resource_version": "595",
+                    "object_uid": "cab8ff1d-746b-43fb-8a43-bcdc84e7bc0b",
+                    "resource_version": "663"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "a70526a5ddcb8a1559cbe100408544bd9d8a1f105f506e64a4cf307db5b2db84",
+                "operations_sha256": "bcbf5def2959c8c5ba42083dceea9f9cbb151e30c323cc298fa68263f962793c",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "03e166f6-215b-4a8c-8684-16a9abed64f6",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "completed",
+                "receipt_sha256": "0061ef338e733da22809c556b2e11b3e3cb86486967b3f0fda5b0f156f95398d",
+                "request_id": "d029db33-361d-408f-9731-84eb9adddafc",
+                "request_sha256": "182e5b7ce883e4ad3321cf216ab34bcd014029083c5a7b423802322d139ae54c",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-2b18f388",
+                  "namespace_uid": "ed8aae74-9b1d-4b50-8d59-d616fd42bab9",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:46Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:11Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:46Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:46Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:11Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://07439ea16f113ee761a6319458a2caa259eaf50a6a5bf6790959dd106dcb45a6",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://07439ea16f113ee761a6319458a2caa259eaf50a6a5bf6790959dd106dcb45a6",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:13:46Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:13:12Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.6",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.6"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:13:11Z"
+                }
+              },
+              "closure_trigger": "complete",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "d029db33-361d-408f-9731-84eb9adddafc",
+              "request_sha256": "182e5b7ce883e4ad3321cf216ab34bcd014029083c5a7b423802322d139ae54c",
+              "requested_closure_reason": "completed",
+              "revision": 5
+            }
+          ],
+          "revision": 12,
+          "target_retained": false
+        }
+      },
+      "receipt_sha256": "0e67b21d25952cc4d63f0e1b823676b117cec3741746ddec6b38297ea56bc78c",
+      "scenario": "restart",
+      "scheduled_execute_activity_ids": [
+        "0ed8501e-bf2a-46e0-a328-7ba2b5d94f7f",
+        "d029db33-361d-408f-9731-84eb9adddafc"
+      ],
+      "workflow_id": "birbforge-kubernetes-7c5e354eb5be66a563b3525bb405a318a44b0b4e0cb0fd85ef5dd2edbfdf1c72"
+    },
+    {
+      "account_auth": {
+        "account_auth": "passed",
+        "pod_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9"
+      },
+      "admission_denial_observed": true,
+      "history_run_count": 5,
+      "history_sha256": "3eac9146e210d0e64288aa10533b8b84ffcb18af69077a21e4a527daa35fa8a7",
+      "projection": {
+        "ok": true,
+        "value": {
+          "requests": [
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "none",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "45c70aee8099cae32c4def7ef7caf6cc8426c228762ab4a0e34efc1d5f562bd7",
+                    "expected_resource_version": "673",
+                    "object_uid": "5f5e1a3d-5f01-4c2f-a5d0-845d1a1e03d0",
+                    "resource_version": "688"
+                  },
+                  "create-pod": {
+                    "body_sha256": "d4b0705a4394a618aedf816ff3bdd2d7ff240e0df1cb22a58c0cb905cfc25e69",
+                    "expected_resource_version": null,
+                    "object_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9",
+                    "resource_version": "690"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "4430914606b0785727fbd5ef0a05fca21106a0d95e9885193690fd967c9bb7b4",
+                    "expected_resource_version": null,
+                    "object_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9",
+                    "resource_version": "707"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "cc44fdb2d914313e54d73d68ea8ab54617b6073e60a8ebfdcea4a0b42ee48450",
+                    "expected_resource_version": null,
+                    "object_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9",
+                    "resource_version": "763"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "9d6b7128368a53d562c74e955e07977a3e039d13a0bad5a391e47a7247092889",
+                    "expected_resource_version": "748",
+                    "object_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9",
+                    "resource_version": "761"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "9551477b310a8d4718b09822ba694a3011b1fe6b10a0fc77905f15070c5901be",
+                    "expected_resource_version": "688",
+                    "object_uid": "5f5e1a3d-5f01-4c2f-a5d0-845d1a1e03d0",
+                    "resource_version": "765"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "e4667c90c6374a363dbea3b9fe1ec9316933e8fb98b361883ce6b3917af19f49",
+                "operations_sha256": "d48e0cb4156f9d5e59d33b6525aa68187d8dcab3b6d56d6c83f6fe0c11a8893c",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "4ee3f50f-f7b8-4ded-9bb1-84a57d4c71d9",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "worker_lost",
+                "receipt_sha256": "caad0672e1b3958425e6d094524cabb0d547976036880541957561ce9f6502c7",
+                "request_id": "14e2a7d6-6b25-4709-b323-be432e177925",
+                "request_sha256": "370d23cb4ef4c71e7d57b5bd2ddc0187615c5b20b2e9e4148c18de071b285dbc",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-d32daf72",
+                  "namespace_uid": "08279209-1baa-4fe1-b5d1-5bcbc8f95752",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:14:36Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:57Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:14:36Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:14:36Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:13:57Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://22c2e2940445d80de36dd0b89c3460c2fa825e22788a94d0ae964a48bf219dc9",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://22c2e2940445d80de36dd0b89c3460c2fa825e22788a94d0ae964a48bf219dc9",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:14:36Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:13:57Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.7",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.7"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:13:57Z"
+                }
+              },
+              "closure_trigger": "execution_unknown",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "14e2a7d6-6b25-4709-b323-be432e177925",
+              "request_sha256": "370d23cb4ef4c71e7d57b5bd2ddc0187615c5b20b2e9e4148c18de071b285dbc",
+              "requested_closure_reason": "worker_lost",
+              "revision": 5
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "acknowledged",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": null,
+              "closure_trigger": null,
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "cancelled_before_dispatch",
+              "request_id": "30e460c2-f35f-4862-a2da-debd309944ff",
+              "request_sha256": "6d9d6a68d8e6b2253e2a4f800e38d8c730a0ded36687e058783526bd9ff871dd",
+              "requested_closure_reason": null,
+              "revision": 2
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "none",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "51866e3af7af698e1232e51139faf71b7343c695d46cd474f8024b6c592c1c96",
+                    "expected_resource_version": "765",
+                    "object_uid": "5f5e1a3d-5f01-4c2f-a5d0-845d1a1e03d0",
+                    "resource_version": "767"
+                  },
+                  "create-pod": {
+                    "body_sha256": "4a215694df34e1b7269df635ddcdab73c98bba680c315644300c208ba68253cc",
+                    "expected_resource_version": null,
+                    "object_uid": "49af2556-8059-4e92-b67e-835969f325f9",
+                    "resource_version": "768"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "c44a2dc80908eb100e5fc9d96c9e8c8946ad8c381255bdc302fbf313fcacdf70",
+                    "expected_resource_version": null,
+                    "object_uid": "49af2556-8059-4e92-b67e-835969f325f9",
+                    "resource_version": "774"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "08b5e1186e1ac8681a6c9d6cf979f2ab46ad3c1163b52ae93fde95098b9f88cc",
+                    "expected_resource_version": null,
+                    "object_uid": "49af2556-8059-4e92-b67e-835969f325f9",
+                    "resource_version": "830"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "03835cd0be4b5b10079c2ef9d54bcd6257f7ce1eb7f9964ab59ede863737e122",
+                    "expected_resource_version": "818",
+                    "object_uid": "49af2556-8059-4e92-b67e-835969f325f9",
+                    "resource_version": "827"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "2196037746834fbe1eb0d26a39d0653728c68beced9caa37f3f8eabd1bf5e115",
+                    "expected_resource_version": "767",
+                    "object_uid": "5f5e1a3d-5f01-4c2f-a5d0-845d1a1e03d0",
+                    "resource_version": "832"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "e4667c90c6374a363dbea3b9fe1ec9316933e8fb98b361883ce6b3917af19f49",
+                "operations_sha256": "c9794ca67db48b89ed4b68bf2278609e7ebc2fc1eff1c3cc49ac927aac6f40b9",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "49af2556-8059-4e92-b67e-835969f325f9",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "completed",
+                "receipt_sha256": "62acb5dbe4bfe4000dd86315df341629c65d4817213c143c4e520b02a7e553c8",
+                "request_id": "3c562fa4-c1aa-4f00-815f-abf5e44033ac",
+                "request_sha256": "20a34accd1a807fd3d04fe6e0c318620b6b2bfa68be5ed40d3dc9c6844d5aa7a",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-d32daf72",
+                  "namespace_uid": "08279209-1baa-4fe1-b5d1-5bcbc8f95752",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:15:20Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:14:47Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:15:20Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:15:20Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:14:47Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://1c6d8e959e67af244069788afe056265d62f40670ec7c581c8ff40fb44da4b80",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://1c6d8e959e67af244069788afe056265d62f40670ec7c581c8ff40fb44da4b80",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:15:20Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:14:47Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.8",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.8"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:14:47Z"
+                }
+              },
+              "closure_trigger": "complete",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "3c562fa4-c1aa-4f00-815f-abf5e44033ac",
+              "request_sha256": "20a34accd1a807fd3d04fe6e0c318620b6b2bfa68be5ed40d3dc9c6844d5aa7a",
+              "requested_closure_reason": "completed",
+              "revision": 5
+            }
+          ],
+          "revision": 12,
+          "target_retained": false
+        }
+      },
+      "receipt_sha256": "dfe13d9bdbc2385293330bd3f45f13fc97711470803e9bdcc1acf0634aecec0b",
+      "scenario": "worker_lost",
+      "scheduled_execute_activity_ids": [
+        "14e2a7d6-6b25-4709-b323-be432e177925",
+        "3c562fa4-c1aa-4f00-815f-abf5e44033ac"
+      ],
+      "workflow_id": "birbforge-kubernetes-42ff2e1c00d80c203877720b9168275b1c5b89425046a084ccccb62730166805"
+    },
+    {
+      "account_auth": {
+        "account_auth": "passed",
+        "pod_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534"
+      },
+      "admission_denial_observed": true,
+      "history_run_count": 6,
+      "history_sha256": "c8ff9ef1e7f385c2310d788dd69cc2a7d6a5d343dc2985864fd12a0f03f2ccad",
+      "projection": {
+        "ok": true,
+        "value": {
+          "requests": [
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "acknowledged",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "472c54f511822bd52f4792b5e6fcafed11fc94a66d11f5821077ab4d0a151d51",
+                    "expected_resource_version": "841",
+                    "object_uid": "cef8374a-0a8e-48aa-a152-3fca3cbd6524",
+                    "resource_version": "859"
+                  },
+                  "create-pod": {
+                    "body_sha256": "92be74b74f8686fe3b3e19a75fc35b9b99c6865ffeda24dc3db1b4426e95895c",
+                    "expected_resource_version": null,
+                    "object_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534",
+                    "resource_version": "861"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "fcddbab28a9baf89b1c2488ee5b40d964a04c0eafc6f369d6732c43d7bd07b5a",
+                    "expected_resource_version": null,
+                    "object_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534",
+                    "resource_version": "870"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "edc6fbf9382e5bc54b267ed39cfcc61cde4fd98880a7ef5f783bffe215079727",
+                    "expected_resource_version": null,
+                    "object_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534",
+                    "resource_version": "925"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "88d55a80b00661aecb23f45eaf39030f8dc5562f18c3959893d04e88acd020a0",
+                    "expected_resource_version": "911",
+                    "object_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534",
+                    "resource_version": "923"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "01777fa3775d0d0d2ab85020343c79792a7c34af5671f266098075eb2c939814",
+                    "expected_resource_version": "859",
+                    "object_uid": "cef8374a-0a8e-48aa-a152-3fca3cbd6524",
+                    "resource_version": "927"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "85d054c9ea85000385f6eb1abfd931af2ab1026fc3b7ea8e6bcc0df7250bc720",
+                "operations_sha256": "7c0aa961555518551048d69c006970fda4aceb294d8420068f0a532e3fda7dc7",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "00c64c2a-f8c2-47f8-83fa-0a96c0ee2534",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "cancelled",
+                "receipt_sha256": "6e76fe214ed600eea0a2277002cfc957ac0e7b9374330cdedb668a652aae7ea6",
+                "request_id": "eefda4f9-a95f-400f-833a-02112e4af1a3",
+                "request_sha256": "849b3ef309ade5966aabc5e25a6b003e226316f2f4bf42672f1526d207540794",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-32c386b6",
+                  "namespace_uid": "a3f53412-b027-412d-8ce7-111795772609",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:06Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:15:33Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:06Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:06Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:15:33Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://d56c67c558dce9fcc5ec60ef79d62d2ec09d658fb3c651993f5ce19c5daae2b9",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://d56c67c558dce9fcc5ec60ef79d62d2ec09d658fb3c651993f5ce19c5daae2b9",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:16:06Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:15:33Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.9",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.9"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:15:33Z"
+                }
+              },
+              "closure_trigger": "cancel",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "eefda4f9-a95f-400f-833a-02112e4af1a3",
+              "request_sha256": "849b3ef309ade5966aabc5e25a6b003e226316f2f4bf42672f1526d207540794",
+              "requested_closure_reason": "cancelled",
+              "revision": 5
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "acknowledged",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": null,
+              "closure_trigger": null,
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "cancelled_before_dispatch",
+              "request_id": "c19cd299-dc8c-430a-9bd9-e37911a524be",
+              "request_sha256": "76604083d7443c8a13fad866d07bc5bf472c6aafd9d5acbca2104024bb216ae4",
+              "requested_closure_reason": null,
+              "revision": 2
+            },
+            {
+              "authored_revision": "d91e2164f15bd92720441c82a41eb6320be2bd71",
+              "beans_issue": "birbforge-yrnb",
+              "cancellation": "none",
+              "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+              "closure": {
+                "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "effects": {
+                  "apply-revision": {
+                    "body_sha256": "5d2fcba46f71bb73fc08c03329f70d1f4db1f092fdb3843e079c9fddc2d11960",
+                    "expected_resource_version": "927",
+                    "object_uid": "cef8374a-0a8e-48aa-a152-3fca3cbd6524",
+                    "resource_version": "930"
+                  },
+                  "create-pod": {
+                    "body_sha256": "2d937584ab86fc0e7bd1e1adda883837ae1e803d5922a71b378e9ef666690f6d",
+                    "expected_resource_version": null,
+                    "object_uid": "c2618d04-97b8-4863-85a5-da5e97247476",
+                    "resource_version": "931"
+                  },
+                  "delete-pod": {
+                    "body_sha256": "005084f71179adcc11558208b8df79e4ba3d01868ae52ccca8668ca0a115e361",
+                    "expected_resource_version": null,
+                    "object_uid": "c2618d04-97b8-4863-85a5-da5e97247476",
+                    "resource_version": "937"
+                  },
+                  "finalize-delete": {
+                    "body_sha256": "48aaf70e3571890d9f09911e1c90e496149e56951d74c7105304336c15d8aaa4",
+                    "expected_resource_version": null,
+                    "object_uid": "c2618d04-97b8-4863-85a5-da5e97247476",
+                    "resource_version": "991"
+                  },
+                  "remove-finalizer": {
+                    "body_sha256": "3832fb5f1f9eee890a6d73a0392f83da881c2180fd80365f677028ceabda5e1c",
+                    "expected_resource_version": "980",
+                    "object_uid": "c2618d04-97b8-4863-85a5-da5e97247476",
+                    "resource_version": "989"
+                  },
+                  "restore-revision": {
+                    "body_sha256": "7cf5e76aa65cf2c696d11527d43628caccc14895e7cd50a1c385a8b88d5489c9",
+                    "expected_resource_version": "930",
+                    "object_uid": "cef8374a-0a8e-48aa-a152-3fca3cbd6524",
+                    "resource_version": "993"
+                  }
+                },
+                "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                "installation_sha256": "85d054c9ea85000385f6eb1abfd931af2ab1026fc3b7ea8e6bcc0df7250bc720",
+                "operations_sha256": "0d0302a99d0cbbf38dcafb166091ab68b897af035a9cd5398fe53926fecf000a",
+                "plan_sha256": "5674087abeed250908e1ea132aa4ab3f13e92af6cefa859ec76776c5037c622e",
+                "pod_uid": "c2618d04-97b8-4863-85a5-da5e97247476",
+                "policy_revision": "2d532285b7f35636009cac8a44165df655541bcb",
+                "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+                "reason": "completed",
+                "receipt_sha256": "2646933aa1b40fb91214e985fcf2d542c4782871c25d8d2370b3309692a2cc86",
+                "request_id": "c0750fd2-2b32-40d8-88ba-89d1536bca50",
+                "request_sha256": "b23558b3db093aa70f070a957cccc8101cf247350d76bbfc57df225828e3c631",
+                "schema_version": "birbverify.kubernetes.closure.v1",
+                "state": "released",
+                "target": {
+                  "cluster_uid": "3184c2df-feb4-4008-bb91-060c27e9ea62",
+                  "namespace": "bv-app-32c386b6",
+                  "namespace_uid": "a3f53412-b027-412d-8ce7-111795772609",
+                  "target_id": "kind-account-auth"
+                },
+                "terminal_proof": {
+                  "conditions": [
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:50Z",
+                      "status": "False",
+                      "type": "PodReadyToStartContainers"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:17Z",
+                      "status": "True",
+                      "type": "Initialized"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:50Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "Ready"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:50Z",
+                      "reason": "PodFailed",
+                      "status": "False",
+                      "type": "ContainersReady"
+                    },
+                    {
+                      "lastProbeTime": null,
+                      "lastTransitionTime": "2026-11-10T15:16:17Z",
+                      "status": "True",
+                      "type": "PodScheduled"
+                    }
+                  ],
+                  "containerStatuses": [
+                    {
+                      "containerID": "containerd://7d08577505cbcb556f3f847e84b6d9d812e6abb71452c7548b3c95c2c512a8a3",
+                      "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+                      "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+                      "lastState": {},
+                      "name": "account-auth",
+                      "ready": false,
+                      "resources": {},
+                      "restartCount": 0,
+                      "started": false,
+                      "state": {
+                        "terminated": {
+                          "containerID": "containerd://7d08577505cbcb556f3f847e84b6d9d812e6abb71452c7548b3c95c2c512a8a3",
+                          "exitCode": 137,
+                          "finishedAt": "2026-11-10T15:16:50Z",
+                          "reason": "Error",
+                          "startedAt": "2026-11-10T15:16:17Z"
+                        }
+                      },
+                      "user": {
+                        "linux": {
+                          "gid": 0,
+                          "supplementalGroups": [
+                            0
+                          ],
+                          "uid": 0
+                        }
+                      }
+                    }
+                  ],
+                  "hostIP": "172.20.0.2",
+                  "hostIPs": [
+                    {
+                      "ip": "172.20.0.2"
+                    }
+                  ],
+                  "phase": "Failed",
+                  "podIP": "10.244.0.10",
+                  "podIPs": [
+                    {
+                      "ip": "10.244.0.10"
+                    }
+                  ],
+                  "qosClass": "BestEffort",
+                  "startTime": "2026-11-10T15:16:17Z"
+                }
+              },
+              "closure_trigger": "complete",
+              "eligibility": {
+                "eligible": false,
+                "reason": "delivery_not_authorized"
+              },
+              "observation_error": null,
+              "phase": "closed",
+              "request_id": "c0750fd2-2b32-40d8-88ba-89d1536bca50",
+              "request_sha256": "b23558b3db093aa70f070a957cccc8101cf247350d76bbfc57df225828e3c631",
+              "requested_closure_reason": "completed",
+              "revision": 5
+            }
+          ],
+          "revision": 12,
+          "target_retained": false
+        }
+      },
+      "receipt_sha256": "d3c14adc5bb8c713c56d0c14f61bc72c850a688ce9d70a6463843382678046a4",
+      "scenario": "cancelled",
+      "scheduled_execute_activity_ids": [
+        "eefda4f9-a95f-400f-833a-02112e4af1a3",
+        "c0750fd2-2b32-40d8-88ba-89d1536bca50"
+      ],
+      "workflow_id": "birbforge-kubernetes-75f5d22de3576072fa9592d1df0ee09a073826c3368bbd4f0f2b9c272342d896"
+    }
+  ],
+  "producer_image": "birbverify-yrnb:bc52efc@sha256:1c32fc2a3606dca59256d92fbe078af42195896b140d1133f8eb271cf22f27e8",
+  "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+  "review": {
+    "final_verdict": "APPROVE",
+    "standard_checkpoint": "a30fe901198f511fab9f35d31da81df622d6997e",
+    "standard_summary": {
+      "fixed": 21,
+      "needs_manual": 0,
+      "skipped": 1
+    },
+    "thermonuclear_checkpoint": "2d532285b7f35636009cac8a44165df655541bcb",
+    "thermonuclear_summary": {
+      "fixed": 15,
+      "needs_manual": 0,
+      "skipped": 2
+    },
+    "upstream_rubric": {
+      "revision": "de8ee15dd1194627d21eb5fcd41cb1873208dabb",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/de8ee15dd1194627d21eb5fcd41cb1873208dabb/cursor-team-kit/skills/thermo-nuclear-code-quality-review/SKILL.md"
+    }
+  },
+  "source_integrity": {
+    "expected": {
+      "consumer": "2d532285b7f35636009cac8a44165df655541bcb",
+      "producer": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd"
+    },
+    "observed": {
+      "consumer": {
+        "clean": true,
+        "revision": "2d532285b7f35636009cac8a44165df655541bcb"
+      },
+      "producer": {
+        "clean": true,
+        "revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd"
+      }
+    },
+    "unchanged": true
+  },
+  "source_sha256": {
+    "packaging/kubernetes-producer.json": "fec7353a8c4ae0ce891e195f49414e907208c0fbeb3bea69865d9af6e1617dc9",
+    "packaging/kubernetes-worker.Dockerfile": "e3f56d72bb36017c091c845d74a9a4e2e24111a6b5fe2feda2fb9be3461d72e9",
+    "packaging/kubernetes-worker.Dockerfile.dockerignore": "5b384732bdd5dc12f3513f98b7229621051ffa86f017a12138cc46fb6df70dd5",
+    "scripts/verify-kubernetes": "8bb4c66cb7767bb596d04ddf7b496650b7513b49354ee2dfa21f074e601babc2",
+    "tests/verification_kubernetes/test_live.py": "2371436980638cc28c69936b7d7615fb0e801f1eef9f860cd20400f056501201",
+    "tests/verification_python/fixtures/kubernetes-receipt.json": "8dfd2ca26fc5bdc9806d2d26cfe0df48b762dbfee9fa2eb46ebba001aa07dcf8",
+    "tests/verification_python/kubernetes_helpers.py": "0d27b3746248a7d22feb994cc13ccfde639b68be22e4d5acb080815cb68f76c5",
+    "tests/verification_python/test_kubernetes.py": "6bc75df2f6c0f9ca12cae36d1d0cc367c81829e3d058f77a49a403dd2efa4c38",
+    "tests/verification_python/test_kubernetes_runtime.py": "1edff409f9dd8a14f47bbaf7f5fcc380d07704234c0d0f47b423f2e7a1e9629c",
+    "tests/verification_python/test_kubernetes_temporal.py": "9b8333da8417c422497bff5b00f7c8a742f62dd9ceae03700f29359b63e3623a",
+    "verification/kubernetes.py": "3622a8c22bb29b24317b15d16a1f19b9f39e0434adb951369df7d74afda91c76",
+    "verification/kubernetes_adapter.py": "939e53dfaf9b5f5efa27107a4b247cf663f7d7a782d205621a1d7210f8576591",
+    "verification/kubernetes_runtime.py": "4225801c4b3874fb83dee29d0dbdcf0769278b42359d2de7596d70cd8ff4eb4f",
+    "verification/kubernetes_worker.py": "380c5b5ac1b09291e08df2b5e5b30e7b8058e08e912880a2cfef4e4c73fdaef6",
+    "verification/kubernetes_workflow.py": "d8126e742832d625481d8e808f42652f6c667844f6e40d0c046f1239a6c3ce0a"
+  },
+  "tool_versions": {
+    "docker_client": "28.3.3",
+    "docker_server": "28.3.3",
+    "kind": "kind v0.29.0 go1.24.3 darwin/arm64",
+    "python": "3.13.7 (main, Aug 14 2025, 11:12:11) [Clang 17.0.0 (clang-1700.0.13.3)]",
+    "temporal": "temporal version 1.4.1 (Server 1.28.0, UI 2.39.0)"
+  },
+  "validation": {
+    "docs": "passed",
+    "image_smoke": "passed as UID10001 without network",
+    "legacy_full_npm_test": "Not passed in this setup: three tests require an absent conversation fixture; one requires a Linux Python export. These unchanged checks were excluded from the portable subset.",
+    "live_journeys_passed": 3,
+    "portable_javascript_opt_in_skipped": 4,
+    "portable_javascript_passed": 51,
+    "python_passed": 90,
+    "ruff": "passed",
+    "typescript": "passed"
+  }
+}

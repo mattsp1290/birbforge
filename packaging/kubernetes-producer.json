@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/mattsp1290/birbverify",
+  "revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+  "request_schema": "birbverify.kubernetes.v1",
+  "closure_schema": "birbverify.kubernetes.closure.v1",
+  "source_sha256": {
+    "__init__.py": "72015608560c259c0ddfcb7af2ed28f3202e131cc555b7cf3a20c95aa8ee6d15",
+    "closure.py": "f1de948ecb0974d0439739e005a4c4c46fc95b61c6be5bf2e4473aa79bb5a6c0",
+    "closure_supervisor.py": "a3b254ace785ff9a73d956a93cf99fcf7ca2e1c34a1a1f28b79c94897c6db3dd",
+    "closure_target.py": "e90660119a3acbec0661a29621df16c0601678dbb7b7a780b80e9acf0ecec835",
+    "contract.py": "925b71c82f27b2c3063ba2c3f786d1ec7b5b18ff98c5dea787b5f709f4e43617",
+    "fixture.py": "085d6f1ce8fe3b9a45af7b19f8917a336bbfcf78d3b29b865ebdc85308817fbf",
+    "fixture_launcher.py": "725d5d85cd26ca12a1018187bac62cf21c12f431d213897d18c1fc599c42c169",
+    "kubernetes_admission.py": "cce35b2526fb54685a935dd629c519c321e23b6cf487ab876a3ed91464236c38",
+    "kubernetes_api.py": "891e1a0016a7414c774388ef9ec18944c642fd72de0b83bc8a51245d0cc3337c",
+    "kubernetes_contract.py": "3a312358a990ca11d9a59375db993ac405e4cd2cd67bbc27643f24b0736d82de",
+    "kubernetes_service.py": "d93ac2ef3a195891122c31041b1d2505dbaee3b7b5a7b02709adbcd4af7d8e41",
+    "kubernetes_target.py": "1779fe693a22fefe1d630a8a446adde52387c1dabd73f73c9a08f934d5ed7ca3",
+    "kubernetes_worker.py": "c6075540e7f8bc3eebd1a3de81f315ecd20cf7ec57e44a67fd474fcc7e4c7c6c",
+    "lifecycle.py": "195ee7c86f5f572b275b46e7c906d833e3ea66ccd95b559215725a23e8a45d27",
+    "policy.py": "a8deed4616a11dccb3f13288ecd337cf2f85e73158025d4d7aa67ebfd474ef02",
+    "projection.py": "861cc613a9373e24f617222176a572ce2de5a177d360112f87b07c698dbb5c0c",
+    "runner.py": "37da29fee61ca32d673a6c72d1778124872c92f04a4c6b50a4011a71c44dc97a",
+    "stale_probe.py": "95b93ae090059016c026ac9de2399fb369ec7c9a83f43548c70f255442ccad9b",
+    "target.py": "db917dc2f58b2216104a7a0e7457bca39120ae7b4b785e9db50b5814ad57dfb4",
+    "temporal_worker.py": "422e3491ea90ef54e46ce6f9f6d7ee7732fc78938ef0ab3884185dcd67898b4b"
+  }
+}

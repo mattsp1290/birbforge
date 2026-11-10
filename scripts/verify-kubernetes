@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import os
+import re
+import subprocess
+from pathlib import Path
+from uuid import uuid4
+
+ROOT = Path(__file__).resolve().parents[1]
+NODE_IMAGE = "kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f"
+
+
+def run(args, **kwargs):
+    return subprocess.run(args, check=True, **kwargs)
+
+
+def revision(path):
+    return subprocess.check_output(
+        ["git", "-C", str(path), "rev-parse", "HEAD"], text=True
+    ).strip()
+
+
+def checkout_state(path):
+    return {
+        "revision": revision(path),
+        "clean": not subprocess.check_output(
+            ["git", "-C", str(path), "status", "--porcelain", "--untracked-files=all"]
+        ).strip(),
+    }
+
+
+def verify_sources(sources, expected, evidence):
+    observed = {name: checkout_state(path) for name, path in sources.items()}
+    unchanged = all(
+        state["clean"] and state["revision"] == expected[name]
+        for name, state in observed.items()
+    )
+    (evidence / "source-integrity.json").write_text(
+        json.dumps(
+            {"expected": expected, "observed": observed, "unchanged": unchanged},
+            indent=2,
+        )
+        + "\n"
+    )
+    if not unchanged:
+        raise ValueError("source_checkout_changed_during_proof")
+
+
+def tool_versions(python, temporal):
+    commands = {
+        "kind": ["kind", "version"],
+        "temporal": [str(temporal), "--version"],
+        "docker": ["docker", "version", "--format", "{{json .}}"],
+        "python": [str(python), "-c", "import sys; print(sys.version)"],
+    }
+    return {
+        name: subprocess.check_output(command, text=True).strip()
+        for name, command in commands.items()
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Prove durable queue lifecycle in a new disposable kind cluster."
+    )
+    parser.add_argument("--producer", required=True, type=Path)
+    parser.add_argument("--python", required=True, type=Path)
+    parser.add_argument("--temporal", required=True, type=Path)
+    parser.add_argument("--evidence", required=True, type=Path)
+    parser.add_argument("--authored-revision", required=True)
+    args = parser.parse_args()
+    if not re.fullmatch(r"[0-9a-f]{40}", args.authored_revision):
+        parser.error("--authored-revision must be a full lowercase Git commit SHA")
+    producer = args.producer.resolve(strict=True)
+    python = args.python.absolute()
+    temporal = args.temporal.resolve(strict=True)
+    evidence = args.evidence.resolve()
+    evidence.mkdir(parents=True, exist_ok=False)
+    pin = json.loads((ROOT / "packaging/kubernetes-producer.json").read_text())[
+        "revision"
+    ]
+    sources = {"consumer": ROOT, "producer": producer}
+    initial = {name: checkout_state(path) for name, path in sources.items()}
+    for name, state in initial.items():
+        if not state["clean"]:
+            raise ValueError(name + "_checkout_not_clean")
+    revisions = {name: state["revision"] for name, state in initial.items()}
+    if revisions["producer"] != pin:
+        raise ValueError("producer_revision_mismatch")
+    (evidence / "tool-versions.json").write_text(
+        json.dumps(tool_versions(python, temporal), indent=2) + "\n"
+    )
+    name = "birbverify-r5rh-bf-" + uuid4().hex[:8]
+    config = evidence / "kubeconfig.private"
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(ROOT) + os.pathsep + str(producer / "src"),
+        "BIRBVERIFY_SOURCE_ROOT": str(producer),
+        "BIRBVERIFY_SOURCE_REVISION": pin,
+        "BIRBFORGE_SOURCE_REVISION": revisions["consumer"],
+        "BIRBFORGE_AUTHORED_REVISION": args.authored_revision,
+        "BIRBVERIFY_KUBE_FIXTURE": str(config),
+        "BIRBVERIFY_KUBE_CONTEXT": "kind-" + name,
+        "BIRBFORGE_KUBE_EVIDENCE": str(evidence),
+        "TEMPORAL_CLI": str(temporal),
+    }
+    try:
+        with (evidence / "cluster.log").open("w") as log:
+            run(
+                [
+                    "kind",
+                    "create",
+                    "cluster",
+                    "--name",
+                    name,
+                    "--image",
+                    NODE_IMAGE,
+                    "--kubeconfig",
+                    str(config),
+                    "--wait",
+                    "90s",
+                ],
+                stdout=log,
+                stderr=subprocess.STDOUT,
+            )
+        config.chmod(0o600)
+        with (evidence / "pytest.log").open("w") as log:
+            run(
+                [
+                    str(python),
+                    "-m",
+                    "pytest",
+                    "tests/verification_kubernetes/test_live.py",
+                    "-q",
+                    "--tb=short",
+                    "--junitxml=" + str(evidence / "junit.xml"),
+                ],
+                cwd=ROOT,
+                env=env,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+            )
+    finally:
+        try:
+            with (evidence / "cleanup.log").open("w") as log:
+                run(
+                    ["kind", "delete", "cluster", "--name", name],
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                )
+        finally:
+            try:
+                config.unlink(missing_ok=True)
+            finally:
+                verify_sources(sources, revisions, evidence)
+    print(
+        json.dumps(
+            {
+                "evidence": str(evidence),
+                "producer_revision": pin,
+                "consumer_revision": revisions["consumer"],
+            }
+        )
+    )
+
+
+if __name__ == "__main__":
+    main()
