@@ -26,6 +26,7 @@ class Missing(Exception):
 class KubernetesAPI:
     def __init__(self):
         self.objects = {
+            "/apis/admissionregistration.k8s.io": {"versions": [{"version": "v1"}]},
             "/apis/admissionregistration.k8s.io/v1/mutatingwebhookconfigurations": {
                 "items": []
             },
