@@ -1,22 +1,37 @@
 import asyncio
 import copy
+import os
 import shutil
 import tempfile
 import threading
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
+
+pytest.importorskip("birbverify.kubernetes_worker")
+
 from birbverify.contract import digest
 from birbverify.kubernetes_contract import KubernetesInstallation
 from birbverify.kubernetes_service import TargetService
 from birbverify.kubernetes_target import KubernetesTarget
 from birbverify.kubernetes_worker import KubernetesActivities
+from kubernetes_helpers import admission, cancellation, completion, config
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
-from test_kubernetes import admission, cancellation, completion, config
 
 from verification.kubernetes import validate_closure
 from verification.kubernetes_workflow import KubernetesQueue
+
+
+@pytest.fixture
+def temporal_cli():
+    binary = os.environ.get("TEMPORAL_CLI") or shutil.which("temporal")
+    if not binary or not Path(binary).is_file():
+        pytest.skip(
+            "set TEMPORAL_CLI to an installed Temporal CLI; downloads are disabled"
+        )
+    return binary
 
 
 class Missing(Exception):
@@ -156,10 +171,12 @@ async def until(handle, predicate):
 
 
 @pytest.mark.asyncio
-async def test_real_activities_fifo_restart_queued_cancel_and_receipt_integrity(target):
+async def test_real_activities_fifo_restart_queued_cancel_and_receipt_integrity(
+    target, temporal_cli
+):
     queue_config, target, api, socket = target
     async with await WorkflowEnvironment.start_local(
-        dev_server_existing_path=shutil.which("temporal")
+        dev_server_existing_path=temporal_cli
     ) as env:
         producer = KubernetesActivities(socket)
         async with Worker(
@@ -266,6 +283,7 @@ async def test_real_activities_fifo_restart_queued_cancel_and_receipt_integrity(
                     "uid",
                     "null_operations",
                     "null_response",
+                    "oversized_proof",
                 ):
                     changed = copy.deepcopy(observed)
                     if mutation in {"restore", "finalizer"}:
@@ -282,6 +300,11 @@ async def test_real_activities_fifo_restart_queued_cancel_and_receipt_integrity(
                         ] = None
                     elif mutation == "uid":
                         changed["pod_uid"] = changed["receipt"]["pod_uid"] = "wrong"
+                    elif mutation == "oversized_proof":
+                        changed["terminal_proof"]["message"] = "x" * 8192
+                        changed["receipt"]["terminal_proof"] = copy.deepcopy(
+                            changed["terminal_proof"]
+                        )
                     elif mutation == "null_operations":
                         changed["operations"] = None
                     else:
@@ -322,11 +345,13 @@ async def test_real_activities_fifo_restart_queued_cancel_and_receipt_integrity(
 
 
 @pytest.mark.asyncio
-async def test_active_cancellation_waits_for_real_producer_closure(target):
+async def test_active_cancellation_waits_for_real_producer_closure(
+    target, temporal_cli
+):
     queue_config, target, api, socket = target
     api.unblock_create.clear()
     async with await WorkflowEnvironment.start_local(
-        dev_server_existing_path=shutil.which("temporal")
+        dev_server_existing_path=temporal_cli
     ) as env:
         producer = KubernetesActivities(socket)
         async with (
@@ -389,14 +414,16 @@ async def test_active_cancellation_waits_for_real_producer_closure(target):
 
 
 @pytest.mark.asyncio
-async def test_killed_activity_worker_cannot_release_or_repeat_acquisition(target):
+async def test_killed_activity_worker_cannot_release_or_repeat_acquisition(
+    target, temporal_cli
+):
     import sys
 
     queue_config, target, api, socket = target
     queue_config = queue_config.model_copy(update={"continue_threshold": 100})
     api.unblock_create.clear()
     async with await WorkflowEnvironment.start_local(
-        dev_server_existing_path=shutil.which("temporal")
+        dev_server_existing_path=temporal_cli
     ) as env:
         process = await asyncio.create_subprocess_exec(
             *[
@@ -474,11 +501,13 @@ async def test_killed_activity_worker_cannot_release_or_repeat_acquisition(targe
 
 
 @pytest.mark.asyncio
-async def test_running_deadline_closes_without_completion(target):
+async def test_running_deadline_closes_without_completion(target, temporal_cli):
     queue_config, target, api, socket = target
-    queue_config = queue_config.model_copy(update={"request_timeout_seconds": 10})
+    queue_config = queue_config.model_copy(
+        update={"request_timeout_seconds": 10, "activity_timeout_seconds": 5}
+    )
     async with await WorkflowEnvironment.start_local(
-        dev_server_existing_path=shutil.which("temporal")
+        dev_server_existing_path=temporal_cli
     ) as env:
         producer = KubernetesActivities(socket)
         async with (
@@ -511,5 +540,160 @@ async def test_running_deadline_closes_without_completion(target):
                     row["closure_reason"] == row["closure"]["reason"] == "worker_lost"
                 )
                 assert state["outstanding_request_id"] is None
+            finally:
+                await handle.terminate()
+
+
+def queued_state(queue_config, monkeypatch):
+    with monkeypatch.context() as patch:
+        patch.setattr(
+            "verification.kubernetes_workflow.workflow.now", lambda: datetime.now(UTC)
+        )
+        queue = KubernetesQueue({"config": queue_config.model_dump(mode="json")})
+        assert queue.admit(admission())["ok"]
+        return queue.snapshot()
+
+
+@pytest.mark.asyncio
+async def test_near_deadline_head_expires_without_scheduling_activity(
+    target, temporal_cli, monkeypatch
+):
+    queue_config, _, api, _ = target
+    queue_config = queue_config.model_copy(
+        update={"request_timeout_seconds": 10, "activity_timeout_seconds": 5}
+    )
+    state = queued_state(queue_config, monkeypatch)
+    state["rows"]["r1"]["payload"]["deadline"] = (
+        datetime.now(UTC) + timedelta(seconds=3)
+    ).isoformat()
+    async with (
+        await WorkflowEnvironment.start_local(
+            dev_server_existing_path=temporal_cli
+        ) as env,
+        Worker(env.client, task_queue="consumer", workflows=[KubernetesQueue]),
+    ):
+        handle = await env.client.start_workflow(
+            KubernetesQueue.run,
+            {"config": queue_config.model_dump(mode="json"), "state": state},
+            id=queue_config.authority.workflow_id,
+            task_queue="consumer",
+        )
+        try:
+            expired = await until(
+                handle, lambda state: state["rows"]["r1"]["phase"] == "expired"
+            )
+            assert expired["outstanding_request_id"] is None
+            assert api.acquisitions == []
+            history = await handle.fetch_history()
+            assert not any(
+                event.HasField("activity_task_scheduled_event_attributes")
+                for event in history.events
+            )
+        finally:
+            await handle.terminate()
+
+
+@pytest.mark.asyncio
+async def test_idle_queue_does_not_schedule_timers_or_continue_as_new(temporal_cli):
+    queue_config = config().model_copy(update={"continue_threshold": 2})
+    async with (
+        await WorkflowEnvironment.start_local(
+            dev_server_existing_path=temporal_cli
+        ) as env,
+        Worker(env.client, task_queue="consumer", workflows=[KubernetesQueue]),
+    ):
+        handle = await env.client.start_workflow(
+            KubernetesQueue.run,
+            {"config": queue_config.model_dump(mode="json")},
+            id=queue_config.authority.workflow_id,
+            task_queue="consumer",
+        )
+        try:
+            await handle.query(KubernetesQueue.snapshot)
+            initial_run = (await handle.describe()).run_id
+            await asyncio.sleep(3)
+            assert (await handle.describe()).run_id == initial_run
+            history = await handle.fetch_history()
+            assert not any(
+                event.HasField("timer_started_event_attributes")
+                for event in history.events
+            )
+            assert not any(
+                event.HasField("workflow_execution_continued_as_new_event_attributes")
+                for event in history.events
+            )
+        finally:
+            await handle.terminate()
+
+
+@pytest.mark.parametrize("producer_state", ["sealed_unadmitted", "quarantined"])
+@pytest.mark.asyncio
+async def test_terminal_retention_stops_closure_polling(
+    target, temporal_cli, monkeypatch, producer_state
+):
+    from birbverify.kubernetes_contract import KubernetesRequest
+
+    queue_config, target, api, socket = target
+    queue_config = queue_config.model_copy(update={"continue_threshold": 100})
+    state = queued_state(queue_config, monkeypatch)
+    row = state["rows"]["r1"]
+    request = KubernetesRequest.model_validate(row["payload"])
+    if producer_state == "sealed_unadmitted":
+        observed = target.close(request, "worker_lost")
+    else:
+        target.begin(request)
+        api.objects["/api/v1/namespaces/app"]["metadata"]["uid"] = "replacement"
+        observed = target.execute(request)
+    assert observed["state"] == producer_state
+    row.update(
+        phase="closing",
+        activity_outcome="unknown",
+        closure_reason="worker_lost",
+        closure_trigger="execution_unknown",
+    )
+    state["outstanding_request_id"] = "r1"
+    async with await WorkflowEnvironment.start_local(
+        dev_server_existing_path=temporal_cli
+    ) as env:
+        producer = KubernetesActivities(socket)
+        async with (
+            Worker(
+                env.client,
+                task_queue="producer",
+                activities=[producer.execute, producer.close],
+            ),
+            Worker(
+                env.client,
+                task_queue="consumer",
+                workflows=[KubernetesQueue],
+            ),
+        ):
+            handle = await env.client.start_workflow(
+                KubernetesQueue.run,
+                {"config": queue_config.model_dump(mode="json"), "state": state},
+                id=queue_config.authority.workflow_id,
+                task_queue="consumer",
+            )
+            try:
+                retained = await until(
+                    handle, lambda state: state["rows"]["r1"]["phase"] == "retained"
+                )
+                assert (
+                    retained["rows"]["r1"]["observation_error"]
+                    == "producer_" + producer_state
+                )
+                await handle.execute_update(KubernetesQueue.admit, admission("r2"))
+                await asyncio.sleep(3)
+                parked = await handle.query(KubernetesQueue.snapshot)
+                assert parked["outstanding_request_id"] == "r1"
+                assert parked["rows"]["r2"]["phase"] == "queued"
+                history = await handle.fetch_history()
+                activities = [
+                    event.activity_task_scheduled_event_attributes.activity_type.name
+                    for event in history.events
+                    if event.HasField("activity_task_scheduled_event_attributes")
+                ]
+                assert activities == ["birbverify_kubernetes_close"]
+                assert api.acquisitions == []
             finally:
                 await handle.terminate()

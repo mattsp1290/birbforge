@@ -1,74 +1,17 @@
 from datetime import UTC, datetime
 
 import pytest
-from birbverify.contract import digest
 from pydantic import ValidationError
 
+pytest.importorskip("birbverify.kubernetes_contract")
+
+from kubernetes_helpers import admission, cancellation, completion, config
+
 from verification.kubernetes import (
-    KubernetesAuthority,
     KubernetesCommand,
-    KubernetesQueueConfig,
     projection,
 )
 from verification.kubernetes_workflow import KubernetesQueue
-
-
-def config():
-    return KubernetesQueueConfig(
-        authority=KubernetesAuthority(
-            target={
-                "target_id": "target",
-                "cluster_uid": "cluster",
-                "namespace": "app",
-                "namespace_uid": "namespace",
-            },
-            candidate_revision="a" * 40,
-            authored_revision="a" * 40,
-            beans_issue="birbforge-yrnb",
-            producer_revision="b" * 40,
-            installation_sha256="f" * 64,
-            policy_revision="c" * 40,
-            plan_sha256=digest(
-                {"spec": {"containers": [{"name": "app", "image": "old"}]}}
-            ),
-            image="example/app@sha256:" + "e" * 64,
-        ),
-        activity_task_queue="producer",
-        continue_threshold=4,
-    )
-
-
-def admission(identity="r1", **changes):
-    body = {
-        "request_id": identity,
-        "idempotency_key": identity,
-        "candidate_revision": "a" * 40,
-        "authored_revision": "a" * 40,
-        "beans_issue": "birbforge-yrnb",
-        "approved_plan_sha256": digest(
-            {"spec": {"containers": [{"name": "app", "image": "old"}]}}
-        ),
-    }
-    body.update(changes)
-    return {
-        "principal": "owner",
-        "command": {"op": "admit", "conversation_id": "chat", "body": body},
-    }
-
-
-def cancellation(identity, revision, command_id="cancel-1"):
-    return {
-        "principal": "owner",
-        "command": {
-            "op": "cancel",
-            "conversation_id": "chat",
-            "body": {
-                "request_id": identity,
-                "expected_revision": revision,
-                "command_id": command_id,
-            },
-        },
-    }
 
 
 @pytest.fixture
@@ -197,12 +140,6 @@ def test_existing_workflow_configuration_cannot_silently_change(field, value):
         check_installation(local, installed)
 
 
-def completion(identity, revision, command_id="complete-1"):
-    message = cancellation(identity, revision, command_id)
-    message["command"]["op"] = "complete"
-    return message
-
-
 def test_completion_requires_running_and_survives_state_restore(queue):
     queue.admit(admission())
     assert queue.complete(completion("r1", 1))["code"] == "request_not_running"
@@ -233,3 +170,70 @@ def test_installation_capacity_is_permanent(queue):
         "code": "installation_capacity",
         "status": 409,
     }
+
+
+@pytest.mark.asyncio
+async def test_full_installation_state_fits_temporal_payload_with_headroom(queue):
+    import copy
+    import json
+    from pathlib import Path
+
+    from birbverify.contract import digest
+    from temporalio.converter import DataConverter
+
+    evidence = json.loads(
+        (
+            Path(__file__).resolve().parents[2]
+            / "docs/evidence/kubernetes-queue/receipts.json"
+        ).read_text()
+    )
+    receipts = [
+        row["closure"]
+        for journey in evidence["journeys"]
+        for row in journey["projection"]["value"]["requests"]
+        if row["closure"]
+    ]
+    largest = max(receipts, key=lambda receipt: len(json.dumps(receipt)))
+    for number in range(128):
+        identity = "r" + str(number)
+        queue.admit(admission(identity))
+        row = queue.state["rows"][identity]
+        row.update(phase="running", activity_outcome="completed")
+        assert queue.complete(
+            completion(identity, row["revision"], "complete-" + identity)
+        )["ok"]
+        row.update(phase="closed", closure=copy.deepcopy(largest))
+        assert queue.cancel(
+            cancellation(identity, row["revision"], "cancel-" + identity)
+        )["ok"]
+    payloads = await DataConverter.default.encode(
+        [{"config": queue.config.model_dump(mode="json"), "state": queue.snapshot()}]
+    )
+    serialized_bytes = payloads[0].ByteSize()
+    print(
+        f"full_installation_payload_bytes={serialized_bytes}; rows=128; receipt_sample_bytes={len(json.dumps(largest))}"
+    )
+    assert serialized_bytes < 1024 * 1024
+    from verification.kubernetes import MAX_CLOSURE_BYTES
+
+    padded = copy.deepcopy(largest)
+    padded["terminal_proof"]["message"] = ""
+    baseline = len(json.dumps(padded, sort_keys=True, separators=(",", ":")).encode())
+    padded["terminal_proof"]["message"] = "x" * (MAX_CLOSURE_BYTES - baseline)
+    assert (
+        len(json.dumps(padded, sort_keys=True, separators=(",", ":")).encode())
+        == MAX_CLOSURE_BYTES
+    )
+    padded["receipt_sha256"] = digest(
+        {key: value for key, value in padded.items() if key != "receipt_sha256"}
+    )
+    for row in queue.state["rows"].values():
+        row["closure"] = copy.deepcopy(padded)
+    payloads = await DataConverter.default.encode(
+        [{"config": queue.config.model_dump(mode="json"), "state": queue.snapshot()}]
+    )
+    bounded_bytes = payloads[0].ByteSize()
+    print(
+        f"full_installation_bounded_payload_bytes={bounded_bytes}; receipt_limit={MAX_CLOSURE_BYTES}"
+    )
+    assert bounded_bytes < 1_600_000

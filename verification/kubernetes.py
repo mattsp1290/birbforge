@@ -1,5 +1,6 @@
+import json
 from datetime import datetime, timedelta
-from typing import Annotated, Literal, TypedDict
+from typing import Annotated, Literal, NotRequired, TypedDict
 
 from birbverify.contract import Commit, Id, Record, RequestId, Sha, digest
 from birbverify.kubernetes_contract import (
@@ -10,9 +11,11 @@ from birbverify.kubernetes_contract import (
 )
 from pydantic import Field
 
+MAX_CLOSURE_BYTES = 8192
+
 
 class KubernetesAdmission(Record):
-    request_id: RequestId
+    request_id: RequestId = Field(max_length=63)
     idempotency_key: Id
     candidate_revision: Commit
     authored_revision: Commit
@@ -21,7 +24,7 @@ class KubernetesAdmission(Record):
 
 
 class KubernetesRevisionCommand(Record):
-    request_id: RequestId
+    request_id: RequestId = Field(max_length=63)
     command_id: Id
     expected_revision: Annotated[int, Field(strict=True, ge=0)]
 
@@ -93,6 +96,7 @@ class KubernetesRow(TypedDict):
         "dispatching",
         "running",
         "closing",
+        "retained",
         "closed",
         "expired",
         "cancelled_before_dispatch",
@@ -105,6 +109,7 @@ class KubernetesRow(TypedDict):
     )
     closure: dict | None
     observation_error: str | None
+    close_attempts: NotRequired[int]
 
 
 class KubernetesState(TypedDict):
@@ -241,6 +246,8 @@ def validate_closure(
     }
     if receipt["effects"] != effects:
         raise ValueError("closure_effects_mismatch")
+    if len(json.dumps(receipt, separators=(",", ":")).encode()) > MAX_CLOSURE_BYTES:
+        raise ValueError("closure_receipt_too_large")
     if receipt.get("receipt_sha256") != digest(unsigned):
         raise ValueError("closure_digest_mismatch")
     return receipt

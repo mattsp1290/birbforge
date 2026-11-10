@@ -21,6 +21,45 @@ def revision(path):
     ).strip()
 
 
+def checkout_state(path):
+    return {
+        "revision": revision(path),
+        "clean": not subprocess.check_output(
+            ["git", "-C", str(path), "status", "--porcelain", "--untracked-files=all"]
+        ).strip(),
+    }
+
+
+def verify_sources(sources, expected, evidence):
+    observed = {name: checkout_state(path) for name, path in sources.items()}
+    unchanged = all(
+        state["clean"] and state["revision"] == expected[name]
+        for name, state in observed.items()
+    )
+    (evidence / "source-integrity.json").write_text(
+        json.dumps(
+            {"expected": expected, "observed": observed, "unchanged": unchanged},
+            indent=2,
+        )
+        + "\n"
+    )
+    if not unchanged:
+        raise ValueError("source_checkout_changed_during_proof")
+
+
+def tool_versions(python, temporal):
+    commands = {
+        "kind": ["kind", "version"],
+        "temporal": [str(temporal), "--version"],
+        "docker": ["docker", "version", "--format", "{{json .}}"],
+        "python": [str(python), "-c", "import sys; print(sys.version)"],
+    }
+    return {
+        name: subprocess.check_output(command, text=True).strip()
+        for name, command in commands.items()
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Prove durable queue lifecycle in a new disposable kind cluster."
@@ -41,23 +80,17 @@ def main():
     pin = json.loads((ROOT / "packaging/kubernetes-producer.json").read_text())[
         "revision"
     ]
-    if revision(producer) != pin:
+    sources = {"consumer": ROOT, "producer": producer}
+    initial = {name: checkout_state(path) for name, path in sources.items()}
+    for name, state in initial.items():
+        if not state["clean"]:
+            raise ValueError(name + "_checkout_not_clean")
+    revisions = {name: state["revision"] for name, state in initial.items()}
+    if revisions["producer"] != pin:
         raise ValueError("producer_revision_mismatch")
-    if subprocess.check_output(
-        [
-            "git",
-            "-C",
-            str(producer),
-            "status",
-            "--porcelain",
-            "--untracked-files=normal",
-        ]
-    ).strip():
-        raise ValueError("producer_checkout_not_clean")
-    if subprocess.check_output(
-        ["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=normal"]
-    ).strip():
-        raise ValueError("consumer_checkout_not_clean")
+    (evidence / "tool-versions.json").write_text(
+        json.dumps(tool_versions(python, temporal), indent=2) + "\n"
+    )
     name = "birbverify-r5rh-bf-" + uuid4().hex[:8]
     config = evidence / "kubeconfig.private"
     env = {
@@ -65,7 +98,7 @@ def main():
         "PYTHONPATH": str(ROOT) + os.pathsep + str(producer / "src"),
         "BIRBVERIFY_SOURCE_ROOT": str(producer),
         "BIRBVERIFY_SOURCE_REVISION": pin,
-        "BIRBFORGE_SOURCE_REVISION": revision(ROOT),
+        "BIRBFORGE_SOURCE_REVISION": revisions["consumer"],
         "BIRBFORGE_AUTHORED_REVISION": args.authored_revision,
         "BIRBVERIFY_KUBE_FIXTURE": str(config),
         "BIRBVERIFY_KUBE_CONTEXT": "kind-" + name,
@@ -117,13 +150,16 @@ def main():
                     stderr=subprocess.STDOUT,
                 )
         finally:
-            config.unlink(missing_ok=True)
+            try:
+                config.unlink(missing_ok=True)
+            finally:
+                verify_sources(sources, revisions, evidence)
     print(
         json.dumps(
             {
                 "evidence": str(evidence),
                 "producer_revision": pin,
-                "consumer_revision": revision(ROOT),
+                "consumer_revision": revisions["consumer"],
             }
         )
     )

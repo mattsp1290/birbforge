@@ -1,4 +1,5 @@
 import asyncio
+import signal
 import sys
 from datetime import timedelta
 from pathlib import Path
@@ -8,10 +9,15 @@ from temporalio.common import WorkflowIDConflictPolicy, WorkflowIDReusePolicy
 from temporalio.worker import Worker
 
 from verification.kubernetes import KubernetesConfig, check_installation
+from verification.kubernetes_runtime import check_producer
 from verification.kubernetes_workflow import KubernetesQueue
 
 
 async def run(config: KubernetesConfig):
+    check_producer(config.queue.authority.producer_revision)
+    stopped = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGTERM, stopped.set)
     client = await Client.connect(config.temporal_address, namespace=config.namespace)
     async with Worker(
         client,
@@ -31,7 +37,7 @@ async def run(config: KubernetesConfig):
             KubernetesQueue.installation, rpc_timeout=timedelta(seconds=10)
         )
         check_installation(config, installed)
-        await asyncio.Event().wait()
+        await stopped.wait()
 
 
 def main():

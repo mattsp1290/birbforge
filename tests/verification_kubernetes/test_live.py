@@ -12,6 +12,23 @@ from pathlib import Path
 from uuid import uuid4
 
 import pytest
+
+REQUIRED_ENV = (
+    "BIRBVERIFY_SOURCE_ROOT",
+    "BIRBVERIFY_SOURCE_REVISION",
+    "BIRBFORGE_SOURCE_REVISION",
+    "BIRBFORGE_AUTHORED_REVISION",
+    "BIRBFORGE_KUBE_EVIDENCE",
+    "BIRBVERIFY_KUBE_FIXTURE",
+    "BIRBVERIFY_KUBE_CONTEXT",
+    "TEMPORAL_CLI",
+)
+if missing := [name for name in REQUIRED_ENV if not os.environ.get(name)]:
+    pytest.skip("live proof requires " + ", ".join(missing), allow_module_level=True)
+TEMPORAL = Path(os.environ["TEMPORAL_CLI"])
+if not TEMPORAL.is_file() or not os.access(TEMPORAL, os.X_OK):
+    pytest.skip("TEMPORAL_CLI must name an executable file", allow_module_level=True)
+
 from birbverify.contract import digest
 from birbverify.kubernetes_service import TargetService
 from birbverify.kubernetes_target import KubernetesTarget
@@ -25,9 +42,6 @@ from verification.kubernetes import (
 )
 from verification.kubernetes_adapter import execute
 from verification.kubernetes_workflow import KubernetesQueue
-
-if not os.environ.get("BIRBVERIFY_SOURCE_ROOT"):
-    pytest.skip("requires pinned Kubernetes producer fixture", allow_module_level=True)
 
 PRODUCER = Path(os.environ["BIRBVERIFY_SOURCE_ROOT"]).resolve()
 SPEC = importlib.util.spec_from_file_location(
@@ -303,9 +317,7 @@ async def test_real_queue_target_lifecycle(installation, scenario):
         )
         try:
             async with await WorkflowEnvironment.start_local(
-                dev_server_existing_path=os.environ.get(
-                    "TEMPORAL_CLI", "/opt/homebrew/bin/temporal"
-                ),
+                dev_server_existing_path=str(TEMPORAL),
                 dev_server_database_filename=str(root / "temporal.sqlite"),
                 dev_server_startup_timeout=timedelta(seconds=30),
             ) as env:

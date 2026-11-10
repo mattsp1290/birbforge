@@ -1,17 +1,17 @@
-# Kubernetes queue acceptance
+# Historical Kubernetes queue acceptance
 
-The bounded account/auth integration for `birbforge-yrnb` passed against producer `birbverify-r5rh`. Temporal is the only scheduler. Beans remains the authored-work owner. No shared staging deployment or delivery authorization occurred.
+These receipts are historical evidence for an earlier implementation of `birbforge-yrnb` against producer `birbverify-r5rh`. They do not establish acceptance of the current review fixes. A fresh proof from clean, unchanged consumer and producer revisions is pending. Temporal is the only scheduler. Beans remains the authored-work owner. No shared staging deployment or delivery authorization occurred.
 
 ## Exact sources
 
 - Runtime and live proof source `97ba00a6824985b4003c34a27ffa9e5f13c6cfb4`.
-- Regression fixture follow-up `08a9fdb90bdd0099249e651c0f1a20b80e9ff6b8` adds one simulated API-discovery response. It changes no runtime, packaging or live-test code. It landed during the live run; scenario receipts retain the original source revision, while the runner's final console summary reads the later HEAD. The source hashes in `receipts.json` identify the tested files directly.
+- Regression fixture follow-up `08a9fdb90bdd0099249e651c0f1a20b80e9ff6b8` adds one simulated API-discovery response. It changes no runtime, packaging or live-test code. It landed during the live run. All journeys record `birbforge_revision` as `97ba00a6824985b4003c34a27ffa9e5f13c6cfb4`, but the sealed `policy_revision` differs. The `restart` receipts use `97ba00a6824985b4003c34a27ffa9e5f13c6cfb4`; the `worker_lost` and `cancelled` receipts use `08a9fdb90bdd0099249e651c0f1a20b80e9ff6b8`. The final runner summary also reads the later HEAD. This mixed identity invalidates a claim that all journeys used one unchanged source revision. The historical source hashes do not certify the current tree.
 - Birbverify `bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd`, superseding the earlier development pin.
 - Authored Beans hub reference `d91e2164f15bd92720441c82a41eb6320be2bd71`. This is operator-supplied authority, not a tracker authorization check.
 
-## Observed results
+## Historical observed results
 
-The regression suite passed 75 tests. It covers legacy queue behavior, immutable admission, replay, config drift, receipt validation, cancellation, deadlines and real Temporal execution with a simulated Kubernetes API.
+The earlier regression suite passed 75 tests. It covers legacy queue behavior, immutable admission, replay, config drift, receipt validation, cancellation, deadlines and real Temporal execution with a simulated Kubernetes API.
 
 The committed live proof passed three journeys in a newly created kind cluster. Each journey used the actual producer target journal, Unix service, registered activities and Kubernetes API. Each exercised account creation and login, rejected an unauthorized Pod, cancelled a queued request without execution, restarted the coordinator process, and proved successor dispatch after exact release. The worker-loss journey additionally killed the producer worker during an accepted API operation. The cancellation journey closed a running request. Continue-As-New histories contain exactly the two expected execute activities.
 

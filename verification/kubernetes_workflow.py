@@ -226,11 +226,12 @@ class KubernetesQueue:
         except (ValueError, TypeError, KeyError, AttributeError):
             error = "invalid_producer_evidence"
         else:
-            error = (
-                "producer_quarantined"
-                if observed.get("state") == "quarantined"
-                else None
-            )
+            error = {
+                "quarantined": "producer_quarantined",
+                "sealed_unadmitted": "producer_sealed_unadmitted",
+            }.get(observed.get("state"))
+            if error is not None:
+                row["phase"] = "retained"
             if receipt is not None:
                 row.update(closure=receipt, phase="closed", observation_error=None)
                 if row["cancellation"] == "requested":
@@ -253,10 +254,10 @@ class KubernetesQueue:
                 {"request": row["payload"], "reason": row["closure_reason"]},
                 task_queue=self.config.activity_task_queue,
                 start_to_close_timeout=timedelta(
-                    seconds=self.config.activity_timeout_seconds
+                    seconds=max(125, self.config.activity_timeout_seconds)
                 ),
                 schedule_to_close_timeout=timedelta(
-                    seconds=self.config.activity_timeout_seconds + 5
+                    seconds=max(125, self.config.activity_timeout_seconds) + 5
                 ),
                 retry_policy=RetryPolicy(maximum_attempts=1),
             )
@@ -267,82 +268,20 @@ class KubernetesQueue:
         else:
             self.reconcile(row, observed)
 
+    async def wait_for_change(self, timeout: timedelta | None = None):
+        revision = self.state["revision"]
+        try:
+            await workflow.wait_condition(
+                lambda: self.state["revision"] != revision, timeout=timeout
+            )
+        except TimeoutError:
+            pass
+
     @workflow.run
     async def run(self, initial: dict) -> None:
         if workflow.info().workflow_id != self.config.authority.workflow_id:
             raise ApplicationError("noncanonical_target_workflow", non_retryable=True)
         while True:
-            self.cycles += 1
-            owner = self.state["outstanding_request_id"]
-            if owner is not None:
-                row = self.state["rows"][owner]
-                if (
-                    row["phase"] == "running"
-                    and datetime.fromisoformat(row["payload"]["deadline"])
-                    <= workflow.now()
-                ):
-                    row.update(
-                        phase="closing",
-                        closure_reason="worker_lost",
-                        closure_trigger="deadline",
-                    )
-                    self.touch(row)
-                if row["phase"] == "closing":
-                    await self.close(row)
-            else:
-                head = next(
-                    (
-                        self.state["rows"][identity]
-                        for identity in self.state["order"]
-                        if self.state["rows"][identity]["phase"] == "queued"
-                    ),
-                    None,
-                )
-                if head is not None:
-                    deadline = datetime.fromisoformat(head["payload"]["deadline"])
-                    if deadline <= workflow.now():
-                        head["phase"] = "expired"
-                        self.touch(head)
-                    else:
-                        identity = head["payload"]["request_id"]
-                        self.state["outstanding_request_id"] = identity
-                        head["phase"] = "dispatching"
-                        self.touch(head)
-                        self.active = workflow.start_activity(
-                            "birbverify_kubernetes_execute",
-                            head["payload"],
-                            activity_id=identity,
-                            task_queue=self.config.activity_task_queue,
-                            start_to_close_timeout=timedelta(
-                                seconds=self.config.activity_timeout_seconds
-                            ),
-                            schedule_to_close_timeout=deadline - workflow.now(),
-                            heartbeat_timeout=timedelta(seconds=5),
-                            retry_policy=RetryPolicy(maximum_attempts=1),
-                            cancellation_type=workflow.ActivityCancellationType.WAIT_CANCELLATION_COMPLETED,
-                        )
-                        try:
-                            await self.active
-                            head["activity_outcome"] = "completed"
-                        except ActivityError:
-                            head["activity_outcome"] = "unknown"
-                        finally:
-                            self.active = None
-                        if (
-                            head["activity_outcome"] == "unknown"
-                            and head["closure_reason"] is None
-                        ):
-                            head.update(
-                                closure_reason="worker_lost",
-                                closure_trigger="execution_unknown",
-                            )
-                        head["phase"] = (
-                            "closing"
-                            if head["closure_reason"] is not None
-                            else "running"
-                        )
-                        self.touch(head)
-                        continue
             if (
                 self.cycles >= self.config.continue_threshold
                 or workflow.info().is_continue_as_new_suggested()
@@ -351,4 +290,79 @@ class KubernetesQueue:
                 workflow.continue_as_new(
                     {"config": self.config.model_dump(mode="json"), "state": self.state}
                 )
-            await workflow.sleep(1)
+            self.cycles += 1
+            owner = self.state["outstanding_request_id"]
+            if owner is not None:
+                row = self.state["rows"][owner]
+                if row["phase"] == "running":
+                    remaining = (
+                        datetime.fromisoformat(row["payload"]["deadline"])
+                        - workflow.now()
+                    )
+                    if remaining > timedelta(0):
+                        await self.wait_for_change(remaining)
+                        continue
+                    row.update(
+                        phase="closing",
+                        closure_reason="worker_lost",
+                        closure_trigger="deadline",
+                    )
+                    self.touch(row)
+                if row["phase"] == "closing":
+                    await self.close(row)
+                    if row["phase"] == "closing":
+                        row["close_attempts"] = min(4, row.get("close_attempts", 0) + 1)
+                        await workflow.sleep(min(10, 2 ** (row["close_attempts"] - 1)))
+                else:
+                    await self.wait_for_change()
+                continue
+
+            head = next(
+                (
+                    self.state["rows"][identity]
+                    for identity in self.state["order"]
+                    if self.state["rows"][identity]["phase"] == "queued"
+                ),
+                None,
+            )
+            if head is None:
+                await self.wait_for_change()
+                continue
+            deadline = datetime.fromisoformat(head["payload"]["deadline"])
+            remaining = deadline - workflow.now()
+            if remaining <= timedelta(seconds=self.config.activity_timeout_seconds):
+                head["phase"] = "expired"
+                self.touch(head)
+                continue
+            identity = head["payload"]["request_id"]
+            self.state["outstanding_request_id"] = identity
+            head["phase"] = "dispatching"
+            self.touch(head)
+            self.active = workflow.start_activity(
+                "birbverify_kubernetes_execute",
+                head["payload"],
+                activity_id=identity,
+                task_queue=self.config.activity_task_queue,
+                start_to_close_timeout=timedelta(
+                    seconds=self.config.activity_timeout_seconds
+                ),
+                schedule_to_close_timeout=remaining,
+                heartbeat_timeout=timedelta(seconds=5),
+                retry_policy=RetryPolicy(maximum_attempts=1),
+                cancellation_type=workflow.ActivityCancellationType.WAIT_CANCELLATION_COMPLETED,
+            )
+            try:
+                await self.active
+                head["activity_outcome"] = "completed"
+            except ActivityError:
+                head["activity_outcome"] = "unknown"
+            finally:
+                self.active = None
+            if head["activity_outcome"] == "unknown" and head["closure_reason"] is None:
+                head.update(
+                    closure_reason="worker_lost", closure_trigger="execution_unknown"
+                )
+            head["phase"] = (
+                "closing" if head["closure_reason"] is not None else "running"
+            )
+            self.touch(head)
