@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/mattsp1290/birbverify",
+  "revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+  "request_schema": "birbverify.kubernetes.v1",
+  "closure_schema": "birbverify.kubernetes.closure.v1"
+}

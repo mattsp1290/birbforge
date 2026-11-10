@@ -1,0 +1,9 @@
+ts	phase	decision	why	evidence	result
+2026-11-10T03:38:13Z	frame	Use existing contextless closure queue as integration base	Main contains documentation only; this branch owns durable queue and release receipts	b5566d9	open
+2026-11-10T03:40:05Z	baseline	Run existing queue admission adapter and closure unit tests	Establish existing behavior before target integration	.local/yrnb/baseline.xml	53 passed
+2026-11-10T03:43:45Z	design	Choose separate typed Kubernetes workflow with shared binding and proof requirements	Producer explicit close lifecycle and receipt differ from v1; preserve existing histories	.local/yrnb/synthesis.md	selected
+2026-11-10T03:53:17Z	proof	Set sticky queue failover to two seconds	Real process restart hit ten-second config query timeout while history remained assigned to dead worker	.local/yrnb/live-snapshot-2/restart-logs/process-2.log	fixed
+2026-11-10T04:02:36Z	review	Add durable completion window before normal closure	Claude review showed the response gate hid immediate teardown in the real path	.local/yrnb/review.md	fixed
+2026-11-10T04:02:36Z	verification	Run legacy and Kubernetes regressions against pinned producer	Keep existing fixture behavior and prove new commands through real Temporal	.local/yrnb/regression.xml	75 passed
+2026-11-10T04:02:36Z	delivery	Use configured GitHub origin for review	Preferred Forgejo SSH endpoint timed out; no remotes or server state changed	.git/config	review prepared
+2026-11-10T04:11:00Z	producer	Pin bc52efc and model admission discovery in simulated API	Producer strengthened admission identity and unadmitted sealing	packaging/kubernetes-producer.json	75 regressions and 3 live journeys passed
