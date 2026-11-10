@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Annotated, Literal, TypedDict
+from typing import Annotated, Literal, NotRequired, TypedDict
 
 from birbverify.contract import Commit, Id, Record, RequestId, Sha, digest
 from birbverify.kubernetes_contract import (
@@ -9,7 +9,10 @@ from birbverify.kubernetes_contract import (
     KubernetesReceipt,
     KubernetesRequest,
 )
-from pydantic import Field, RootModel, TypeAdapter
+from pydantic import AwareDatetime, Field, RootModel, TypeAdapter
+
+from verification.deployment_runtime import DeploymentRuntime
+from verification.temporal_transport import TemporalTLS
 
 MAX_CLOSURE_BYTES = 8192
 
@@ -84,8 +87,35 @@ class KubernetesAuthority(Record):
         )
 
 
+class DeploymentQueueProfile(Record):
+    request_id: RequestId = Field(max_length=63)
+    request_sha256: Sha
+    activity_installation_sha256: Sha
+    producer_package_sha256: Sha
+    ownership_server_cert_sha256: Sha
+    epoch: Id
+    deadline: AwareDatetime
+    verifier_task_queue: Id
+
+    @property
+    def invocation(self) -> dict:
+        return self.model_dump(include={"request_id", "request_sha256", "epoch"})
+
+    @property
+    def operation_id(self) -> str:
+        return digest(
+            {
+                "invocation": self.invocation,
+                "installation": self.activity_installation_sha256,
+            }
+        )
+
+
 class KubernetesQueueConfig(Record):
     authority: KubernetesAuthority
+    deployment: DeploymentQueueProfile | None = Field(
+        default=None, exclude_if=lambda profile: profile is None
+    )
     activity_task_queue: Id
     max_requests: Annotated[int, Field(strict=True, ge=1, le=128)] = 128
     continue_threshold: Annotated[int, Field(strict=True, ge=2, le=10000)] = 100
@@ -96,6 +126,8 @@ class KubernetesQueueConfig(Record):
 class KubernetesConfig(Record):
     queue: KubernetesQueueConfig
     temporal_address: str
+    temporal_tls: TemporalTLS | None = None
+    deployment_runtime: DeploymentRuntime | None = None
     namespace: str = "default"
     workflow_task_queue: Id
 
@@ -114,7 +146,15 @@ def closure_reason(trigger: ClosureTrigger | None) -> ClosureReason | None:
     return CLOSURE_REASONS[trigger] if trigger is not None else None
 
 
+class DeploymentRecord(TypedDict):
+    operation_id: str
+    lookup_status: Literal["unavailable", "absent", "pending", "recorded"]
+    result: dict | None
+    seal_observation: dict | None
+
+
 class KubernetesRow(TypedDict):
+    deployment: NotRequired[DeploymentRecord]
     intent: dict
     payload: dict
     request_sha256: str
@@ -162,6 +202,14 @@ def bind_kubernetes(intent: dict, config: KubernetesQueueConfig, now: datetime) 
             raise ValueError(field + "_not_current")
     if body.approved_plan_sha256 != authority.plan_sha256:
         raise ValueError("plan_not_approved")
+    if profile := config.deployment:
+        if body.request_id != profile.request_id:
+            raise ValueError("request_not_installed")
+        return {
+            "request_id": body.request_id,
+            "candidate_revision": authority.candidate_revision,
+            "deadline": profile.deadline.isoformat(),
+        }
     return KubernetesRequest(
         request_id=body.request_id,
         candidate_revision=authority.candidate_revision,

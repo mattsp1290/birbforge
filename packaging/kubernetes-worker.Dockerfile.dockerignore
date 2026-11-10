@@ -2,5 +2,8 @@
 !verification
 !verification/__init__.py
 !verification/kubernetes*.py
+!verification/deployment*.py
+!verification/ownership_tls.py
+!verification/temporal_transport.py
 !packaging
 !packaging/kubernetes-producer.json

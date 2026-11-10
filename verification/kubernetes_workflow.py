@@ -4,6 +4,8 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 from temporalio.exceptions import ActivityError, ApplicationError
 
+from verification.deployment_workflow import dispatch_deployment, reconcile_deployment
+
 with workflow.unsafe.imports_passed_through():
     from verification.kubernetes import (
         STATE_ADAPTER,
@@ -30,6 +32,14 @@ class KubernetesQueue:
     @workflow.init
     def __init__(self, initial: dict):
         self.config = KubernetesQueueConfig.model_validate(initial["config"])
+        if (
+            self.config.deployment
+            and "state" in initial
+            and not workflow.info().continued_run_id
+        ):
+            raise ApplicationError(
+                "deployment_initial_state_forbidden", non_retryable=True
+            )
         self.state = STATE_ADAPTER.validate_python(
             initial.get(
                 "state",
@@ -119,6 +129,14 @@ class KubernetesQueue:
             "observation_error": None,
             "close_attempts": 0,
         }
+        if profile := self.config.deployment:
+            row["request_sha256"] = profile.request_sha256
+            row["deployment"] = {
+                "operation_id": profile.operation_id,
+                "lookup_status": "unavailable",
+                "result": None,
+                "seal_observation": None,
+            }
         self.state["rows"][identity] = row
         self.state["order"].append(identity)
         return row
@@ -159,7 +177,12 @@ class KubernetesQueue:
         if row["cancellation"] != "none":
             return failure("cancellation_already_decided")
         if row["phase"] == "queued":
-            row.update(phase="cancelled_before_dispatch", cancellation="acknowledged")
+            if self.config.deployment:
+                row.update(closure_trigger="cancel", cancellation="requested")
+            else:
+                row.update(
+                    phase="cancelled_before_dispatch", cancellation="acknowledged"
+                )
         elif row["phase"] in {"closed", "expired"}:
             row["cancellation"] = "too_late"
         elif row["closure_trigger"] is not None:
@@ -189,6 +212,29 @@ class KubernetesQueue:
     @workflow.query
     def snapshot(self) -> dict:
         return self.state
+
+    @workflow.query
+    def deployment_evidence_v1(self, invocation: dict) -> dict | None:
+        profile = self.config.deployment
+        if profile is None or invocation != profile.invocation:
+            return None
+        row = self.state["rows"].get(profile.request_id)
+        if row is None:
+            return None
+        record = row["deployment"]
+        return {
+            "schema_version": "birbforge.deployment.evidence-status.v1",
+            "invocation": profile.invocation,
+            "operation_id": record["operation_id"],
+            "result_sha256": record["result"]["result_sha256"]
+            if record["result"]
+            else None,
+            "seal_observation_sha256": digest(record["seal_observation"])
+            if record["seal_observation"]
+            else None,
+            "eligible": False,
+            "reason": "release_not_authorized",
+        }
 
     def reconcile(self, row: dict, observed: dict):
         old_phase = row["phase"]
@@ -267,6 +313,9 @@ class KubernetesQueue:
             owner = self.state["outstanding_request_id"]
             if owner is not None:
                 row = self.state["rows"][owner]
+                if self.config.deployment:
+                    await reconcile_deployment(self, row)
+                    continue
                 if row["phase"] == "running":
                     remaining = (
                         datetime.fromisoformat(row["payload"]["deadline"])
@@ -302,7 +351,9 @@ class KubernetesQueue:
                 continue
             deadline = datetime.fromisoformat(head["payload"]["deadline"])
             remaining = deadline - workflow.now()
-            if remaining <= timedelta(seconds=self.config.activity_timeout_seconds):
+            if not self.config.deployment and remaining <= timedelta(
+                seconds=self.config.activity_timeout_seconds
+            ):
                 head["phase"] = "expired"
                 self.touch(head)
                 continue
@@ -310,6 +361,9 @@ class KubernetesQueue:
             self.state["outstanding_request_id"] = identity
             head["phase"] = "dispatching"
             self.touch(head)
+            if self.config.deployment:
+                await dispatch_deployment(self, head)
+                continue
             self.active = workflow.start_activity(
                 "birbverify_kubernetes_execute",
                 head["payload"],

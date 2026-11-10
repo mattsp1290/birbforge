@@ -1,5 +1,7 @@
 # Account/auth result contract groundwork
 
+For the deployment profile and its authenticated denial export, see [Recover a deployment result and read its promotion status](deployment-result-status.md).
+
 Birbforge must distinguish an application pass from the release of a target. A completed activity or safe closure does not establish an application pass.
 
 This change defines a provisional consumer contract and fixture checks for `birbforge-vsrd`. Production queue projections remain delivery-ineligible. No result submission command, verifier worker, publisher, scheduler, or deployment is added. Final integration depends on the reviewed deployment-compatible contract from `birbverify-bsmn`.

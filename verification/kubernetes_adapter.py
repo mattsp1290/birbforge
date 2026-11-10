@@ -5,7 +5,6 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 
-from temporalio.client import Client
 from temporalio.exceptions import TemporalError
 from temporalio.service import RPCError
 
@@ -19,6 +18,7 @@ from verification.kubernetes import (
 )
 from verification.kubernetes_runtime import check_producer
 from verification.kubernetes_workflow import KubernetesQueue
+from verification.temporal_transport import connect
 
 MAX_INPUT = 16384
 
@@ -34,7 +34,10 @@ async def _execute(config: KubernetesConfig, raw: dict) -> dict:
     command = KubernetesCommand.model_validate(raw).normalized()
     authority = config.queue.authority
     try:
-        check_producer(authority.producer_revision)
+        if config.queue.deployment is None:
+            check_producer(authority.producer_revision)
+        elif config.queue.deployment.verifier_task_queue == config.workflow_task_queue:
+            return failure("deployment_task_queue_conflict", 409)
     except (ValueError, OSError) as error:
         return failure(
             str(error)
@@ -43,9 +46,9 @@ async def _execute(config: KubernetesConfig, raw: dict) -> dict:
             409,
         )
     try:
-        client = await Client.connect(
-            config.temporal_address, namespace=config.namespace
-        )
+        client = await connect(config)
+    except (ValueError, OSError):
+        return failure("invalid_transport_configuration", 409)
     except RuntimeError:
         return failure("verification_unavailable", 503)
     handle = client.get_workflow_handle(authority.workflow_id)

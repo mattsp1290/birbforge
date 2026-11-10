@@ -1,3 +1,5 @@
+import asyncio
+
 from birbverify.contract import digest
 
 from verification.kubernetes import KubernetesAuthority, KubernetesQueueConfig
@@ -67,3 +69,14 @@ def cancellation(identity, revision, command_id="cancel-1"):
 
 def completion(identity, revision, command_id="complete-1"):
     return _revision_command("complete", identity, revision, command_id)
+
+
+async def until(handle, predicate):
+    from verification.kubernetes_workflow import KubernetesQueue
+
+    async with asyncio.timeout(30):
+        while True:
+            state = await handle.query(KubernetesQueue.snapshot)
+            if predicate(state):
+                return state
+            await asyncio.sleep(0.1)
