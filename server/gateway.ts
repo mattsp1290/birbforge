@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createServer, type IncomingMessage, type RequestListener } from 'node:http';
 import { Readable } from 'node:stream';
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { RunAgentInputSchema } from '@ag-ui/core/schemas';
 import { z } from 'zod/v4';
@@ -11,6 +11,7 @@ import { VerificationConfig, serveVerification } from './verification';
 import {DeliveryConfig, serveDelivery} from './delivery';
 import {Projects, ProjectsConfig} from './projects';
 import {ProjectError} from './beans-projects';
+import {workspaceAction, type Workspace} from './workspace';
 import {GitHubUnavailable} from './github';
 
 export const GatewayConfig = z.object({
@@ -38,7 +39,7 @@ async function body(request: IncomingMessage) {
   return JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown;
 }
 
-export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: ListenerPolicy, webRoot?: string): RequestListener {
+export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: ListenerPolicy, webRoot?: string, services?: Workspace): RequestListener {
   const projects = config.projects ? new Projects(config.projects) : null;
   const external = policy.kind === 'privateProxy' ? new URL(policy.settings.origin) : null;
   const hashes = Object.entries(config.tokens).map(([principal, token]) => ({
@@ -73,9 +74,18 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
       catch { return send(400, 'invalid_path'); }
       const path = resolve(root, '.' + pathname);
       if (!path.startsWith(root + sep)) return send(404, 'not_found');
+      const asset = path.slice(root.length);
+      const mime: Record<string, string> = {'.js': 'text/javascript', '.ttf': 'font/ttf', '.css': 'text/css',
+        '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2'};
+      const contentType = asset === '/index.html' ? 'text/html' :
+        asset === '/metadata.json' ? 'application/json' :
+        asset.startsWith('/_expo/static/') || asset.startsWith('/assets/') ? mime[extname(path)] : undefined;
+      if (!contentType) return send(404, 'not_found');
       try {
-        const content = await readFile(path);
-        response.setHeader('Content-Type', extname(path) === '.js' ? 'text/javascript' : extname(path) === '.html' ? 'text/html' : 'application/octet-stream');
+        const file = await realpath(path);
+        if (!file.startsWith(await realpath(root) + sep)) return send(404, 'not_found');
+        const content = await readFile(file);
+        response.setHeader('Content-Type', contentType);
         response.end(content);
       } catch { send(404, 'not_found'); }
       return;
@@ -93,6 +103,15 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     const digest = createHash('sha256').update(authorization.slice(7)).digest();
     const credential = owner ?? (authorization.startsWith('Bearer ') && hashes.find(entry => timingSafeEqual(entry.hash, digest)));
     if (!credential) return send(401, 'authentication_required');
+    if (/^\/api\/(?:session|catalog|factory|secrets|chats(?:\/.*)?)$/.test(url.pathname)) {
+      if (url.search) return send(404, 'not_found');
+      const workspaceOwner = services?.ownerPrincipal ?? config.projects?.owner_principal ?? owner?.principal ?? 'owner';
+      if (credential.principal !== workspaceOwner) return send(403, 'workspace_owner_required');
+      const result = await workspaceAction(services, url.pathname, request.method, request, body, Boolean(config.projects));
+      response.writeHead(result.status, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify(result.data));
+      return;
+    }
     if (url.pathname.startsWith('/api/projects') || url.pathname === '/api/github/repositories') {
       if (!projects) return send(404, 'projects_unavailable');
       return projects.serve({url, request, response, principal: credential.principal, producerUrl: config.url, credential: credential.token, readBody: () => body(request)});
@@ -208,12 +227,12 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
   };
 }
 
-export function gateway(config: z.infer<typeof GatewayConfig>, webRoot?: string) {
-  return createServer(gatewayHandler(config, {kind: 'loopback'}, webRoot));
+export function gateway(config: z.infer<typeof GatewayConfig>, webRoot?: string, services?: Workspace) {
+  return createServer(gatewayHandler(config, {kind: 'loopback'}, webRoot, services));
 }
 
-export function privateGateway(config: z.infer<typeof GatewayConfig>, settings: ProxySettings, webRoot?: string) {
-  const server = createServer(gatewayHandler(config, {kind: 'privateProxy', settings}, webRoot));
+export function privateGateway(config: z.infer<typeof GatewayConfig>, settings: ProxySettings, webRoot?: string, services?: Workspace) {
+  const server = createServer(gatewayHandler(config, {kind: 'privateProxy', settings}, webRoot, services));
   server.on('connection', socket => {
     const source = socket.remoteAddress?.replace(/^::ffff:/, '') ?? '';
     if (source !== '127.0.0.1') socket.destroy();

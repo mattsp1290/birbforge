@@ -1,11 +1,15 @@
+import {connectMachine} from './browser-machine.mjs';
 import {chromium} from '@playwright/test';
 import {readFileSync, writeFileSync} from 'node:fs';
+import {checkCatalog} from './workspace-catalog-check.mjs';
+import {checkChat} from './workspace-chat-check.mjs';
 import assert from 'node:assert/strict';
 const session = JSON.parse(readFileSync('.local/session.json', 'utf8'));
 const executablePath = process.env.BIRBFORGE_CHROMIUM;
 if (!executablePath) throw new Error('Set BIRBFORGE_CHROMIUM to an existing authorized Chromium binary');
 const browser = await chromium.launch({executablePath, headless: true});
 const context = await browser.newContext({viewport: {width: 1280, height: 1000}});
+context.setDefaultTimeout(15_000);
 const errors = [];
 const transitions = [];
 try {
@@ -14,12 +18,15 @@ try {
   let observations = 0;
   let inputRequests = 0;
   a.on('request', request => {
-    if (request.url().endsWith('/events')) observations++;
+    if (/\/api\/conversations\/[^/]+\/events$/.test(request.url())) observations++;
     if (request.method() === 'POST' && request.url().endsWith('/inputs')) inputRequests++;
   });
   for (const page of [a,b]) page.on('pageerror', error => errors.push(error.message));
-  await a.goto(session.url);
-  await a.getByRole('textbox', {name:'Owner test credential', exact:true}).fill(session.tokens.owner);
+  async function signIn(page) {
+    await connectMachine(page, session.url, session.tokens.owner);
+    await page.getByRole('tab', {name:'Factory', exact:true}).click();
+  }
+  await signIn(a);
   const createIds = [];
   await a.route('**/api/conversations', async route => {
     createIds.push(route.request().postDataJSON().id);
@@ -37,13 +44,14 @@ try {
   await a.getByRole('button', {name:'Send goal', exact:true}).click();
   await a.getByRole('button', {name:'Inspect fixture', exact:true}).waitFor({timeout:60000});
   transitions.push('browser A submitted goal and received durable input');
-  await b.goto(session.url);
-  await b.getByRole('textbox', {name:'Owner test credential', exact:true}).fill(session.tokens.owner);
+  await signIn(b);
   await b.getByRole('textbox', {name:'Conversation identity', exact:true}).fill(identity);
   await b.getByRole('button', {name:'Continue conversation', exact:true}).click();
   await b.getByRole('button', {name:'Inspect fixture', exact:true}).waitFor();
   await b.getByRole('button', {name:'Inbox (1)', exact:true}).click();
+  await b.getByRole('tab', {name:'Settings', exact:true}).click();
   await b.getByRole('button', {name:'Large text', exact:true}).click();
+  await b.getByRole('tab', {name:'Factory', exact:true}).click();
   let tabs = 0;
   const decisionButton = b.getByRole('button', {name:'Test fixture', exact:true});
   while (!(await decisionButton.evaluate(element => element === document.activeElement)) && tabs < 30) {
@@ -77,6 +85,8 @@ try {
   assert.equal(authoritative.decisions.length, 1);
   transitions.push('network loss and automatic reconnect preserved one input without prompt resubmission');
   await b.screenshot({path: '.local/browser-large-text.png', fullPage:true});
+  await a.setViewportSize({width:390, height:844});
+  await checkChat(a, await checkCatalog(a));
   assert.deepEqual(errors, []);
   writeFileSync('docs/evidence/browser-checks.json', JSON.stringify({
     target:'Linux ARM64 headless Chromium, not a Mac browser or native phone',

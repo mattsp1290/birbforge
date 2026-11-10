@@ -1,3 +1,4 @@
+import {connectMachine} from '../scripts/browser-machine.mjs';
 import assert from 'node:assert/strict';
 import {readFile, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -13,9 +14,8 @@ try {
   const first = await browser.newPage({viewport: {width: 1280, height: 1000}});
   const second = await browser.newPage({viewport: {width: 430, height: 932}});
   const enter = async page => {
-    await page.goto(session.url);
-    await page.getByLabel('Owner test credential', {exact: true}).fill(session.token);
-    await page.getByRole('button', {name: 'Projects', exact: true}).click();
+    await connectMachine(page, session.url, session.token);
+    await page.getByRole('tab', {name: 'Projects', exact: true}).click();
   };
   first.on('request', request => {if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/projects') commands.push(request.postDataJSON());});
   await enter(first);

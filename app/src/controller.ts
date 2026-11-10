@@ -162,7 +162,7 @@ export class ConversationClient {
       throw error;
     }
     await this.pendingStore?.clear();
-    this.patch({pendingPrompt: null, notice: 'Message accepted.'});
+    this.patch({pendingPrompt: null, notice: this.value.conversation?.kind === 'project' ? 'Message accepted.' : 'Goal accepted.'});
     await this.reconcile();
   }
   async resolve(decision: Decision) {

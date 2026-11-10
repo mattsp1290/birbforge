@@ -1,3 +1,4 @@
+import {connectMachine} from './browser-machine.mjs';
 import {chromium} from '@playwright/test';
 import {readFileSync, writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -51,14 +52,16 @@ try {
   const a = await context.newPage();
   const b = await context.newPage();
   for (const page of [a,b]) page.on('pageerror', error => errors.push(error.message));
-  await a.goto(session.url);
-  await a.getByRole('textbox', {name: 'Owner test credential', exact: true}).fill(session.tokens.owner);
+  async function connect(page) {
+    await connectMachine(page, session.url, session.tokens.owner);
+    await page.getByRole('tab', {name: 'Factory', exact: true}).click();
+  }
+  await connect(a);
   await a.getByRole('button', {name: 'New conversation', exact: true}).click();
   const identity = await a.getByTestId('conversation-id').textContent();
   assert.match(identity, /^[0-9a-f-]{36}$/);
   await a.getByRole('button', {name: 'Request verification', exact: true}).waitFor();
-  await b.goto(session.url);
-  await b.getByRole('textbox', {name: 'Owner test credential', exact: true}).fill(session.tokens.owner);
+  await connect(b);
   await b.getByRole('textbox', {name: 'Conversation identity', exact: true}).fill(identity);
   await b.getByRole('button', {name: 'Continue conversation', exact: true}).click();
   await b.getByRole('button', {name: /^Inbox/}).click();

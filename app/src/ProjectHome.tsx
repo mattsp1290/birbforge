@@ -1,20 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {PendingProjectAction, pendingProjectKey} from './project-pending';
 import React, {useEffect, useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
+import {Action as Button, useUI} from './ui';
 import {ProjectClient} from './projects';
 import {ProjectCommand as ProjectCommandSchema} from './project-contract';
 import type {Project, ProjectCommand} from './project-contract';
 import {ActionError} from './controller';
 
 type Picked = {id: string; full_name: string};
-function Button({label, onPress, disabled = false}: {label: string; onPress: () => void; disabled?: boolean}) {
-  const [focused, setFocused] = useState(false);
-  return <Pressable onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} accessibilityRole="button" accessibilityLabel={label} accessibilityState={{disabled}} disabled={disabled} onPress={onPress}
-    style={({pressed}) => [styles.button, disabled && {opacity: 0.45}, pressed && {opacity: 0.75}, focused && {outlineColor: '#ffffff', outlineWidth: 3}]}><Text style={styles.buttonText}>{label}</Text></Pressable>;
-}
 function Picker({client, selected, select, busy}: {client: ProjectClient; selected: Picked[]; select: (value: Picked[]) => void; busy: boolean}) {
+  const {colors} = useUI();
+  const styles = useProjectStyles();
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<Picked[]>([]);
@@ -36,7 +34,7 @@ function Picker({client, selected, select, busy}: {client: ProjectClient; select
   }, [client, query, page, refresh]);
   return <View style={styles.card}>
     <Text style={styles.heading}>Select GitHub repositories</Text>
-    <TextInput accessibilityLabel="Search accessible repositories" placeholder="Search accessible repositories" placeholderTextColor="#aabcb5" style={styles.input} value={query} onChangeText={value => {setQuery(value); setPage(1);}} />
+    <TextInput accessibilityLabel="Search accessible repositories" placeholder="Search accessible repositories" placeholderTextColor={colors.muted} style={styles.input} value={query} onChangeText={value => {setQuery(value); setPage(1);}} />
     <Button label="Refresh GitHub repositories" disabled={busy || loading} onPress={() => {setPage(1); setRefresh(value => value + 1);}} />
     {loading && <Text accessibilityLiveRegion="polite" style={styles.text}>Loading repositories...</Text>}
     {!!failure && <Text accessibilityLiveRegion="polite" style={styles.notice}>{failure}</Text>}
@@ -50,6 +48,8 @@ function Picker({client, selected, select, busy}: {client: ProjectClient; select
   </View>;
 }
 export function ProjectHome({client, initialProjectId, openChat, leave}: {client: ProjectClient; initialProjectId: string | null; openChat: (id: string, projectId: string) => Promise<void>; leave: () => void}) {
+  const {colors} = useUI();
+  const styles = useProjectStyles();
   const [projects, setProjects] = useState<Project[]>([]);
   const [project, setProject] = useState<Project | null>(null);
   const [creating, setCreating] = useState(false);
@@ -105,7 +105,7 @@ export function ProjectHome({client, initialProjectId, openChat, leave}: {client
     if (project) void act(() => mutate({project_id: project.id, operation_id: randomUUID(), expected_revision: project.revision, change}));
   };
   const locked = !restored || busy || !!pending || !!pendingChat;
-  return <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
+  return <ScrollView style={{backgroundColor: colors.bg}} contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
     <Text accessibilityRole="header" style={styles.title}>{project ? project.name : 'Your projects'}</Text>
     <Button label={project || creating ? 'Back to projects' : 'Back to conversations'} disabled={locked} onPress={() => {if (project || creating) {setProject(null); setCreating(false); setSelected([]); setName('');} else leave();}} />
     <Text accessibilityLiveRegion="polite" style={styles.notice}>{notice}</Text>
@@ -124,7 +124,7 @@ export function ProjectHome({client, initialProjectId, openChat, leave}: {client
     {creating && <>
       <Picker client={client} selected={selected} select={setSelected} busy={locked} />
       <Text style={styles.text}>Project name defaults to the first repository you select.</Text>
-      <TextInput accessibilityLabel="New project name" placeholder={selected[0]?.full_name.split('/')[1] ?? 'Select the first repository'} placeholderTextColor="#aabcb5" style={styles.input} editable={!locked} value={name} onChangeText={setName} />
+      <TextInput accessibilityLabel="New project name" placeholder={selected[0]?.full_name.split('/')[1] ?? 'Select the first repository'} placeholderTextColor={colors.muted} style={styles.input} editable={!locked} value={name} onChangeText={setName} />
       <Button label="Create project" disabled={locked || !selected.length} onPress={() => void act(() => mutate({project_id: `project-${randomUUID()}`, operation_id: randomUUID(), expected_revision: null,
         change: {type: 'create', name: name.trim() || null, repository_ids: selected.map(repo => repo.id)}}))} />
     </>}
@@ -156,11 +156,15 @@ export function ProjectHome({client, initialProjectId, openChat, leave}: {client
     </>}
   </ScrollView>;
 }
-const styles = StyleSheet.create({
-  page: {padding: 24, paddingTop: 60, gap: 18, width: '100%', maxWidth: 850, alignSelf: 'center', paddingBottom: 60},
-  title: {color: '#f1f6ed', fontSize: 32, fontWeight: '700'}, heading: {color: '#f1f6ed', fontSize: 22, fontWeight: '600'},
-  text: {color: '#dce9df', fontSize: 16, lineHeight: 25}, notice: {color: '#f3d4a1', fontSize: 16, lineHeight: 25},
-  card: {backgroundColor: '#142222', padding: 18, borderRadius: 12, gap: 12, borderColor: '#30453f', borderWidth: 1},
-  input: {color: '#f1f6ed', borderColor: '#78998a', borderWidth: 1, borderRadius: 8, padding: 14, fontSize: 17, minHeight: 52, backgroundColor: '#0b1515'},
-  button: {minHeight: 48, padding: 14, backgroundColor: '#b4debe', borderRadius: 9, alignItems: 'center'}, buttonText: {color: '#10231b', fontSize: 16, fontWeight: '600'},
-});
+function useProjectStyles() {
+  const {colors, largeText} = useUI();
+  return StyleSheet.create({
+    page: {padding: 20, gap: 16, width: '100%', maxWidth: 850, alignSelf: 'center', paddingBottom: 40},
+    title: {color: colors.text, fontSize: largeText ? 38 : 30, fontWeight: '700'},
+    heading: {color: colors.text, fontSize: largeText ? 26 : 20, fontWeight: '600'},
+    text: {color: colors.text, fontSize: largeText ? 20 : 16, lineHeight: largeText ? 29 : 25},
+    notice: {color: colors.muted, fontSize: largeText ? 20 : 16, lineHeight: largeText ? 29 : 25},
+    card: {backgroundColor: colors.panel, padding: 18, borderRadius: 12, gap: 12, borderColor: colors.line, borderWidth: 1},
+    input: {color: colors.text, borderColor: colors.line, borderWidth: 1, borderRadius: 8, padding: 14, fontSize: largeText ? 20 : 16, minHeight: 48, backgroundColor: colors.bg},
+  });
+}

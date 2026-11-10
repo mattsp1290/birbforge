@@ -8,22 +8,27 @@
     "gateway": "tsx --tsconfig tsconfig.node.json server/main.ts",
     "web": "expo start --web --localhost",
     "export:web": "expo export --platform web",
-    "export:native": "expo export --platform ios --platform android --no-bytecode"
+    "export:native": "expo export --platform ios --platform android --no-bytecode",
+    "check:settings": "tsx --tsconfig tsconfig.node.json scripts/settings-browser-check.ts"
   },
   "main": "app/index.ts",
   "dependencies": {
     "@ag-ui/client": "1.0.4",
     "@ag-ui/core": "1.0.4",
     "@expo/metro-runtime": "~55.0.0",
+    "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
     "expo": "~55.0.0",
     "expo-crypto": "~55.0.19",
+    "expo-font": "~55.0.8",
+    "expo-system-ui": "55.0.22",
     "octokit": "5.0.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.10",
+    "react-native-safe-area-context": "~5.6.2",
     "react-native-web": "~0.21.0",
     "zod": "3.25.76"
   },

@@ -11,6 +11,9 @@
 !app/**
 !server
 !server/**
+!scripts
+scripts/**
+!scripts/chat-agent.py
 !delivery
 !delivery/**
 **/__pycache__

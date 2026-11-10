@@ -129,6 +129,22 @@ async def test_real_activity_queue_restarts_recovery_cancel_and_gate(
                 assert result["ok"], result
                 return result["value"]
 
+            status = await execute(config, {"op": "factory", "principal": "owner"})
+            assert status == {
+                "ok": True,
+                "value": {
+                    "conversationId": None,
+                    "environment": "free",
+                    "queued": 0,
+                    "running": 0,
+                    "uncertain": 0,
+                    "finished": 0,
+                },
+            }
+            assert (await execute(config, {"op": "factory", "principal": "stranger"}))[
+                "status"
+            ] == 403
+
             never_started = {**command(), "conversation_id": str(uuid4())}
             assert (await execute(config, never_started))["ok"]
 
@@ -185,6 +201,15 @@ async def test_real_activity_queue_restarts_recovery_cancel_and_gate(
             attempt = view["requests"][0]["attempt_id"]
             assert view["requests"][1]["phase"] == "queued"
             assert view["requests"][1]["attempt_id"] is None
+            status = (await execute(config, {"op": "factory", "principal": "owner"}))[
+                "value"
+            ]
+            assert status["conversationId"] == conversation
+            assert (status["queued"], status["running"], status["finished"]) == (
+                2,
+                1,
+                1,
+            )
             history = await handle.fetch_history()
             scheduled = [
                 event.activity_task_scheduled_event_attributes.activity_id

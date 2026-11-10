@@ -8,6 +8,7 @@ import {createServer, type Server} from 'node:http';
 import {createHash, randomUUID} from 'node:crypto';
 import {test} from 'node:test';
 import {BeansProjects, ProjectError} from '../server/beans-projects';
+import {CatalogService} from '../server/catalog';
 import {ProjectIntents} from '../server/project-intents';
 import {GatewayConfig, gateway} from '../server/gateway';
 
@@ -56,6 +57,12 @@ test('Beans consumer survives separate CLI retries and preserves namespace and h
     assert.equal(created.project.name, 'zebra');
     assert.deepEqual(created.project.repositories.map(repo => repo.id), ['22', '11']);
     assert.equal(created.pushed, true);
+    const crewCatalog = new CatalogService({directory: join(f.root, 'workspace'), managedBeans: f.config});
+    const agent = {id: randomUUID(), name: 'Finch', instructions: '', projectIds: [created.project.id]};
+    const assigned = await crewCatalog.apply({kind: 'saveAgent', agent, previous: null});
+    assert.deepEqual(assigned.projects, [{id: 'project-stable', name: 'zebra', repositories: ['owner/zebra', 'owner/alpha']}]);
+    assert.deepEqual(assigned.agents, [agent]);
+    await assert.rejects(crewCatalog.apply({kind: 'linkRepository', id: 'project-stable', repository: 'owner/third'}), /use_managed_project_command/);
     const firstHead = await git(f.hub, 'rev-parse', 'HEAD');
     const retry = await new BeansProjects(f.config).apply(create);
     assert.equal(retry.replayed, true);
@@ -74,6 +81,8 @@ test('Beans consumer survives separate CLI retries and preserves namespace and h
     const archived = await f.beans.apply(request('project-stable', randomUUID(), removed.project.revision, {type: 'archive'}));
     assert.equal(archived.project.archived, true);
     assert.deepEqual(await f.beans.list(), []);
+    assert.deepEqual((await crewCatalog.snapshot()).projects, []);
+    assert.deepEqual((await crewCatalog.snapshot()).agents[0].projectIds, ['project-stable']);
     assert.equal((await new BeansProjects(f.config).get('project-stable')).archived, true);
     assert.ok((await git(f.hub, 'show', `${firstHead}:projects/project-stable/beans.toml`)).includes('zebra'));
     assert.equal(await git(f.remote, 'rev-parse', 'main'), await git(f.hub, 'rev-parse', 'HEAD'));

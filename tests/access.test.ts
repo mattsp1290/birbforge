@@ -104,6 +104,10 @@ print(json.dumps({'ok': True, 'value': json.loads(${JSON.stringify(JSON.stringif
       request.on('error', reject); request.end();
     });
     assert.equal(rejectedSource, 403);
+    assert.deepEqual(await (await requestFetch(base + '/api/session', {headers})).json(), {authenticated: true, managedProjects: false});
+    assert.equal((await fetch(loopbackUrl + '/api/session')).status, 401);
+    assert.equal((await fetch(loopbackUrl + '/api/secrets', {headers: {Authorization: `Bearer ${stranger}`}})).status, 403);
+    assert.equal((await requestFetch(base + '/api/secrets', {headers: {...headers, Origin: 'https://outside.invalid'}})).status, 403);
     assert.equal((await requestFetch(base + '/api/conversations', {headers})).status, 200);
     assert.equal((await requestFetch(base + '/api/conversations', {headers: {...headers, Authorization: `Bearer ${stranger}`}})).status, 200);
     assert.equal((await requestFetch(base + '/api/conversations', {method: 'POST', headers, body: JSON.stringify({id})})).status, 200);

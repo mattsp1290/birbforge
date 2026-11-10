@@ -20,9 +20,8 @@ All runtime listeners bind to loopback. Do not use the private Beans hub.
 3. Run `scripts/npm run export:web`.
 4. Run `scripts/dev` and keep it running while either client is in use.
 5. Read the generated `.local/session.json` privately. Enter only its owner
-   test credential into the UI at `http://127.0.0.1:8787`.
-6. Create a conversation, send a goal, and copy its displayed identity to the
-   second client's sign-in form. Use the same owner credential there.
+   credential under **Settings** at `http://127.0.0.1:8787`. Select **Connect machine**.
+6. Use **Projects** to group repositories, then create and assign an agent in **Crew**. Open **Chat** to inspect the factory or start a conversation. For the durable goal fixture, open **Factory**, select **New conversation**, and send a goal. On a second device, connect to the same machine and enter the identity under **Factory**.
 7. Stop the launcher with Ctrl-C. It stops only its own processes and disposable
    container. Its fixture directory remains outside Git for inspection.
 
@@ -36,6 +35,27 @@ Beans context boundary. It is a development launcher, not a scheduler.
 screenshots stay private. The directory is ignored by Git. Treat its credentials
 as disposable local fixture secrets. Do not publish the raw producer fixture
 folder. No credential belongs in an EXPO_PUBLIC variable.
+
+## Run a persistent workspace on a private server
+
+On the server, use Node 22.23.3, install the locked JavaScript dependencies, and export the web app. Supply the Birbcrew producer's loopback HTTP `url` and `tokens` map in an owner-readable JSON file outside the web export. Each token must match the producer credential for the same principal and contain at least 32 characters. Workspace access uses `projects.owner_principal` when configured, then the private single-owner proxy's principal, and otherwise `owner`. For an installed verification queue, supply the adapter's `python` and `configuration` paths in the optional `verification` object.
+
+Set these variables for the gateway process. Choose durable paths outside the checkout and web export for a persistent installation.
+
+| Variable | Purpose |
+| --- | --- |
+| `BIRBFORGE_CLIENT_CONFIG` | Path to the private gateway configuration file. |
+| `BIRBFORGE_WORKSPACE_DIR` | Directory for the crew roster, chat database, and named secrets. Defaults to a directory named `workspace` beside the private configuration file. Protect its backups like the credentials themselves. |
+| `BIRBFORGE_BEANS_HUB` | Standalone mode only. Absolute path to the Beans hub clone you want to manage. A gateway with a `projects` configuration uses its managed Beans and GitHub integration instead. The gateway runs the installed `bn` executable and commits project changes locally. Sync the clone using your normal Beans workflow. |
+| `BIRBFORGE_CHAT_PYTHON` | Path to the Python interpreter with the pinned Birbcrew runtime installed. The disposable launcher sets this for local inspection. |
+| `BIRBFORGE_CHAT_ATTESTATION` | Optional path to the current Birbcrew provider attestation for live model calls. Set it together with the Python interpreter. Configure `OPENCODE_GO_API_KEY` in **Settings → Machine secrets**. |
+| `BIRBFORGE_PROXY_CONFIG` | Optional private proxy configuration for the HTTPS origin your mobile devices can reach. |
+
+Start the gateway from the repository root with `scripts/npm run gateway`. Use one gateway process per workspace directory. Both its loopback and private proxy listeners share the same workspace. A persistent path retains chats, crew, and secrets when you restart the process. The disposable `scripts/dev` launcher creates a fresh workspace and hub on each run.
+
+On the phone, join the server's network and enter its HTTPS origin in **Settings**. The app uses the device's existing NetBird connection. For an explicitly configured local build, supply `EXPO_PUBLIC_BIRBFORGE_URL` when launching Expo. Expo embeds this value in the client bundle. Leave the variable unset for a public build. In a browser, sign in at the gateway's own origin.
+
+**Machine secrets** lists names. Owners can set, replace, and remove a value. The gateway keeps values in owner-only files on the server. Chat passes the provider credential to the live provider adapter. Other saved names are available for server-side integration.
 
 ## Exercise the checks
 

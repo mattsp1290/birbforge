@@ -2,7 +2,7 @@
 
 This separate entrypoint renders the unchanged application with a diagnostic panel. It is acceptance tooling, not an application feature. Its transport delegates to the checked-in native `expo/fetch` adapter. The gateway and controllers remain unchanged.
 
-Select the build with both `BIRBFORGE_NATIVE_FIXTURE=1` and an absolute `ENTRY_FILE` pointing to `tests/native-fixture/index.tsx`. The fixture Metro configuration replaces only the production App's transport import, only for iOS. The normal entrypoint and normal Metro configuration do not import this tooling. The native screen visibly identifies the fixture build. Record the source revision, diagnostic module hashes, bundle hash and signed app identity separately from the ordinary app build.
+Select the build with both `BIRBFORGE_NATIVE_FIXTURE=1` and an absolute `ENTRY_FILE` pointing to `tests/native-fixture/index.tsx`. The fixture Metro configuration redirects the goal and project conversation transport imports on iOS. The normal entrypoint and normal Metro configuration do not import this tooling. The native screen visibly identifies the fixture build. Record the source revision, diagnostic module hashes, bundle hash and signed app identity separately from the ordinary app build.
 
 1. Authenticate with the ordinary secure field and open the ordinary conversation.
 2. Expand Native fixture controls and arm one action. The panel collapses so the ordinary action remains available.

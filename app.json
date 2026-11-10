@@ -4,7 +4,8 @@
     "slug": "birbforge",
     "version": "0.1.0",
     "orientation": "default",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-system-ui"],
     "ios": {"bundleIdentifier": "dev.birbforge.proof"},
     "android": {"package": "dev.birbforge.proof"},
     "web": {"bundler": "metro"}

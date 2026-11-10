@@ -256,8 +256,7 @@ Do not expose port 8787 publicly, bind all interfaces, disable TLS checks, chang
 VPN routes, install a tunnel product, or add a new proxy under this handoff. Use the existing private HTTPS service
 and the reviewed adapter when its scoped activation is authorized.
 
-Enter the resulting authorized phone-local or private HTTPS endpoint into the
-native app, then enter the same generated owner token used in the Mac browser.
+In **Settings**, enter the authorized phone-local or private HTTPS endpoint as the **Server URL**. Enter the same owner credential used in the Mac browser and select **Connect machine**. Open **Factory** to create or continue a goal workflow.
 Both paths must terminate on the same running disposable Linux runtime.
 
 ## Run all six journeys

@@ -33,6 +33,7 @@ try:
     proof.start_worker()
     proof.start_gateway()
     environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'BIRBFORGE_CLIENT_CONFIG': str(proof.root / 'clients.json'), 'TSX_TSCONFIG_PATH': str(repo / 'tsconfig.node.json')}
+    environment.update(BIRBFORGE_BEANS_HUB=str(proof.root / 'beans' / 'hub'), BIRBFORGE_CHAT_PYTHON=sys.executable)
     environment.update({'DD_INJECTION_ENABLED': 'false', 'DD_TRACE_ENABLED': 'false', 'DD_INSTRUMENTATION_TELEMETRY_ENABLED': 'false'})
     ready_file = proof.root / 'birbforge-ready.json'
     environment['BIRBFORGE_READY_FILE'] = str(ready_file)

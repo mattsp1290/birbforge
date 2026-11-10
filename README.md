@@ -1,14 +1,15 @@
 # Birbforge
 
-A shared native phone and browser interface for a durable goal conversation and
-one synthetic input decision, plus a synthetic durable verification queue.
-The first implementation consumes an exact pinned
-Birbcrew runtime through AG-UI. Functional native iPhone and Mac journeys,
-including the later queue controls, now have revision-bound fixture evidence.
-The [native queue record](docs/durable-verification-queue.md#physical-iphone-acceptance)
-distinguishes historical checks, fresh device checks and the cancellation
-qualification. Native OS accessibility remains deferred; staging and human
-merge review remain separate gates. This proof grants no PR or merge authority.
+Birbforge is a React Native workspace for a Birbforge server. Use the same five screens on a phone or in a browser.
+
+- **Factory** shows the selected machine's runtime and verification queue. Open a goal workflow here to send a goal, answer a decision, or continue it from another device.
+- **Projects** supports GitHub-backed projects and their contextual chats on configured gateways. For a standalone Beans workspace, it reads the gateway's Beans hub. Create a `bn` project and link its GitHub repositories.
+- **Crew** manages agent profiles, their instructions, and their assigned projects.
+- **Chat** pins the Chief of Staff above your other conversations. Ask the chief about the factory or start a thread with a crew agent. Local inspection works without a live provider.
+- **Settings** manages machine connections, server-side secrets, theme, and text size.
+
+On a phone, connect to the server's private network, open **Settings**, and enter its HTTPS URL. Bearer-authenticated gateways also require an owner credential. The public mobile app ships with an empty server field. In a browser, open the gateway's own address. The app remembers machine profiles on the device and keeps the owner credential in memory.
+
 
 - [Read the durable verification queue contract and evidence status](docs/durable-verification-queue.md).
 - [Run the disposable development proof](docs/development.md).

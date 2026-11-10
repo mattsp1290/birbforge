@@ -79,6 +79,8 @@ class VerificationRuntime:
         ready_file = self.root / f'gateway-ready-{self.generations.get("gateway", 0) + 1}.json'
         environment = {
             'BIRBFORGE_CLIENT_CONFIG': str(self.root / 'clients.json'),
+            'BIRBFORGE_BEANS_HUB': str(self.crew.root / 'beans' / 'hub'),
+            'BIRBFORGE_CHAT_PYTHON': sys.executable,
             'BIRBFORGE_PORT': str(self.port), 'TSX_TSCONFIG_PATH': str(self.repo / 'tsconfig.node.json'),
             'BIRBFORGE_READY_FILE': str(ready_file),
         }

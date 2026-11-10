@@ -266,7 +266,7 @@ test('Metro fixture guards require matching explicit entry and opt-in; productio
   assert.throws(() => loadMetro({BIRBFORGE_NATIVE_FIXTURE: '1', ENTRY_FILE: path.join(baseline.root, 'app/index.ts')}), /ENTRY_FILE/);
 });
 
-test('Metro redirects only the exact iOS App transport import and preserves the previous resolver', () => {
+test('Metro redirects the iOS goal and project conversation transport imports and preserves the previous resolver', () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const previous: Resolver = (_context, moduleName) => ({type: 'sourceFile', filePath: `previous/${moduleName}`});
   const {config} = loadMetro({BIRBFORGE_NATIVE_FIXTURE: '1', ENTRY_FILE: path.join(root, 'tests/native-fixture/index.tsx')}, previous);
@@ -274,6 +274,9 @@ test('Metro redirects only the exact iOS App transport import and preserves the 
   assert.ok(resolve);
   const context = {originModulePath: path.join(root, 'app/App.tsx'), resolveRequest: () => {throw new Error('Previous resolver bypassed');}};
   assert.equal(resolve(context, './src/transport', 'ios').filePath, path.join(root, 'tests/native-fixture/transport.native.ts'));
+  const goal = {...context, originModulePath: path.join(root, 'app/src/GoalWorkflows.tsx')};
+  assert.equal(resolve(goal, './transport', 'ios').filePath, path.join(root, 'tests/native-fixture/transport.native.ts'));
+  assert.equal(resolve({...goal, originModulePath: path.join(root, 'app/src/ChatScreen.tsx')}, './transport', 'ios').filePath, 'previous/./transport');
   assert.equal(resolve(context, './src/controller', 'ios').filePath, 'previous/./src/controller');
   assert.equal(resolve({...context, originModulePath: path.join(root, 'tests/native-fixture/transport.native.ts')}, '../../app/src/transport.native', 'ios').filePath, 'previous/../../app/src/transport.native');
   assert.throws(() => resolve(context, './src/transport', 'web'), /only the iOS/);

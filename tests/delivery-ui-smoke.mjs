@@ -1,3 +1,4 @@
+import {connectMachine} from '../scripts/browser-machine.mjs';
 import {chromium} from '@playwright/test';
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
@@ -14,7 +15,7 @@ const server = createServer(async (request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 let browser;
 try {
-  browser = await chromium.launch({headless: true, channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome'});
+  browser = await chromium.launch({headless: true, ...(process.env.BIRBFORGE_CHROMIUM ? {executablePath: process.env.BIRBFORGE_CHROMIUM} : {channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome'})});
   const page = await browser.newPage({viewport: {width: 430, height: 932}});
   let id = randomUUID();
   const commands = [];
@@ -31,6 +32,7 @@ try {
     const path = new URL(request.url()).pathname;
     let payload;
     if (path === '/api/access') payload = {kind: 'bearer'};
+    else if (path === '/api/session') payload = {authenticated: true, managedProjects: false};
     else if (path.endsWith('/delivery/command')) {commands.push(request.postDataJSON().command_id); payload = state();}
     else if (path.endsWith('/events')) {
       const snapshot = path.includes('/delivery/') ? {delivery: state()} : conversation();
@@ -43,8 +45,8 @@ try {
     }
     await route.fulfill({contentType: 'application/json', body: JSON.stringify(payload)});
   });
-  await page.goto(`http://127.0.0.1:${server.address().port}`);
-  await page.getByLabel('Owner test credential', {exact: true}).fill('disposable-browser-smoke');
+  await connectMachine(page, `http://127.0.0.1:${server.address().port}`, 'disposable-browser-smoke');
+  await page.getByRole('tab', {name: 'Factory', exact: true}).click();
   await page.getByRole('button', {name: 'New conversation', exact: true}).click();
   await page.getByRole('button', {name: 'Approve goal and start', exact: true}).waitFor();
   await page.getByRole('button', {name: 'Inbox (1)', exact: true}).click();

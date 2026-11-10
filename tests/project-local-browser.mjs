@@ -1,3 +1,4 @@
+import {connectMachine} from '../scripts/browser-machine.mjs';
 import assert from 'node:assert/strict';
 import {readFile, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -11,9 +12,8 @@ try {
   const page = await browser.newPage({viewport: {width: 1280, height: 1000}});
   const commands = [];
   page.on('request', request => {if (request.method() === 'POST' && !request.url().endsWith('/events')) commands.push(new URL(request.url()).pathname);});
-  await page.goto(session.url);
-  await page.getByLabel('Owner test credential', {exact: true}).fill(session.token);
-  await page.getByRole('button', {name: 'Projects', exact: true}).click();
+  await connectMachine(page, session.url, session.token);
+  await page.getByRole('tab', {name: 'Projects', exact: true}).click();
   await page.getByRole('button', {name: 'Open Forge and Crew assembled journey', exact: true}).click();
   await page.getByRole('button', {name: new RegExp(`^Open chat ${session.conversation_id.slice(0, 8)}`)}).click();
   await page.getByLabel('Project message', {exact: true}).waitFor();

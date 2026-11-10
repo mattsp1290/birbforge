@@ -15,7 +15,7 @@ const server = createServer(async (request, response) => {
 await new Promise(done => server.listen(0, '127.0.0.1', done));
 let browser;
 try {
-  browser = await chromium.launch({channel: 'chrome', headless: true});
+  browser = await chromium.launch({...(process.env.BIRBFORGE_CHROMIUM ? {executablePath: process.env.BIRBFORGE_CHROMIUM} : {channel: 'chrome'}), headless: true});
   for (const width of [430, 1280]) {
     const page = await browser.newPage({viewport: {width, height: 932}});
     const requests = [];
@@ -37,6 +37,7 @@ try {
       requests.push({path: url.pathname, body});
       let payload;
       if (url.pathname === '/api/access') payload = {kind: 'private-single-owner'};
+      else if (url.pathname === '/api/session') payload = {authenticated: true, managedProjects: true};
       else if (url.pathname === '/api/conversations') payload = [];
       else if (url.pathname === '/api/github/repositories') payload = {repositories: repositories.filter(repo => repo.full_name.includes(url.searchParams.get('q') || '')), page: 1, has_more: false};
       else if (url.pathname === '/api/projects' && body) {
@@ -68,7 +69,7 @@ try {
       await route.fulfill({contentType: 'application/json', body: JSON.stringify(payload)});
     });
     await page.goto(`http://127.0.0.1:${server.address().port}`);
-    await page.getByRole('button', {name: 'Projects', exact: true}).click();
+    await page.getByRole('tab', {name: 'Projects', exact: true}).click();
     await page.getByRole('button', {name: 'Import repositories into a new project', exact: true}).click();
     await page.getByRole('button', {name: 'Select owner/zebra', exact: true}).click();
     await page.getByRole('button', {name: 'Select owner/alpha', exact: true}).click();
@@ -76,7 +77,7 @@ try {
     await page.getByRole('button', {name: 'Create project', exact: true}).click();
     await page.getByRole('button', {name: 'Retry same project edit', exact: true}).waitFor();
     await page.reload();
-    await page.getByRole('button', {name: 'Projects', exact: true}).click();
+    await page.getByRole('tab', {name: 'Projects', exact: true}).click();
     await page.getByRole('button', {name: 'Retry same project edit', exact: true}).click();
     await page.getByLabel('Project name', {exact: true}).fill('My project');
     await page.getByRole('button', {name: 'Save project name', exact: true}).click();
@@ -84,7 +85,7 @@ try {
     await page.getByRole('button', {name: 'New project chat', exact: true}).click();
     await page.getByRole('button', {name: 'Retry same new chat', exact: true}).waitFor();
     await page.reload();
-    await page.getByRole('button', {name: 'Projects', exact: true}).click();
+    await page.getByRole('tab', {name: 'Projects', exact: true}).click();
     await page.getByRole('button', {name: 'Retry same new chat', exact: true}).click();
     await page.getByLabel('Project message', {exact: true}).waitFor();
     assert.equal(await page.getByRole('button', {name: 'Send message', exact: true}).isEnabled(), false);
@@ -106,5 +107,5 @@ try {
     if (directory) await writeFile(resolve(directory, `project-ui-${width}.json`), JSON.stringify({kind: 'simulated-api-ui', browser: await browser.version(), width, checks: ['ordered selection and default', 'lost create and chat acknowledgements restored unchanged after full reload', 'rename', 'project chat composer', 'no execution dispatch', 'archive preserves chat'], requests: requests.length}, null, 2));
     await page.close();
   }
-  process.stdout.write('Built project UI passed in Mac Chrome at 430px and1280px using simulated API. No live/device/staging acceptance claimed.\n');
+  process.stdout.write(`Built project UI passed in Chromium on ${process.platform} at 430px and 1280px using a simulated API.\n`);
 } finally {await browser?.close(); await new Promise(done => server.close(done));}

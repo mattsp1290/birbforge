@@ -24,7 +24,7 @@ class VerificationError extends Error {
 
 async function command(config: z.infer<typeof VerificationConfig>, input: {
   op: 'snapshot' | 'admit' | 'cancel'; principal: string; conversation_id: string; body: unknown;
-}): Promise<unknown> {
+} | {op: 'factory'; principal: string}): Promise<unknown> {
   if (activeCommands >= 4) throw new VerificationError(503, 'verification_busy_retry_same_command');
   activeCommands++;
   try {
@@ -42,7 +42,7 @@ async function command(config: z.infer<typeof VerificationConfig>, input: {
         if (failed) return;
         failed = true;
         child.kill('SIGKILL');
-        reject(new VerificationError(503, input.op === 'snapshot' ? 'verification_observation_unavailable' : 'verification_acknowledgement_unknown'));
+        reject(new VerificationError(503, input.op === 'snapshot' || input.op === 'factory' ? 'verification_observation_unavailable' : 'verification_acknowledgement_unknown'));
       };
       const timeout = setTimeout(fail, 20_000);
       child.stdout.on('data', (chunk: Buffer) => {
@@ -64,6 +64,10 @@ async function command(config: z.infer<typeof VerificationConfig>, input: {
     if (!reply.ok) throw new VerificationError(reply.status, reply.code);
     return reply.value;
   } finally { activeCommands--; }
+}
+
+export function verificationQueueStatus(config: z.infer<typeof VerificationConfig>, principal: string) {
+  return command(config, {op: 'factory', principal});
 }
 
 export async function serveVerification(input: {

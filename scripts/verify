@@ -24,6 +24,7 @@ for (let attempt = 0; attempt < 180; attempt++) {
 throw new Error('Launcher did not become ready; inspect the temporary verifier log');
 JS
 scripts/npm test
+scripts/npm run check:settings
 .local/bin/node scripts/browser-check.mjs
 .local/bin/node docs/build.mjs
 python3 docs/check.py

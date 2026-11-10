@@ -10,7 +10,7 @@ import {recentConversations} from '../app/src/access';
 
 const requireNative = createRequire(import.meta.resolve('react-native/package.json'));
 const nativeAbort = requireNative('abort-controller');
-const source = ts.createSourceFile('App.tsx', readFileSync(new URL('../app/App.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+const source = ts.createSourceFile('GoalWorkflows.tsx', readFileSync(new URL('../app/src/GoalWorkflows.tsx', import.meta.url), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 let handlerSource = '';
 function findHandler(node: ts.Node) {
   if (ts.isFunctionDeclaration(node) && node.name?.text === 'listConversations') handlerSource = node.getText(source);

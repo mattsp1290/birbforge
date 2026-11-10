@@ -13,7 +13,8 @@ if (process.env.BIRBFORGE_NATIVE_FIXTURE === '1') {
   const previousResolver = config.resolver.resolveRequest;
   config.resolver.resolveRequest = (context, moduleName, platform) => {
     if (platform !== 'ios') throw new Error('Native fixture supports only the iOS acceptance build');
-    if (context.originModulePath === path.resolve(__dirname, 'app/App.tsx') && moduleName === './src/transport') {
+    if ((context.originModulePath === path.resolve(__dirname, 'app/App.tsx') && moduleName === './src/transport') ||
+        (context.originModulePath === path.resolve(__dirname, 'app/src/GoalWorkflows.tsx') && moduleName === './transport')) {
       return {type: 'sourceFile', filePath: path.resolve(__dirname, 'tests/native-fixture/transport.native.ts')};
     }
     return (previousResolver ?? context.resolveRequest)(context, moduleName, platform);
