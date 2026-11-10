@@ -459,6 +459,7 @@ async def test_killed_activity_worker_cannot_release_or_repeat_acquisition(
                     handle, lambda state: state["rows"]["r1"]["phase"] == "closing"
                 )
                 assert state["outstanding_request_id"] == "r1"
+                assert state["rows"]["r1"]["observation_error"] == "execution_unknown"
                 assert state["rows"]["r2"]["phase"] == "queued"
                 assert api.acquisitions == ["r1"]
                 api.unblock_create.set()
@@ -529,16 +530,14 @@ async def test_running_deadline_closes_without_completion(target, temporal_cli):
                 state = await until(
                     handle, lambda state: state["rows"]["r1"]["phase"] == "running"
                 )
-                assert state["rows"]["r1"]["closure_reason"] is None
+                assert state["rows"]["r1"]["closure_trigger"] is None
                 api.terminated.set()
                 state = await until(
                     handle, lambda state: state["rows"]["r1"]["phase"] == "closed"
                 )
                 row = state["rows"]["r1"]
                 assert row["closure_trigger"] == "deadline"
-                assert (
-                    row["closure_reason"] == row["closure"]["reason"] == "worker_lost"
-                )
+                assert row["closure"]["reason"] == "worker_lost"
                 assert state["outstanding_request_id"] is None
             finally:
                 await handle.terminate()
@@ -648,7 +647,6 @@ async def test_terminal_retention_stops_closure_polling(
     row.update(
         phase="closing",
         activity_outcome="unknown",
-        closure_reason="worker_lost",
         closure_trigger="execution_unknown",
     )
     state["outstanding_request_id"] = "r1"
@@ -695,5 +693,65 @@ async def test_terminal_retention_stops_closure_polling(
                 ]
                 assert activities == ["birbverify_kubernetes_close"]
                 assert api.acquisitions == []
+            finally:
+                await handle.terminate()
+
+
+@pytest.mark.asyncio
+async def test_quarantined_execute_never_projects_running(
+    target, temporal_cli, monkeypatch
+):
+    queue_config, target, api, socket = target
+    request = api.request
+
+    def changed_admitted_image(method, path, body=None):
+        response = request(method, path, body)
+        if method == "POST":
+            response["spec"]["containers"][0]["image"] = "unapproved/image"
+        return response
+
+    monkeypatch.setattr(api, "request", changed_admitted_image)
+    async with await WorkflowEnvironment.start_local(
+        dev_server_existing_path=temporal_cli
+    ) as env:
+        producer = KubernetesActivities(socket)
+        async with (
+            Worker(
+                env.client,
+                task_queue="producer",
+                activities=[producer.execute, producer.close],
+            ),
+            Worker(
+                env.client,
+                task_queue="consumer",
+                workflows=[KubernetesQueue],
+            ),
+        ):
+            handle = await env.client.start_workflow(
+                KubernetesQueue.run,
+                {"config": queue_config.model_dump(mode="json")},
+                id=queue_config.authority.workflow_id,
+                task_queue="consumer",
+            )
+            try:
+                await handle.execute_update(KubernetesQueue.admit, admission())
+                await handle.execute_update(KubernetesQueue.admit, admission("r2"))
+                async with asyncio.timeout(10):
+                    while True:
+                        state = await handle.query(KubernetesQueue.snapshot)
+                        row = state["rows"]["r1"]
+                        assert row["phase"] != "running"
+                        if row["phase"] == "retained":
+                            break
+                        await asyncio.sleep(0.05)
+                assert row["observation_error"] == "producer_quarantined"
+                assert state["outstanding_request_id"] == "r1"
+                assert state["rows"]["r2"]["phase"] == "queued"
+                assert api.acquisitions == ["r1"]
+                assert (
+                    await handle.execute_update(
+                        KubernetesQueue.complete, completion("r1", row["revision"])
+                    )
+                )["code"] == "request_not_running"
             finally:
                 await handle.terminate()

@@ -1,15 +1,15 @@
 import json
 from datetime import datetime, timedelta
-from typing import Annotated, Literal, NotRequired, TypedDict
+from typing import Annotated, Literal, TypedDict
 
 from birbverify.contract import Commit, Id, Record, RequestId, Sha, digest
 from birbverify.kubernetes_contract import (
     Image,
     KubernetesBinding,
-    KubernetesClosureReceipt,
+    KubernetesReceipt,
     KubernetesRequest,
 )
-from pydantic import Field
+from pydantic import Field, RootModel, TypeAdapter
 
 MAX_CLOSURE_BYTES = 8192
 
@@ -29,22 +29,36 @@ class KubernetesRevisionCommand(Record):
     expected_revision: Annotated[int, Field(strict=True, ge=0)]
 
 
-class KubernetesCommand(Record):
-    op: Literal["admit", "cancel", "complete", "snapshot"]
+class KubernetesAdmissionCommand(Record):
+    op: Literal["admit"]
     conversation_id: Id
-    body: dict
+    body: KubernetesAdmission
 
+
+class KubernetesMutationCommand(Record):
+    op: Literal["cancel", "complete"]
+    conversation_id: Id
+    body: KubernetesRevisionCommand
+
+
+class KubernetesSnapshotCommand(Record):
+    op: Literal["snapshot"]
+    conversation_id: Id
+    body: Annotated[dict, Field(max_length=0)]
+
+
+class KubernetesCommand(
+    RootModel[
+        Annotated[
+            KubernetesAdmissionCommand
+            | KubernetesMutationCommand
+            | KubernetesSnapshotCommand,
+            Field(discriminator="op"),
+        ]
+    ]
+):
     def normalized(self) -> dict:
-        body = self.body
-        if self.op == "admit":
-            body = KubernetesAdmission.model_validate(body).model_dump(mode="json")
-        elif self.op in {"cancel", "complete"}:
-            body = KubernetesRevisionCommand.model_validate(body).model_dump(
-                mode="json"
-            )
-        elif body:
-            raise ValueError("snapshot_body_not_empty")
-        return {**self.model_dump(mode="json"), "body": body}
+        return self.root.model_dump(mode="json")
 
 
 class KubernetesAuthority(Record):
@@ -86,6 +100,20 @@ class KubernetesConfig(Record):
     workflow_task_queue: Id
 
 
+ClosureTrigger = Literal["complete", "cancel", "execution_unknown", "deadline"]
+ClosureReason = Literal["completed", "cancelled", "worker_lost"]
+CLOSURE_REASONS: dict[ClosureTrigger, ClosureReason] = {
+    "complete": "completed",
+    "cancel": "cancelled",
+    "execution_unknown": "worker_lost",
+    "deadline": "worker_lost",
+}
+
+
+def closure_reason(trigger: ClosureTrigger | None) -> ClosureReason | None:
+    return CLOSURE_REASONS[trigger] if trigger is not None else None
+
+
 class KubernetesRow(TypedDict):
     intent: dict
     payload: dict
@@ -103,13 +131,10 @@ class KubernetesRow(TypedDict):
     ]
     cancellation: Literal["none", "requested", "acknowledged", "too_late"]
     activity_outcome: Literal["completed", "unknown"] | None
-    closure_reason: Literal["completed", "cancelled", "worker_lost"] | None
-    closure_trigger: (
-        Literal["complete", "cancel", "execution_unknown", "deadline"] | None
-    )
+    closure_trigger: ClosureTrigger | None
     closure: dict | None
     observation_error: str | None
-    close_attempts: NotRequired[int]
+    close_attempts: Annotated[int, Field(strict=True, ge=0, le=4)]
 
 
 class KubernetesState(TypedDict):
@@ -118,6 +143,9 @@ class KubernetesState(TypedDict):
     order: list[str]
     commands: dict[str, dict]
     outstanding_request_id: str | None
+
+
+STATE_ADAPTER = TypeAdapter(KubernetesState)
 
 
 def failure(code: str, status: int = 409) -> dict:
@@ -152,12 +180,19 @@ def validate_closure(
     if not isinstance(observed, dict):
         raise TypeError("observation_invalid")
     request = KubernetesRequest.model_validate(payload)
-    request_sha256 = digest(request)
-    if (
-        observed.get("request_id") != request.request_id
-        or observed.get("request_sha256") != request_sha256
-    ):
+    if observed.get("request_id") != request.request_id or observed.get(
+        "request_sha256"
+    ) != digest(request):
         raise ValueError("observation_request_mismatch")
+    state = observed.get("state")
+    if not isinstance(state, str) or state not in {
+        "active",
+        "closing",
+        "released",
+        "quarantined",
+        "sealed_unadmitted",
+    }:
+        raise ValueError("observation_state_invalid")
     receipt = observed.get("receipt")
     if observed.get("state") != "released":
         if receipt is not None:
@@ -165,13 +200,24 @@ def validate_closure(
         return None
     if not isinstance(receipt, dict):
         raise TypeError("release_receipt_missing")
+    if len(json.dumps(receipt, separators=(",", ":")).encode()) > MAX_CLOSURE_BYTES:
+        raise ValueError("closure_receipt_too_large")
+    KubernetesReceipt.model_validate(receipt)
+    _validate_binding(request, observed, receipt, installation_sha256)
+    _validate_release_evidence(observed, receipt)
+    return receipt
+
+
+def _validate_binding(
+    request: KubernetesRequest, observed: dict, receipt: dict, installation_sha256: str
+):
     expected = {
         "schema_version": "birbverify.kubernetes.closure.v1",
         "request_id": request.request_id,
         "image": request.image,
         "installation_sha256": installation_sha256,
         "pod_uid": observed.get("pod_uid"),
-        "request_sha256": request_sha256,
+        "request_sha256": digest(request),
         "candidate_revision": request.candidate_revision,
         "producer_revision": request.producer_revision,
         "policy_revision": request.policy_revision,
@@ -187,12 +233,9 @@ def validate_closure(
         "worker_lost",
     }:
         raise ValueError("closure_reason_invalid")
-    if receipt.get("operations_sha256") != digest(observed.get("operations", {})):
-        raise ValueError("closure_operations_mismatch")
-    if receipt.get("terminal_proof") != observed.get("terminal_proof"):
-        raise ValueError("closure_terminal_proof_mismatch")
-    unsigned = {key: value for key, value in receipt.items() if key != "receipt_sha256"}
-    KubernetesClosureReceipt.model_validate(unsigned)
+
+
+def _validate_release_evidence(observed: dict, receipt: dict):
     operations = observed.get("operations", {})
     if not isinstance(operations, dict) or "restore-revision" not in operations:
         raise ValueError("closure_restore_missing")
@@ -207,6 +250,10 @@ def validate_closure(
             response.get("metadata", {}), dict
         ):
             raise TypeError("closure_effect_invalid")
+    if receipt["operations_sha256"] != digest(operations):
+        raise ValueError("closure_operations_mismatch")
+    if receipt["terminal_proof"] != observed.get("terminal_proof"):
+        raise ValueError("closure_terminal_proof_mismatch")
     created = operations.get("create-pod")
     if created is not None:
         uid = created["response"].get("metadata", {}).get("uid")
@@ -232,7 +279,12 @@ def validate_closure(
             )
         ):
             raise ValueError("closure_containers_not_terminal")
-    effects = {
+    if receipt["effects"] != _closure_effects(operations):
+        raise ValueError("closure_effects_mismatch")
+
+
+def _closure_effects(operations: dict) -> dict:
+    return {
         name: {
             "body_sha256": effect["body_sha256"],
             "object_uid": effect["response"].get("metadata", {}).get("uid")
@@ -244,13 +296,6 @@ def validate_closure(
         }
         for name, effect in operations.items()
     }
-    if receipt["effects"] != effects:
-        raise ValueError("closure_effects_mismatch")
-    if len(json.dumps(receipt, separators=(",", ":")).encode()) > MAX_CLOSURE_BYTES:
-        raise ValueError("closure_receipt_too_large")
-    if receipt.get("receipt_sha256") != digest(unsigned):
-        raise ValueError("closure_digest_mismatch")
-    return receipt
 
 
 def projection(state: dict, principal: str, conversation_id: str) -> dict:
@@ -274,7 +319,7 @@ def projection(state: dict, principal: str, conversation_id: str) -> dict:
                 "phase": row["phase"],
                 "cancellation": row["cancellation"],
                 "closure": row["closure"],
-                "requested_closure_reason": row["closure_reason"],
+                "requested_closure_reason": closure_reason(row["closure_trigger"]),
                 "closure_trigger": row["closure_trigger"],
                 "observation_error": row["observation_error"],
                 "eligibility": {"eligible": False, "reason": "delivery_not_authorized"},

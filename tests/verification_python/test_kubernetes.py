@@ -154,7 +154,13 @@ def test_completion_requires_running_and_survives_state_restore(queue):
     )
     assert restored.complete(message) == receipt
     assert restored.complete(completion("r1", 2))["code"] == "command_id_conflict"
-    assert restored.snapshot()["rows"]["r1"]["closure_reason"] == "completed"
+    assert restored.snapshot()["rows"]["r1"]["closure_trigger"] == "complete"
+    assert (
+        projection(restored.snapshot(), "owner", "chat")["requests"][0][
+            "requested_closure_reason"
+        ]
+        == "completed"
+    )
     assert restored.snapshot()["outstanding_request_id"] == "r1"
     assert not projection(restored.snapshot(), "owner", "chat")["requests"][0][
         "eligibility"
@@ -179,21 +185,13 @@ async def test_full_installation_state_fits_temporal_payload_with_headroom(queue
     from pathlib import Path
 
     from birbverify.contract import digest
+    from birbverify.kubernetes_contract import KubernetesReceipt
     from temporalio.converter import DataConverter
 
-    evidence = json.loads(
-        (
-            Path(__file__).resolve().parents[2]
-            / "docs/evidence/kubernetes-queue/receipts.json"
-        ).read_text()
+    largest = json.loads(
+        (Path(__file__).parent / "fixtures/kubernetes-receipt.json").read_text()
     )
-    receipts = [
-        row["closure"]
-        for journey in evidence["journeys"]
-        for row in journey["projection"]["value"]["requests"]
-        if row["closure"]
-    ]
-    largest = max(receipts, key=lambda receipt: len(json.dumps(receipt)))
+    KubernetesReceipt.model_validate(largest)
     for number in range(128):
         identity = "r" + str(number)
         queue.admit(admission(identity))
@@ -237,3 +235,38 @@ async def test_full_installation_state_fits_temporal_payload_with_headroom(queue
         f"full_installation_bounded_payload_bytes={bounded_bytes}; receipt_limit={MAX_CLOSURE_BYTES}"
     )
     assert bounded_bytes < 1_600_000
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [("phase", "invented"), ("closure_trigger", "invented"), ("close_attempts", None)],
+)
+def test_restored_queue_rejects_invalid_durable_state(queue, field, value):
+    import copy
+
+    queue.admit(admission())
+    state = copy.deepcopy(queue.snapshot())
+    if value is None:
+        del state["rows"]["r1"][field]
+    else:
+        state["rows"]["r1"][field] = value
+    with pytest.raises(ValidationError):
+        KubernetesQueue({"config": config().model_dump(mode="json"), "state": state})
+
+
+@pytest.mark.parametrize("state", [[], {}, None, "unexpected"])
+def test_invalid_observation_state_retains_owner_without_crashing(queue, state):
+    queue.admit(admission())
+    row = queue.state["rows"]["r1"]
+    row["phase"] = "closing"
+    queue.state["outstanding_request_id"] = "r1"
+    queue.reconcile(
+        row,
+        {
+            "request_id": "r1",
+            "request_sha256": row["request_sha256"],
+            "state": state,
+        },
+    )
+    assert row["observation_error"] == "invalid_producer_evidence"
+    assert queue.state["outstanding_request_id"] == "r1"

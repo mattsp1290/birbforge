@@ -1,0 +1,142 @@
+{
+  "candidate_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+  "effects": {
+    "apply-revision": {
+      "body_sha256": "0728ced36ffeb4a864208fd7ccfa37510309ee9c1e78eb9e8464824dd679601b",
+      "expected_resource_version": "624",
+      "object_uid": "07dbcb2c-793c-41b5-9c0c-41d3ad646c1a",
+      "resource_version": "643"
+    },
+    "create-pod": {
+      "body_sha256": "2b703363797d017be082c8cdee8a597900aefe0403cf177f0da44215241a14c8",
+      "expected_resource_version": null,
+      "object_uid": "d57ce927-7dac-42a4-8ad3-8cbea59d0560",
+      "resource_version": "644"
+    },
+    "delete-pod": {
+      "body_sha256": "d73469b39a1902b44c0e9bbbf370ca43ebe7104b3b9a478488f756f68d8aca70",
+      "expected_resource_version": null,
+      "object_uid": "d57ce927-7dac-42a4-8ad3-8cbea59d0560",
+      "resource_version": "661"
+    },
+    "finalize-delete": {
+      "body_sha256": "fc074f026a1f69c610965914bcb12e149a744ab3a58ae2e5ff0bf0e1626f9ca6",
+      "expected_resource_version": null,
+      "object_uid": "d57ce927-7dac-42a4-8ad3-8cbea59d0560",
+      "resource_version": "706"
+    },
+    "remove-finalizer": {
+      "body_sha256": "836cee79ccdebd07c352facbc5032622b0b15e27942b9219f25bd4badfd25157",
+      "expected_resource_version": "702",
+      "object_uid": "d57ce927-7dac-42a4-8ad3-8cbea59d0560",
+      "resource_version": "704"
+    },
+    "restore-revision": {
+      "body_sha256": "d6f202e249da10185a385b734f02a30a18b486e26e9194ffd3047adaa6e6edd7",
+      "expected_resource_version": "643",
+      "object_uid": "07dbcb2c-793c-41b5-9c0c-41d3ad646c1a",
+      "resource_version": "708"
+    }
+  },
+  "image": "python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+  "installation_sha256": "5956381d68d52a4ac0cd0e576443975431bf24e665593cee0e49a2e84723b8a3",
+  "operations_sha256": "24a3917749dcb51c20dd1b54ee463f20ffa4d848733d0063a3261548ab622caf",
+  "plan_sha256": "dd0aa96526b48f739cc556c9e0ec412d2da2106742e238fbe325287f931d7f1c",
+  "pod_uid": "d57ce927-7dac-42a4-8ad3-8cbea59d0560",
+  "policy_revision": "08a9fdb90bdd0099249e651c0f1a20b80e9ff6b8",
+  "producer_revision": "bc52efc30f7f8ca045cb40daa48fc4e5f1686cbd",
+  "reason": "worker_lost",
+  "receipt_sha256": "3c0e7a3cd5895e9d37a4368a5827c027e56318f517a27f3fff3195aaf4dd015a",
+  "request_id": "7cec6726-a7ac-4692-aac3-fcbd68e6cedc",
+  "request_sha256": "3c4d6abb5a522e9ac57d90d0ac59e0c0834d5e0aa89b5450efc0e6beaef0796c",
+  "schema_version": "birbverify.kubernetes.closure.v1",
+  "state": "released",
+  "target": {
+    "cluster_uid": "70655b19-8237-4246-88e1-199c9a995d7d",
+    "namespace": "bv-app-35adb41d",
+    "namespace_uid": "fedfe887-bf58-4d1c-8ad2-090b8491189a",
+    "target_id": "kind-account-auth"
+  },
+  "terminal_proof": {
+    "conditions": [
+      {
+        "lastProbeTime": null,
+        "lastTransitionTime": "2026-11-10T04:09:14Z",
+        "status": "False",
+        "type": "PodReadyToStartContainers"
+      },
+      {
+        "lastProbeTime": null,
+        "lastTransitionTime": "2026-11-10T04:08:34Z",
+        "status": "True",
+        "type": "Initialized"
+      },
+      {
+        "lastProbeTime": null,
+        "lastTransitionTime": "2026-11-10T04:09:14Z",
+        "reason": "PodFailed",
+        "status": "False",
+        "type": "Ready"
+      },
+      {
+        "lastProbeTime": null,
+        "lastTransitionTime": "2026-11-10T04:09:14Z",
+        "reason": "PodFailed",
+        "status": "False",
+        "type": "ContainersReady"
+      },
+      {
+        "lastProbeTime": null,
+        "lastTransitionTime": "2026-11-10T04:08:34Z",
+        "status": "True",
+        "type": "PodScheduled"
+      }
+    ],
+    "containerStatuses": [
+      {
+        "containerID": "containerd://b0113c390e38d58279bf6d2e7e7dd705aaaee146f755f2e6b0ba493eb229f023",
+        "image": "sha256:b00eb95f27b4a7c666c7b99764515e147ab19ff26451123346f40c23a031498a",
+        "imageID": "docker.io/library/python@sha256:9d2e5553305c7c7b0097999bb17187c69b921ccd6bc9d40e4bb5ebe652c00285",
+        "lastState": {},
+        "name": "account-auth",
+        "ready": false,
+        "resources": {},
+        "restartCount": 0,
+        "started": false,
+        "state": {
+          "terminated": {
+            "containerID": "containerd://b0113c390e38d58279bf6d2e7e7dd705aaaee146f755f2e6b0ba493eb229f023",
+            "exitCode": 137,
+            "finishedAt": "2026-11-10T04:09:14Z",
+            "reason": "Error",
+            "startedAt": "2026-11-10T04:08:35Z"
+          }
+        },
+        "user": {
+          "linux": {
+            "gid": 0,
+            "supplementalGroups": [
+              0
+            ],
+            "uid": 0
+          }
+        }
+      }
+    ],
+    "hostIP": "172.20.0.2",
+    "hostIPs": [
+      {
+        "ip": "172.20.0.2"
+      }
+    ],
+    "phase": "Failed",
+    "podIP": "10.244.0.7",
+    "podIPs": [
+      {
+        "ip": "10.244.0.7"
+      }
+    ],
+    "qosClass": "BestEffort",
+    "startTime": "2026-11-10T04:08:34Z"
+  }
+}

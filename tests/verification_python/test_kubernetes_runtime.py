@@ -7,7 +7,11 @@ pytest.importorskip("birbverify")
 
 from verification import kubernetes_runtime
 
-PIN = json.loads(Path("packaging/kubernetes-producer.json").read_text())
+PIN = json.loads(
+    (
+        Path(__file__).resolve().parents[2] / "packaging/kubernetes-producer.json"
+    ).read_text()
+)
 
 
 def test_installed_producer_source_matches_approved_pin():

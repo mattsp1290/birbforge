@@ -24,6 +24,13 @@ MAX_INPUT = 16384
 
 
 async def execute(config: KubernetesConfig, raw: dict) -> dict:
+    try:
+        return await _execute(config, raw)
+    except (RPCError, TemporalError, TimeoutError):
+        return failure("verification_unavailable", 503)
+
+
+async def _execute(config: KubernetesConfig, raw: dict) -> dict:
     command = KubernetesCommand.model_validate(raw).normalized()
     authority = config.queue.authority
     try:
@@ -106,7 +113,7 @@ def main():
                     response = asyncio.run(
                         asyncio.wait_for(execute(config, command), timeout=25)
                     )
-                except (TimeoutError, RPCError, TemporalError):
+                except TimeoutError:
                     response = failure("verification_unavailable", 503)
     print(json.dumps(response, separators=(",", ":")))
 

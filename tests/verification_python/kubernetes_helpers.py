@@ -46,11 +46,11 @@ def admission(identity="r1", **changes):
     }
 
 
-def cancellation(identity, revision, command_id="cancel-1"):
+def _revision_command(op, identity, revision, command_id):
     return {
         "principal": "owner",
         "command": {
-            "op": "cancel",
+            "op": op,
             "conversation_id": "chat",
             "body": {
                 "request_id": identity,
@@ -61,7 +61,9 @@ def cancellation(identity, revision, command_id="cancel-1"):
     }
 
 
+def cancellation(identity, revision, command_id="cancel-1"):
+    return _revision_command("cancel", identity, revision, command_id)
+
+
 def completion(identity, revision, command_id="complete-1"):
-    message = cancellation(identity, revision, command_id)
-    message["command"]["op"] = "complete"
-    return message
+    return _revision_command("complete", identity, revision, command_id)
