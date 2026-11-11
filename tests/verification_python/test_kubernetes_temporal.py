@@ -1,7 +1,5 @@
 import asyncio
 import copy
-import os
-import shutil
 import tempfile
 import threading
 from datetime import UTC, datetime, timedelta
@@ -16,22 +14,12 @@ from birbverify.kubernetes_contract import KubernetesInstallation
 from birbverify.kubernetes_service import TargetService
 from birbverify.kubernetes_target import KubernetesTarget
 from birbverify.kubernetes_worker import KubernetesActivities
-from kubernetes_helpers import admission, cancellation, completion, config
+from kubernetes_helpers import admission, cancellation, completion, config, until
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
 from verification.kubernetes import validate_closure
 from verification.kubernetes_workflow import KubernetesQueue
-
-
-@pytest.fixture
-def temporal_cli():
-    binary = os.environ.get("TEMPORAL_CLI") or shutil.which("temporal")
-    if not binary or not Path(binary).is_file():
-        pytest.skip(
-            "set TEMPORAL_CLI to an installed Temporal CLI; downloads are disabled"
-        )
-    return binary
 
 
 class Missing(Exception):
@@ -159,15 +147,6 @@ def target(tmp_path):
         server.server_close()
         thread.join()
         temporary.cleanup()
-
-
-async def until(handle, predicate):
-    async with asyncio.timeout(30):
-        while True:
-            state = await handle.query(KubernetesQueue.snapshot)
-            if predicate(state):
-                return state
-            await asyncio.sleep(0.1)
 
 
 @pytest.mark.asyncio
