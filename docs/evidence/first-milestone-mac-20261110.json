@@ -1,0 +1,258 @@
+{
+  "milestone": "First phone and browser conversation",
+  "result": "PARTIAL",
+  "baseline": "858f4f1e6e11c30c014451f41802a848febfd3ee",
+  "tested_revision": "eb5c2843b1528e294d58c1a4efb186beb8c41c4d",
+  "source_tree": "063c063289acc7a972eef325438499c9a8f71b23",
+  "source_hashes_matched_across_checkouts": 160,
+  "clients": {
+    "macOS": "26.6.2 (25G83), arm64",
+    "mac_chrome": "157.0.8103.50",
+    "mac_node": "v26.6.0",
+    "npm": "11.19.0",
+    "device": "iPhone 16 Pro",
+    "iOS": "27.2",
+    "Xcode": "26.2 (17C52)",
+    "CocoaPods": "1.16.2",
+    "native_release": {
+      "bundle": "dev.birbforge.proof",
+      "version": "0.1.0",
+      "build": "1",
+      "executable_sha256": "19fe07fbba0fdf1f9c512829ddf5bb8ca00fdbafccf494af4227c22981a53688",
+      "js_sha256": "40e3df9a3645e65759b462d52c1cbcb49b76c7b1003fc0725b5b84f7ea322dda",
+      "lock_sha256": "0244e4b1255b5fb235f7120305b745b77f46ab774755fb00baa7ce0f3617f3c2",
+      "signature_verified": true,
+      "install_binding": "The operator passed the built .app whose executable and JavaScript were hashed to devicectl install. The installation receipt names the bundle ID. The subsequent launch receipt reports success. The phone executable was not extracted and rehashed."
+    },
+    "native_execution": "Operator observation through iPhone Mirroring: Factory > Connect a machine > Settings > Cancel. Settings showed no saved machine. No fixture credential was entered.",
+    "version_provenance": "Operator recorded sw_vers, xcodebuild -version, pod --version, node -v and npm -v on the Mac. Device details came from devicectl. JavaScript versions came from the tested npm lockfile."
+  },
+  "dependencies": {
+    "birbcrew": "88b219c18adeb352d2f291f099ede990a3190a58",
+    "birbverify": "e785dd8882222b18eaf59ce2b1ceecbd092dcd9e",
+    "javascript": {
+      "expo": "55.0.32",
+      "react-native": "0.83.10",
+      "react-native-web": "0.21.4",
+      "@ag-ui/client": "1.0.4",
+      "@ag-ui/core": "1.0.4"
+    },
+    "linux_node": "v22.23.3",
+    "runtime": {
+      "python": "3.13.12",
+      "pydantic-ai-slim": "2.66.0",
+      "pydantic": "2.14.3",
+      "ag-ui-protocol": "1.0.0",
+      "temporalio": "1.35.0",
+      "psycopg": "3.3.8",
+      "fastapi": "0.162.0",
+      "uvicorn": "0.54.0",
+      "opentelemetry-sdk": "1.45.2",
+      "httpx-sse": "0.4.3",
+      "temporal": "temporal version 1.10.0 (Server 1.32.2, UI 2.56.1)",
+      "postgres": "postgres (PostgreSQL) 17.6",
+      "bn": "bn v0.3.0"
+    }
+  },
+  "linux": {
+    "entry_point": "scripts/verify",
+    "chromium": "156.0.8078.79",
+    "fixture": "Deterministic model, disposable Beans hub, PostgreSQL and Temporal",
+    "tests": {
+      "passed": 66,
+      "failed": 0,
+      "skipped": 4,
+      "skip_reason": "BIRBFORGE_TEST_BN was unset for four managed-project integration tests."
+    },
+    "settings_browser": "passed",
+    "native_and_web_exports": "passed",
+    "dark_docs": "16 pages and 3 SVGs built, 16 pages checked",
+    "public_scan_files": 307,
+    "browser": {
+      "checkedAt": "2026-11-11T00:49:17.830Z",
+      "conversationId": "b5adf6c3-25ff-4e79-8d39-96c62ee1cff7",
+      "inputPostRequests": 1,
+      "keyboardTabsToDecision": 11,
+      "observationsBeforeNetworkLoss": 2,
+      "observationsAfterNetworkRecovery": 3,
+      "pageErrors": [],
+      "target": "Linux ARM64 headless Chromium",
+      "nativePhone": "NOT VERIFIED",
+      "macBrowser": "NOT VERIFIED"
+    },
+    "api": {
+      "checkedAt": "2026-11-11T00:47:43.926Z",
+      "conversationId": "ca09c0b8-c73b-424c-a27e-6caa2ae338d9",
+      "requestId": "ca09c0b8-c73b-424c-a27e-6caa2ae338d9/811ff0c2-f52b-4676-8151-3ec16114497a/next-step",
+      "version": 1,
+      "decisions": 1,
+      "inputs": 1,
+      "messageIds": [
+        "26198d86-85c3-5b81-af09-e6ab4f12308f",
+        "b3a133bd-ae81-565c-8ac8-feffc07734d3",
+        "16901572-2f5a-596b-84e1-9599f7b12ddc",
+        "e23d214c-5203-54b5-ac0c-19ef333959e1",
+        "b55bebf6-ebbd-5753-8d94-d857fc55789f"
+      ]
+    },
+    "environment": {
+      "image_id": "sha256:ccc88dd7c7e17b455dcceefa8df8b00d03bbbb1cfb673349b038f3c221a1f65e",
+      "runtime": "Existing Docker Desktop ARM64 proof image, explicitly selected /usr/bin/chromium.",
+      "database_transport": "Fixture-only loopback adapter inside the disposable container, bound to the exact database container created by the launcher.",
+      "prerequisites": "First run failed at database loopback. Second run exposed a missing Birbverify export pointer and interpreter path. The successful third run used the validated producer export record and the existing Python interpreter at the adapter test shebang path."
+    },
+    "transport": {
+      "checkedAt": "2026-11-11T00:47:49.369Z",
+      "dependencyRevision": "88b219c18adeb352d2f291f099ede990a3190a58",
+      "nodeVersion": "v22.23.3",
+      "target": "Linux Node official AG-UI client with injected stream interruption and one failed GET",
+      "conversationId": "d33c39e2-19bc-4a0d-aa4c-006fef353b1a",
+      "observationRequests": 2,
+      "inputPostRequests": 1,
+      "failedReconnectGets": 1,
+      "nativePhone": "NOT VERIFIED",
+      "macBrowser": "NOT VERIFIED",
+      "result": "same authoritative pending input after automatic retry; no prompt resubmission"
+    }
+  },
+  "mac_conversation": {
+    "pending": {
+      "id": "800ca9ce-e9c5-4119-b2f0-32927c218d50/1f52fee2-08ef-4397-a2c2-b9b800c9278d/next-step",
+      "version": 1
+    },
+    "choice": "test",
+    "decisions": 1,
+    "finalizedMessageIds": [
+      "cc6bff6b-8ede-5bda-bbba-fae04bea3eac",
+      "4ad16d60-e124-5da0-bd26-f21b5f0d387c",
+      "bb9fc640-2e5c-5c4a-8bf4-e4b4f67f3530"
+    ],
+    "contextProject": "birbcrew",
+    "contextCommit": "c9622d3329f8d4e7af0a1ca087d78d631313fa4f",
+    "noteIds": [
+      {
+        "key": "milestone",
+        "sha256": "1a515fa5dadf1817f240b21a1e368b2c3d0ef240100ab687582ffc43f4edafd0"
+      },
+      {
+        "key": "verification",
+        "sha256": "0952e23cdbe08ff9b571cd9597a4a0bd9877955d372f3ddff8e45453a3f55657"
+      }
+    ],
+    "pendingPreservedOnReconnect": true,
+    "browserVersion": "157.0.8103.50",
+    "inputPostRequests": 1,
+    "keyboardTabsToDecision": 11,
+    "observationsBeforeNetworkLoss": 3,
+    "observationsAfterNetworkRecovery": 4,
+    "checkedAt": "2026-11-11T00:50:15.295Z",
+    "nodeVersion": "v26.6.0",
+    "conversationId": "800ca9ce-e9c5-4119-b2f0-32927c218d50",
+    "transitions": [
+      "lost create acknowledgement retried with the same conversation identity",
+      "browser A submitted goal and received durable input",
+      "keyboard activation in browser B inbox resolved browser A conversation",
+      "explicit observation disconnect and reconnect retained resolution",
+      "network loss and automatic reconnect preserved one input without prompt resubmission",
+      "Space disconnected the machine and both browser pages showed signed-out settings"
+    ],
+    "pageErrors": [],
+    "signedOut": true,
+    "target": "Two headed Chrome pages on the Mac",
+    "nativePhone": "NOT VERIFIED",
+    "contextCommitSource": "Git HEAD of the disposable Beans fixture hub captured for the birbcrew namespace.",
+    "keyboard_assertions": {
+      "computed_outline_width": "3px",
+      "inbox_activation_key": "Enter",
+      "disconnect_key": "Space",
+      "mac_check_script_sha256": "2c43d9510cdf922e399dcdd2fdd1c14d716d2febefcceb62457d37c0f916ead0"
+    }
+  },
+  "mac_race": {
+    "checkedAt": "2026-11-11T00:51:05.404Z",
+    "browser": "157.0.8103.50",
+    "identity": "a0db4490-0bcb-4658-9217-4828273d225b",
+    "pending": {
+      "request_id": "a0db4490-0bcb-4658-9217-4828273d225b/8b715df8-848f-470e-8dbc-8be51991639a/next-step",
+      "version": 1
+    },
+    "denied": {
+      "invalid": 401,
+      "stranger": 404,
+      "extraActor": 400,
+      "stale": 409
+    },
+    "unchangedSnapshot": true,
+    "concurrentMacApiStatuses": [
+      200,
+      409
+    ],
+    "winner": "inspect",
+    "decisions": 1,
+    "messageIds": [
+      "96768f56-2786-59d1-b75e-2328d412ad4b",
+      "9878b217-1853-5840-88d4-4aa94c43142d",
+      "4f5b1ed1-6aba-52e8-9aa9-d4e670bcd4a5"
+    ],
+    "macConversationAndInboxConverged": true,
+    "signedOut": true,
+    "target": "Concurrent requests from the Mac API harness, observed in two headed Mac Chrome pages",
+    "nativePhone": "NOT VERIFIED"
+  },
+  "journeys": {
+    "phone_to_browser": {
+      "status": "NOT VERIFIED",
+      "observed": "Two Mac browser pages opened the same fixture conversation. The phone did not start a goal or connect to this fixture."
+    },
+    "inbox_to_conversation": {
+      "status": "PARTIAL",
+      "observed": "In Mac Chrome, Enter in the inbox recorded one decision and the other page displayed it. The phone side and reverse phone action remain unverified."
+    },
+    "racing_answers": {
+      "status": "PARTIAL",
+      "observed": "Two concurrent Mac API calls submitted different choices. One returned 200 and one returned 409. A stale version returned 409. The Mac inbox and conversation converged. Phone convergence remains unverified."
+    },
+    "connection_loss": {
+      "status": "PARTIAL",
+      "observed": "Explicit reconnect preserved pending identity, inputs and finalized messages. After a decision, browser offline/online recovery opened another observation. One input POST was observed across the browser journey. Native request counts and background/foreground recovery remain unverified."
+    },
+    "unauthorized_action": {
+      "status": "VERIFIED (fixture API only; phone not exercised)",
+      "observed": "The Mac API checks returned 401 for an invalid bearer, 404 for a stranger and 400 for an extra actor field. The complete owner snapshot was equal before and after the rejected operations, including stale version rejection. The phone did not exercise the authenticated path."
+    },
+    "accessibility": {
+      "status": "PARTIAL",
+      "observed": "Mac Chrome reached the inbox action in 11 Tab presses with a 3px focus outline. Enter recorded the decision and Space activated Disconnect machine. The operator observed signed-out navigation in iPhone Mirroring. OS Large Text and VoiceOver were deferred and not verified."
+    }
+  },
+  "phone_connectivity": "No existing private phone route to the fresh disposable fixture was established. The historical service answered an unauthenticated request before the fixture started. No credential was sent to it.",
+  "cleanup": {
+    "runtime_container_absent": true,
+    "database_container_absent": true,
+    "browser_loopback_closed": true,
+    "runtime_session_removed": true,
+    "browser_disconnected": true,
+    "native_no_saved_machine": true,
+    "runtime_identity_sha256": "b6c2d516c8543a782a46af8852d68664cbaedd4138ecacd3ad4e378b2ec32458",
+    "database_identity_sha256": "e0f2287bf88100ced7ee250a4cb165398bf755ba2866009273bdef9747957fdb"
+  },
+  "fetched_origin_main": "eb5c2843b1528e294d58c1a4efb186beb8c41c4d",
+  "evidence_provenance": {
+    "method": "Operator collected local receipts, captured command exits, compared source bytes and rechecked exact owned container identities. Digests identify private originals.",
+    "private_receipts_sha256": {
+      "Mac tool versions": "6b6e9d93847ce9c939f7dde2510038b453a803a11687cf5db3d855be55ebfedc",
+      "device details": "c85cdad285c6cb8ec190ba08e9b4bba2f61fbbe0b080d7cf8a6688b9e8041e8a",
+      "signed build log": "dcd16a3705bfc08368c7316542524b4742595e18a7548e04a325d03ec94e5dbe",
+      "installation": "cb6cffc22c6a94e3fd0178cbc63d9519aebbb0ba85f5db8bb5a7e4ce3b47949b",
+      "launch": "f7b8ffdd30ab9a18bbed3580d76ccd49d46f135cc1890f84e0fa4332705cf8d6",
+      "build binding": "ce3ce9bfa12f0b5f05da1358e1330ad7d782d03d3ba9ef914c6c050cdc8b1be3",
+      "successful full verification": "5a32c3aad4ad14be861421b894a78f8dfeff8edb2708c66bd00c084799adf275",
+      "producer validation": "9cc2cae2e6d15eabb5a2115ef9a2bd882d7e258e01083a2a3a7843e01c9d8c89",
+      "Linux source manifest": "e3e05f770dc07aa9870467a86b9e6c8502510a15d5a391b294ad325702a00798",
+      "public scan": "96b9b79320ceffa5ac468cef3383361e106af29570122e824f2c82be4e381500",
+      "Mac browser": "28bf8105d7812ede3fd728622fafcf33f70a2693eca37cbc53718dcb14f09f95",
+      "Mac race and rejections": "9ed9aee43fdb8c7cbce847e2151d04ef5b79f03722c04920973e161ccce89fbc",
+      "cleanup": "f9d909f9d6bab8fc599d4d4eb2af1a168008cf4881572c8402922bbae8f2726c"
+    }
+  }
+}
