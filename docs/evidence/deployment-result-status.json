@@ -1,0 +1,616 @@
+{
+  "consumer_revision": "1b0724db2e5ad619e36195095d2742cb05aad5ca",
+  "producer_revision": "3688810cd229befa853c2d569669a7eb74b937f2",
+  "consumer_image_id": "sha256:a52a85c02cbf1aa81f3f894d7558dbf5be00b9fb945272ef9f91af446c6c7cb7",
+  "target": "Disposable Linux ARM64. Real Birbparty API, PostgreSQL and OpenFGA in Compose. Kubernetes objects, activity installation artifacts and workload incarnations in these receipts are fixtures. The Temporal frontend requires mutual TLS. Production per-identity authorization and a completed target release are outside this run.",
+  "tests": {
+    "tests": 111,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "journeys": [
+    {
+      "activity_installation_sha256": "249a1879d4d943f3a4e0abbebb4d9cfd3d367821bae2b25c7ae84d84791e01fd",
+      "app_source_revision": "503d3bc238e2093eb0e098ecbe87b7e11ed16b4f",
+      "compose_images": {
+        "api": "sha256:3031f0e4f0effba670ba70c2be0e7e3f0226147fedfff62359cd1476f51b45f3",
+        "openfga": "sha256:3703d8a6a5f9fa494f1412fc326fe4ba2dc36796e1c821b0dead2ca5433178aa",
+        "openfga-postgres": "sha256:29e645e20571728f22df398b9954bb6c1cefec390d99ed4e26308fc2f52d6a37",
+        "postgres": "sha256:29e645e20571728f22df398b9954bb6c1cefec390d99ed4e26308fc2f52d6a37"
+      },
+      "export": {
+        "eligible": false,
+        "invocation": {
+          "epoch": "09bca188-0ddd-4ab3-ab1d-8ab3ebb2f075",
+          "request_id": "request-a",
+          "request_sha256": "549c52bc36239ea6f40a26c0957d9d67aec4d869654ca8bf19f0a1048151bd95"
+        },
+        "operation_id": "f5f8ffc1b84e1d8e56fe7521b479518bebebaa34905fd1bf9d4b76714e1ecee8",
+        "reason": "release_not_authorized",
+        "result_sha256": "078d74151654f2f718a97ef2fb163eaa1f89cc83e834077707d2fd62d42b8dad",
+        "schema_version": "birbforge.deployment.evidence-status.v1",
+        "seal_observation_sha256": "4d51bd9bdf69976938d42240da0e63e6762f72da33ec87338ca8c913eba7f607"
+      },
+      "producer_package_sha256": "5ffa9c6ba2c5f9eaec55391e48a7671660091afeca3d47a0d92d1b3d8eed95fb",
+      "request": {
+        "artifacts": {
+          "application_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "data_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "openfga_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "render_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "authored_revision": "cccccccccccccccccccccccccccccccccccccccc",
+        "beans_issue": "fixture-1",
+        "candidate_revision": "503d3bc238e2093eb0e098ecbe87b7e11ed16b4f",
+        "deadline": "2026-11-11T00:59:54.515031Z",
+        "images": {
+          "api": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "api@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "busybox": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "openfga": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "openfga@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "postgres": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "postgres@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "ui": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "ui@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        "installation_sha256": "5cbb8514dd9d35b0d8751e485d77ad327e69e4caee34f47d796f7c0a7fb9b093",
+        "plan_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policy_revision": "cccccccccccccccccccccccccccccccccccccccc",
+        "producer_revision": "3688810cd229befa853c2d569669a7eb74b937f2",
+        "repository": "birbparty/birbparty",
+        "request_id": "request-a",
+        "schema_version": "birbverify.deployment.account-auth.request.v1",
+        "target": {
+          "cluster_uid": "cluster",
+          "namespace": "app",
+          "namespace_uid": "ns-uid",
+          "target_id": "target"
+        },
+        "workflow_id": "birbforge-kubernetes-8a92ab74d2261a169a554d9e6ca868a93c94b99655bb3cb15a5db7c758c7659b"
+      },
+      "result": {
+        "assertions": {
+          "account_create": "passed",
+          "authenticated_identity": "passed",
+          "invalid_credentials_rejected": "passed",
+          "login_success": "passed",
+          "unauthenticated_access_rejected": "passed"
+        },
+        "completed_at": "2026-11-10T23:59:56.264661Z",
+        "invocation": {
+          "epoch": "09bca188-0ddd-4ab3-ab1d-8ab3ebb2f075",
+          "request_id": "request-a",
+          "request_sha256": "549c52bc36239ea6f40a26c0957d9d67aec4d869654ca8bf19f0a1048151bd95"
+        },
+        "operation_id": "f5f8ffc1b84e1d8e56fe7521b479518bebebaa34905fd1bf9d4b76714e1ecee8",
+        "outcome": "passed",
+        "profile": {
+          "reviewer_identity": "owner",
+          "suite_sha256": "6c14602bfa28c5d4a79fe8216bde60705fc74634b805e95ed03beadd0975cab6",
+          "task_queue": "verify",
+          "temporal_namespace": "default",
+          "temporal_server_ca_sha256": "9fdb0313169555bfbbfaf415da99568af038b57d26f0473b36a99c5b18e6acd2",
+          "verifier_identity": "worker",
+          "verifier_revision": "3688810cd229befa853c2d569669a7eb74b937f2",
+          "worker_cert_sha256": "f5e56f4dcb3cd0bab59eb5f0c59e9cdb021580eeb85e1c07ab58781cb424f6f8"
+        },
+        "result_sha256": "078d74151654f2f718a97ef2fb163eaa1f89cc83e834077707d2fd62d42b8dad",
+        "schema_version": "birbverify.deployment.account-auth.result.v1",
+        "started_at": "2026-11-10T23:59:56.116332Z",
+        "workloads": [
+          {
+            "containers": [
+              {
+                "container_id": "containerd://7d4dd79f698ec070d2fcc416821e0098726a15af505e5f5529bbaa9fa14130da",
+                "name": "authz-state-init",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://c745a50088a5757261b23edc45f413e12fc8b6d446393e34982cc35b9729df33",
+                "name": "authz-bootstrap",
+                "role": "api",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://938ddfdaa9ae01ad6f73ac1f09e94aacf9188550d459801200d149da2bb7ca36",
+                "name": "api",
+                "role": "api",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "api-parent",
+            "name": "api",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-api",
+            "workload": "api"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://c444f5e664ed5227175072640552f7879aaefb7686d2aa9fa48d6aaa155a0432",
+                "name": "volume-permissions",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://c5a85cedeeb963feb4a206355ba26ad793e88ac6bf5814b86d3df4caeb5cc5d2",
+                "name": "postgresql",
+                "role": "postgres",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "application-postgres-parent",
+            "name": "application-postgres",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-application-postgres",
+            "workload": "application-postgres"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://e99313dd6bd0d24a8d597503480c1cfa4aceff34144978db12c85a50ef997136",
+                "name": "migrate-database",
+                "role": "openfga",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://8edb41f2aa4f3c530e340f4ecb4bd7207cae1d31c1e1c4c3d176682c45cc75fd",
+                "name": "openfga",
+                "role": "openfga",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "openfga-parent",
+            "name": "openfga",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-openfga",
+            "workload": "openfga"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://2d64e59a55242bc78bdfa2c755430374fb3da1cdb1229848722b4732a7ce9a93",
+                "name": "volume-permissions",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://5087d07af2a46e25c78cde3aa3e0eae24758d46488710ae9dcac046c84c09c17",
+                "name": "postgresql",
+                "role": "postgres",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "openfga-postgres-parent",
+            "name": "openfga-postgres",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-openfga-postgres",
+            "workload": "openfga-postgres"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://23d738a7f9bda156235f191156871c1268ecdebeb65ebe1086735a805cd012b2",
+                "name": "ui",
+                "role": "ui",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "ui-parent",
+            "name": "ui",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-ui",
+            "workload": "ui"
+          }
+        ]
+      },
+      "scenario": "normal",
+      "seal_observation": {
+        "account_activity_state": "passed",
+        "cluster_uid": "cluster",
+        "effects": [
+          {
+            "audit_id": "audit-review-api",
+            "event_sha256": "6229acab28c22de13eb8145b12a5d539be3eec701855e5ca8c63f18ee469292b",
+            "object_uid": "uid-api",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "api",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-application-postgres",
+            "event_sha256": "2f4456ae958caf09c3276eceec3adf937af5fcadf30c45c407c0af66de93b635",
+            "object_uid": "uid-application-postgres",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "application-postgres",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-openfga",
+            "event_sha256": "a8f409bacd6e1daf9b9a5b042ed754520ed4518db8496492cafb5c42c3363e21",
+            "object_uid": "uid-openfga",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "openfga",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-openfga-postgres",
+            "event_sha256": "f3aad1bf22c9da27d022bc790ae001422567b853fa9423bd7dc104d27e1aaffb",
+            "object_uid": "uid-openfga-postgres",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "openfga-postgres",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-ui",
+            "event_sha256": "fe98a7fe64864111effd5499196be52af3a485a87f0196980647f943cccde441",
+            "object_uid": "uid-ui",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "ui",
+            "state": "settled",
+            "terminal_status_sha256": null
+          }
+        ],
+        "epoch": "09bca188-0ddd-4ab3-ab1d-8ab3ebb2f075",
+        "installation_obligations": [
+          "writer_and_admission_integrity",
+          "reconciliation_quiescence",
+          "baseline_restoration"
+        ],
+        "installation_sha256": "5cbb8514dd9d35b0d8751e485d77ad327e69e4caee34f47d796f7c0a7fb9b093",
+        "namespace_uid": "ns-uid",
+        "reason": "completed",
+        "release_authorized": false,
+        "request_id": "request-a",
+        "request_sha256": "549c52bc36239ea6f40a26c0957d9d67aec4d869654ca8bf19f0a1048151bd95",
+        "schema_version": "birbverify.deployment.closure.progress.v1",
+        "state": "sealed"
+      },
+      "workload_observation": "synthetic Kubernetes API"
+    },
+    {
+      "activity_installation_sha256": "a35d43fc3873252af4373090806c7968dff88964011efadb3b42ce95a458c75b",
+      "app_source_revision": "503d3bc238e2093eb0e098ecbe87b7e11ed16b4f",
+      "compose_images": {
+        "api": "sha256:3031f0e4f0effba670ba70c2be0e7e3f0226147fedfff62359cd1476f51b45f3",
+        "openfga": "sha256:3703d8a6a5f9fa494f1412fc326fe4ba2dc36796e1c821b0dead2ca5433178aa",
+        "openfga-postgres": "sha256:29e645e20571728f22df398b9954bb6c1cefec390d99ed4e26308fc2f52d6a37",
+        "postgres": "sha256:29e645e20571728f22df398b9954bb6c1cefec390d99ed4e26308fc2f52d6a37"
+      },
+      "export": {
+        "eligible": false,
+        "invocation": {
+          "epoch": "4a202a9a-cd01-478f-9334-b9acef60b222",
+          "request_id": "request-a",
+          "request_sha256": "5ada6c0e01e7bd9a9cdfb1f4a56b61fb91157e0d05ef609e006f5b7f86f043f6"
+        },
+        "operation_id": "aed6ec67c23b21d47c1e3c52d8abe22b406076c700c6a3e7234911dcfbc6cfd4",
+        "reason": "release_not_authorized",
+        "result_sha256": "b8555036f8883ee200d25361a75ac12215dda868124714343c439cfdb5d785e0",
+        "schema_version": "birbforge.deployment.evidence-status.v1",
+        "seal_observation_sha256": "996eb40d001fb606fd14c12f362715e1ba17696e10cd06c9c522896f9a70b18d"
+      },
+      "producer_package_sha256": "5ffa9c6ba2c5f9eaec55391e48a7671660091afeca3d47a0d92d1b3d8eed95fb",
+      "request": {
+        "artifacts": {
+          "application_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "data_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "openfga_chart_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "render_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "authored_revision": "cccccccccccccccccccccccccccccccccccccccc",
+        "beans_issue": "fixture-1",
+        "candidate_revision": "503d3bc238e2093eb0e098ecbe87b7e11ed16b4f",
+        "deadline": "2026-11-11T01:00:31.826950Z",
+        "images": {
+          "api": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "api@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "busybox": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "busybox@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "openfga": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "openfga@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "postgres": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "postgres@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "ui": {
+            "config_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "platform_manifest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reference": "ui@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        },
+        "installation_sha256": "88072ea9ae12edf33de97f9650a7e20536efceda3fcb575caa7860cdca7ff40d",
+        "plan_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policy_revision": "cccccccccccccccccccccccccccccccccccccccc",
+        "producer_revision": "3688810cd229befa853c2d569669a7eb74b937f2",
+        "repository": "birbparty/birbparty",
+        "request_id": "request-a",
+        "schema_version": "birbverify.deployment.account-auth.request.v1",
+        "target": {
+          "cluster_uid": "cluster",
+          "namespace": "app",
+          "namespace_uid": "ns-uid",
+          "target_id": "target"
+        },
+        "workflow_id": "birbforge-kubernetes-8a92ab74d2261a169a554d9e6ca868a93c94b99655bb3cb15a5db7c758c7659b"
+      },
+      "result": {
+        "assertions": {
+          "account_create": "unknown",
+          "authenticated_identity": "unknown",
+          "invalid_credentials_rejected": "unknown",
+          "login_success": "unknown",
+          "unauthenticated_access_rejected": "unknown"
+        },
+        "completed_at": "2026-11-11T00:00:33.388160Z",
+        "invocation": {
+          "epoch": "4a202a9a-cd01-478f-9334-b9acef60b222",
+          "request_id": "request-a",
+          "request_sha256": "5ada6c0e01e7bd9a9cdfb1f4a56b61fb91157e0d05ef609e006f5b7f86f043f6"
+        },
+        "operation_id": "aed6ec67c23b21d47c1e3c52d8abe22b406076c700c6a3e7234911dcfbc6cfd4",
+        "outcome": "unknown",
+        "profile": {
+          "reviewer_identity": "owner",
+          "suite_sha256": "6c14602bfa28c5d4a79fe8216bde60705fc74634b805e95ed03beadd0975cab6",
+          "task_queue": "verify",
+          "temporal_namespace": "default",
+          "temporal_server_ca_sha256": "5c3441875ecd1ff5c2aefbad2acc4fa4864eb4fbf4edf84f8db8f3e2011b65fe",
+          "verifier_identity": "worker",
+          "verifier_revision": "3688810cd229befa853c2d569669a7eb74b937f2",
+          "worker_cert_sha256": "1b18f7168fb5f7bfe0f690e75b402cb732a975b6c0a67c15defb6b690df8758d"
+        },
+        "result_sha256": "b8555036f8883ee200d25361a75ac12215dda868124714343c439cfdb5d785e0",
+        "schema_version": "birbverify.deployment.account-auth.result.v1",
+        "started_at": "2026-11-11T00:00:33.346888Z",
+        "workloads": [
+          {
+            "containers": [
+              {
+                "container_id": "containerd://7d4dd79f698ec070d2fcc416821e0098726a15af505e5f5529bbaa9fa14130da",
+                "name": "authz-state-init",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://c745a50088a5757261b23edc45f413e12fc8b6d446393e34982cc35b9729df33",
+                "name": "authz-bootstrap",
+                "role": "api",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://938ddfdaa9ae01ad6f73ac1f09e94aacf9188550d459801200d149da2bb7ca36",
+                "name": "api",
+                "role": "api",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "api-parent",
+            "name": "api",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-api",
+            "workload": "api"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://c444f5e664ed5227175072640552f7879aaefb7686d2aa9fa48d6aaa155a0432",
+                "name": "volume-permissions",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://c5a85cedeeb963feb4a206355ba26ad793e88ac6bf5814b86d3df4caeb5cc5d2",
+                "name": "postgresql",
+                "role": "postgres",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "application-postgres-parent",
+            "name": "application-postgres",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-application-postgres",
+            "workload": "application-postgres"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://e99313dd6bd0d24a8d597503480c1cfa4aceff34144978db12c85a50ef997136",
+                "name": "migrate-database",
+                "role": "openfga",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://8edb41f2aa4f3c530e340f4ecb4bd7207cae1d31c1e1c4c3d176682c45cc75fd",
+                "name": "openfga",
+                "role": "openfga",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "openfga-parent",
+            "name": "openfga",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-openfga",
+            "workload": "openfga"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://2d64e59a55242bc78bdfa2c755430374fb3da1cdb1229848722b4732a7ce9a93",
+                "name": "volume-permissions",
+                "role": "busybox",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              {
+                "container_id": "containerd://5087d07af2a46e25c78cde3aa3e0eae24758d46488710ae9dcac046c84c09c17",
+                "name": "postgresql",
+                "role": "postgres",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "openfga-postgres-parent",
+            "name": "openfga-postgres",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-openfga-postgres",
+            "workload": "openfga-postgres"
+          },
+          {
+            "containers": [
+              {
+                "container_id": "containerd://23d738a7f9bda156235f191156871c1268ecdebeb65ebe1086735a805cd012b2",
+                "name": "ui",
+                "role": "ui",
+                "runtime_image_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              }
+            ],
+            "controller_uid": "ui-parent",
+            "name": "ui",
+            "node_name": "node",
+            "node_uid": "node-uid",
+            "uid": "uid-ui",
+            "workload": "ui"
+          }
+        ]
+      },
+      "scenario": "reply_loss",
+      "seal_observation": {
+        "account_activity_state": "unknown",
+        "cluster_uid": "cluster",
+        "effects": [
+          {
+            "audit_id": "audit-review-api",
+            "event_sha256": "22a952001937b05ad2200fd05ff94cab9f3e69b18405825c427adba1c0172d54",
+            "object_uid": "uid-api",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "api",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-application-postgres",
+            "event_sha256": "29a6b582409cc5ed0a0cdf0e2da75ad4be8cfadf3e420db574925f5c5c1353d3",
+            "object_uid": "uid-application-postgres",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "application-postgres",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-openfga",
+            "event_sha256": "6b2d6b2fb9384e0a6e89f1ffda56cca013f00ab394da9739c95632ee91d92284",
+            "object_uid": "uid-openfga",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "openfga",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-openfga-postgres",
+            "event_sha256": "817edc56bc344e95399ce50f103479516ee906d8c85afcc0648e32525410f948",
+            "object_uid": "uid-openfga-postgres",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "openfga-postgres",
+            "state": "settled",
+            "terminal_status_sha256": null
+          },
+          {
+            "audit_id": "audit-review-ui",
+            "event_sha256": "348d72d1e306e442e6232a68d79d1c70aac551543bde895f99ce27956fe5816b",
+            "object_uid": "uid-ui",
+            "obligations": [
+              "object_cleanup",
+              "terminal_status"
+            ],
+            "slot": "ui",
+            "state": "settled",
+            "terminal_status_sha256": null
+          }
+        ],
+        "epoch": "4a202a9a-cd01-478f-9334-b9acef60b222",
+        "installation_obligations": [
+          "writer_and_admission_integrity",
+          "reconciliation_quiescence",
+          "baseline_restoration"
+        ],
+        "installation_sha256": "88072ea9ae12edf33de97f9650a7e20536efceda3fcb575caa7860cdca7ff40d",
+        "namespace_uid": "ns-uid",
+        "reason": "completed",
+        "release_authorized": false,
+        "request_id": "request-a",
+        "request_sha256": "5ada6c0e01e7bd9a9cdfb1f4a56b61fb91157e0d05ef609e006f5b7f86f043f6",
+        "schema_version": "birbverify.deployment.closure.progress.v1",
+        "state": "sealed"
+      },
+      "workload_observation": "synthetic Kubernetes API"
+    }
+  ]
+}
