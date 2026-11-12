@@ -1,4 +1,4 @@
-"""Run the Birbverify app fixture in a fresh Compose project."""
+"""Run the Verify app fixture in a fresh Compose project."""
 
 import os
 import secrets

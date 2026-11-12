@@ -1,5 +1,5 @@
 {
-  "name": "birbforge-docs",
+  "name": "forge-docs",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,24 +1,24 @@
 # Runtime and durable coordination recommendation
 
 Researched November 5, 2026. The owner approved self-hosted Temporal and
-Pydantic AI as the first Birbcrew runtime to validate. These choices authorize
+Pydantic AI as the first Crew runtime to validate. These choices authorize
 readiness planning, not implementation. No factory account integrations,
 workers, or restart behavior have been live-tested.
 
 ## Accepted direction and remaining proof
 
 Use one self-hosted Temporal service for factory coordination and durable
-coworker execution, with PostgreSQL persistence. Keep Birbforge's interface and
+coworker execution, with PostgreSQL persistence. Keep Forge's interface and
 CopilotKit OSS runtime in TypeScript. Evaluate Python with Pydantic AI as the
-preferred Birbcrew implementation because it has documented AG-UI and Temporal
+preferred Crew implementation because it has documented AG-UI and Temporal
 integrations. Retain TypeScript with the pi SDK as the alternative if the
 end-to-end proof shows lower integration or account-access cost.
 
 This recommendation prioritizes existing integrations over using one language
 everywhere. It does not replace Codex, Claude Code, or pi as coding tools. Cloud
 authors and coding harnesses remain separately invoked execution backends.
-Birbcrew's chief of staff uses constrained factory tools to coordinate them.
-Birbcrew is the first implementation repository. Each repository gets its own
+Crew's chief of staff uses constrained factory tools to coordinate them.
+Crew is the first implementation repository. Each repository gets its own
 poteto-mode owner handoff.
 
 ## Why Temporal
@@ -46,14 +46,14 @@ they share an operated PostgreSQL installation.
 [Deployment guidance](https://docs.temporal.io/self-hosted-guide/deployment),
 [persistence](https://docs.temporal.io/temporal-service/persistence)
 
-## Two viable Birbcrew paths
+## Two viable Crew paths
 
 | Concern | TypeScript + pi SDK | Python + Pydantic AI |
 | --- | --- | --- |
 | Agent execution | Reuse pi's sessions, tools and context handling | Reuse the existing agent loop and selected harness capabilities |
 | AG-UI | Implement and maintain a pi event adapter | Use the documented AG-UI adapter |
 | Durability | Integrate session recovery with Temporal activity lifecycles | Use the documented Temporal capability inside actual workflows |
-| Language footprint | Shares TypeScript with Birbforge | Adds Python across a versioned interface |
+| Language footprint | Shares TypeScript with Forge | Adds Python across a versioned interface |
 | Work still ours | Stream translation, session ownership, replay/reconnect, tool authorization | Durable-stream integration, conversation persistence, reconnect, tool authorization |
 | Selection gate | No recreated pi internals; reliable recovery and AG-UI semantics | Supported account access; existing capabilities rather than a new coding harness |
 
@@ -77,7 +77,7 @@ Python. Datadog remains the observability destination; a new hosted observabilit
 product is not part of this recommendation.
 [Harness capabilities](https://pydantic.dev/docs/ai/harness/)
 
-The standalone CopilotKit runtime stays TypeScript even if Birbcrew is Python.
+The standalone CopilotKit runtime stays TypeScript even if Crew is Python.
 That runtime can connect to an AG-UI agent without Intelligence. Do not confuse
 a Python agent backend with CopilotKit's Python runtime, which has a different
 service dependency.
@@ -98,10 +98,10 @@ cancel, tools and state. Revisit it if it removes more code than it adds.
 | --- | --- |
 | Delivery progress, waits and retries | Temporal workflow history |
 | Authored requests, plans, issues and shared notes | Beans hub |
-| Accepted scope snapshot, policy and approval records | Birbforge application records |
-| Conversation and finalized messages | Chosen Birbcrew framework/session store |
+| Accepted scope snapshot, policy and approval records | Forge application records |
+| Conversation and finalized messages | Chosen Crew framework/session store |
 | Workspace contents and code changes | Isolated workspace plus version control |
-| Verification observations and artifacts | Birbverify manifests and private artifact storage |
+| Verification observations and artifacts | Verify manifests and private artifact storage |
 | Cloud task lifecycle | Provider's task ID and status, reconciled by factory adapters |
 
 A restarted workflow must reconnect to existing external work where possible.
@@ -132,9 +132,9 @@ account or network coordinates into these public docs.
 3. Restart a worker during a tool call. Recover or explicitly reconcile the
    outcome without duplicate external action.
 4. Pause for a durable human-input request and resolve it from another client.
-   Birbforge later proves revision-bound approvals through the phone interface.
+   Forge later proves revision-bound approvals through the phone interface.
 5. Recover finalized conversation history after process restart.
-6. In the later Birbverify integration milestone, dispatch a real check through
+6. In the later Verify integration milestone, dispatch a real check through
    the existing Mac path. Respect its lifecycle gates and preserve the
    shared-staging reservation through interruption.
 

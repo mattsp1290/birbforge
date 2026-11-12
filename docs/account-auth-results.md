@@ -2,7 +2,7 @@
 
 For the deployment profile and its authenticated denial export, see [Recover a deployment result and read its promotion status](deployment-result-status.md).
 
-Birbforge must distinguish an application pass from the release of a target. A completed activity or safe closure does not establish an application pass.
+Forge must distinguish an application pass from the release of a target. A completed activity or safe closure does not establish an application pass.
 
 This change defines a provisional consumer contract and fixture checks for `birbforge-vsrd`. Production queue projections remain delivery-ineligible. No result submission command, verifier worker, publisher, scheduler, or deployment is added. Final integration depends on the reviewed deployment-compatible contract from `birbverify-bsmn`.
 
@@ -10,9 +10,9 @@ This change defines a provisional consumer contract and fixture checks for `birb
 
 An application result must identify the exact request, candidate revision, authored-work revision and Beans issue. It also binds the approved plan, policy, producer revision, installation, physical target, approved image, running image, workload incarnation, verifier implementation and assertion suite.
 
-A content digest detects changes. It does not authenticate the author. A caller can invent a result and recompute its digest. The production integration must obtain results from a reviewed Birbverify activity over authenticated Temporal access restricted to authorized workers. Admission authority does not confer verifier authority. A task-queue name or verifier label alone does not establish identity.
+A content digest detects changes. It does not authenticate the author. A caller can invent a result and recompute its digest. The production integration must obtain results from a reviewed Verify activity over authenticated Temporal access restricted to authorized workers. Admission authority does not confer verifier authority. A task-queue name or verifier label alone does not establish identity.
 
-Birbverify owns the assertion execution and target journal. Its operation must persist one immutable result for the request before replying. An ambiguous reply must recover that result or remain unknown. It must not rerun mutating account assertions automatically. Birbforge owns admission, FIFO state and eligibility evaluation. Beans owns the authored work. Birbhomes owns publication and promotion.
+Verify owns the assertion execution and target journal. Its operation must persist one immutable result for the request before replying. An ambiguous reply must recover that result or remain unknown. It must not rerun mutating account assertions automatically. Forge owns admission, FIFO state and eligibility evaluation. Beans owns the authored work. Birbhomes owns publication and promotion.
 
 The proposed assertion suite requires successful account creation, login and session identity, plus rejection of an invalid password and an unauthenticated identity request. Startup, readiness and successful transport cannot substitute for those assertions. Results contain bounded outcomes and digests, not passwords, session tokens, account names or raw HTTP bodies.
 
@@ -30,7 +30,7 @@ The existing shared promoter is `scripts/gitops/promote.py` in Birbhomes. The in
 
 Its required integration must perform these checks before its existing promotion side effect.
 
-1. Retrieve the result and closure through an authenticated Birbforge channel. Reject arbitrary JSON supplied by an untrusted workflow.
+1. Retrieve the result and closure through an authenticated Forge channel. Reject arbitrary JSON supplied by an untrusted workflow.
 2. Require the supported version, bounded schema, canonical digests and independently approved verifier and assertion suite.
 3. Compare the complete verification subject with the promotion intent and current installation. This includes source, authored-work revision, plan, policy, target, registry artifacts and observed runtime identities.
 4. Require an application pass and matching completed safe closure. Reject missing, unknown, cancelled, quarantined, stale or mismatched evidence.

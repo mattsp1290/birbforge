@@ -59,7 +59,7 @@ def test_delivery_survives_workflow_worker_restart_without_second_author():
                 "base_branch": "main",
                 "provider": "github",
                 "number": 42,
-                "url": "https://github.com/mattsp1290/birbforge/pull/42",
+                "url": "https://github.com/mattsp1290/forge/pull/42",
                 "draft": True,
             }
 

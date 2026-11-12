@@ -54,7 +54,7 @@ export function MachineSecrets({session}: {session: Session}) {
   const duplicate = editor?.kind === 'add' && names?.includes(editor.name);
   return <Card>
     <Heading>Machine secrets</Heading>
-    <Body muted>Store credentials on this server. Live Birbcrew chat uses the secret named OPENCODE_GO_API_KEY.</Body>
+    <Body muted>Store credentials on this server. Live Crew chat uses the secret named OPENCODE_GO_API_KEY.</Body>
     {names === null && !error && <Body muted>Loading secrets…</Body>}
     {names?.length === 0 && <Body muted>No secrets saved.</Body>}
     {names?.map(name => <View key={name} style={[styles.entry, {borderColor: colors.line}]}>

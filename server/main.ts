@@ -38,7 +38,7 @@ async function main() {
           listener.server.off('error', startupError);
           listener.server.on('error', () => {
             shutdown();
-            process.stderr.write('Birbforge listener failed.\n');
+            process.stderr.write('Forge listener failed.\n');
             process.exitCode = 1;
           });
           resolve();
@@ -53,11 +53,11 @@ async function main() {
       try { linkSync(pending, ready); }
       finally { unlinkSync(pending); }
     }
-    process.stdout.write('Birbforge loopback gateway ready.\n');
+    process.stdout.write('Forge loopback gateway ready.\n');
     if (proxy) process.stdout.write('Loopback proxy backend ready with exact HTTPS authority checks.\n');
   } catch (error) { shutdown(); throw error; }
 }
 void main().catch(() => {
-  process.stderr.write('Birbforge startup failed. Check private configuration or listener availability.\n');
+  process.stderr.write('Forge startup failed. Check private configuration or listener availability.\n');
   process.exitCode = 1;
 });

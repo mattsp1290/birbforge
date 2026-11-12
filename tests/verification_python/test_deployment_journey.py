@@ -1,4 +1,4 @@
-"""Exercise the producer journal and Birbforge processes on a disposable Temporal server."""
+"""Exercise the producer journal and Forge processes on a disposable Temporal server."""
 
 import asyncio
 import json

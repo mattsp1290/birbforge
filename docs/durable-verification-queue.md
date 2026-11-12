@@ -1,6 +1,6 @@
 # Durable verification queue
 
-Status on November 6, 2026. This milestone adds Birbforge's first durable
+Status on November 6, 2026. This milestone adds Forge's first durable
 environment queue and shared verification view. The local execution checks and independent source review passed.
 Physical iPhone fixture acceptance is now recorded for product revision
 `6b46dac`, using the separate native test build at `88a8182`. The
@@ -15,13 +15,13 @@ it exceeds the concrete pinned producer behavior below.
 
 ## Pinned producer and queue ownership
 
-Birbforge consumes Birbcrew commit
-`88b219c18adeb352d2f291f099ede990a3190a58` and Birbverify commit
+Forge consumes Crew commit
+`88b219c18adeb352d2f291f099ede990a3190a58` and Verify commit
 `a70315a276837ffdde32049fdb77670a3468e151` without source overlays.
-Birbverify supplies its real `Activities.verify` activity, target fencing,
+Verify supplies its real `Activities.verify` activity, target fencing,
 immutable request/result contract, artifact reader, and fixture procedures.
-Birbforge supplies `verification.workflow.EnvironmentQueue`.
-Birbverify's `FixtureWorkflow` is not the environment queue.
+Forge supplies `verification.workflow.EnvironmentQueue`.
+Verify's `FixtureWorkflow` is not the environment queue.
 
 Each admitted producer request has one attempt budget and one immutable
 terminal result. An identical terminal request returns its original result.
@@ -30,10 +30,10 @@ execution retries and replacement terminal manifests are outside this milestone.
 
 | Authority | Responsibility |
 | --- | --- |
-| Authenticated gateway | Checks existing Birbcrew conversation ownership and accepts only admission, cancellation, and observation payloads |
+| Authenticated gateway | Checks existing Crew conversation ownership and accepts only admission, cancellation, and observation payloads |
 | Installation policy | Binds the exact candidate, approved plan, policy, permitted operations, deadline, and fixture capabilities |
-| Birbforge Temporal workflow | Owns admission order, immutable bindings, idempotency receipts, request revisions, and dispatch |
-| Birbverify activity and target | Execute the pinned procedure, own acquired attempt identity, fence effects, and record the producer result |
+| Forge Temporal workflow | Owns admission order, immutable bindings, idempotency receipts, request revisions, and dispatch |
+| Verify activity and target | Execute the pinned procedure, own acquired attempt identity, fence effects, and record the producer result |
 | Separate supervisor CLI | Confirms worker and container stop, reconciles the owned attempt through target operations, and records a separate recovery receipt |
 | Shared phone and browser client | Displays authoritative observations and submits bounded commands. It cannot upload verdicts or release quarantine |
 
@@ -180,7 +180,7 @@ For an acquired interrupted attempt, a trusted host coordinator invokes
 using the validated producer interpreter. After checking quarantine, invoke the
 same command without `fence`. The coordinator first confirms its exact activity
 worker has stopped. The supervisor verifies that independently and reuses
-Birbverify's stop, cleanup and release operations. It rejects recovery of a
+Verify's stop, cleanup and release operations. It rejects recovery of a
 normally released attempt and a different recovery identity for an already
 recovered attempt. It never runs through the client action API.
 

@@ -19,7 +19,7 @@ hub as test data. Use bn for repository work tracking as its AGENTS.md requires.
 
 Acceptance includes the lost-response journey, stale-write conflict, structured
 CLI behavior and the repository's required verification. Native formal proof
-requires its documented Linux environment. Publish the contract for Birbcrew
+requires its documented Linux environment. Publish the contract for Crew
 consumers. Never claim macOS compilation proves the Linux formal checks.
 
 ## Birbhomes
@@ -55,7 +55,7 @@ candidate on shared k3s staging. Production is not the pre-merge test target.
 The acceptance journey must cover creator management, the six-item limit,
 authorization, viewer sending and receiving during a livestream, and the agreed
 native behavior. Preserve failures and missing evidence. Confirm cleanup before
-releasing staging. Birbverify collects these observations; the application repo
+releasing staging. Verify collects these observations; the application repo
 owns the tests and user journeys.
 
 The broader factory pilot later exercises PR ownership, independent approval

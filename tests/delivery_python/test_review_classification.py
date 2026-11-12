@@ -116,7 +116,7 @@ def test_legacy_classification_survives_race_lost_reply_and_worker_restart(outco
                 "base_branch": "main",
                 "provider": "github",
                 "number": 42,
-                "url": "https://github.com/mattsp1290/birbforge/pull/42",
+                "url": "https://github.com/mattsp1290/forge/pull/42",
                 "draft": True,
             }
 

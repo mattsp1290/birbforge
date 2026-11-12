@@ -31,8 +31,8 @@ export class CatalogService {
       NODE_ENV: process.env.NODE_ENV,
       HOME: this.options.directory,
       GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', GIT_TERMINAL_PROMPT: '0',
-      GIT_AUTHOR_NAME: 'Birbforge', GIT_AUTHOR_EMAIL: 'birbforge@localhost',
-      GIT_COMMITTER_NAME: 'Birbforge', GIT_COMMITTER_EMAIL: 'birbforge@localhost',
+      GIT_AUTHOR_NAME: 'Forge', GIT_AUTHOR_EMAIL: 'birbforge@localhost',
+      GIT_COMMITTER_NAME: 'Forge', GIT_COMMITTER_EMAIL: 'birbforge@localhost',
     };
     try {
       const result = await run('bn', ['--hub', this.options.hub, '--actor', 'birbforge', '--no-fetch', '--no-sync', '--json', 'project', ...args],

@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="One accountable owner per repository, with explicit dependencies."><title>Repository map · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Understand</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link selected" aria-current="page" href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Understand <span>· DESIGN RECORD</span></div><h1>Repository map</h1><p class="lead">One accountable owner per repository, with explicit dependencies.</p></div><article><p>Status: ownership model agreed. Birbcrew is ready for its first implementation
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="One accountable owner per repository, with explicit dependencies."><title>Repository map · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ Understand</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link selected" aria-current="page" href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Crew</a><a class="nav-link "  href="first-milestone.html">02 · Forge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Verify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Understand <span>· DESIGN RECORD</span></div><h1>Repository map</h1><p class="lead">One accountable owner per repository, with explicit dependencies.</p></div><article><p>Status: ownership model agreed. Crew is ready for its first implementation
 run. Downstream briefs retain their dependency gates. The owner plans to start a separate poteto-mode agent for each repository
 in Codex, with Claude CLI for independent review.</p>
 <p>Each repository has one coordinating owner. An owner may delegate bounded work
@@ -14,17 +14,17 @@ the duration of the project.</p>
 </tr>
 </thead>
 <tbody><tr>
-<td>Birbcrew</td>
+<td>Crew</td>
 <td>Durable AG-UI conversation proof with Pydantic AI and Temporal</td>
 <td>Isolated local development dependencies and an eligible subscription</td>
 </tr>
 <tr>
-<td>Birbforge</td>
-<td>Phone and browser conversation/inbox journey using the proven Birbcrew contract</td>
-<td>Birbcrew contract and fixtures</td>
+<td>Forge</td>
+<td>Phone and browser conversation/inbox journey using the proven Crew contract</td>
+<td>Crew contract and fixtures</td>
 </tr>
 <tr>
-<td>Birbverify</td>
+<td>Verify</td>
 <td>Execute one repository verification plan and return attributable evidence</td>
 <td>Factory verification contract and environment permissions</td>
 </tr>
@@ -44,9 +44,9 @@ the duration of the project.</p>
 <td>Final feature acceptance and staging readiness</td>
 </tr>
 </tbody></table></div>
-<p>Birbcrew goes first. Birbhomes can inspect deployment prerequisites while that
+<p>Crew goes first. Birbhomes can inspect deployment prerequisites while that
 proof runs. The Beans owner can investigate write recovery independently while
-Birbcrew initially reads fixture notes. Birbforge and Birbverify can prepare their own tests and interfaces
+Crew initially reads fixture notes. Forge and Verify can prepare their own tests and interfaces
 once the relevant contracts are stable. The Birbparty feature is the complete
 factory pilot, not a prerequisite for the first coworker-runtime proof.</p>
 <p>The proposed Beans write journey uses two clients and one note in a disposable
@@ -56,12 +56,12 @@ the newer note silently. Request, plan and issue integration follows this bounde
 first write proof. Beans ownership of those authored records is now agreed.</p>
 <h2 id="contract-ownership">Contract ownership<a class="anchor" href="#contract-ownership" aria-label="Link to Contract ownership">#</a></h2><p>Beans owns authored requests, plans, issues, shared notes and their mutation
 formats, as agreed in <a href="beans-integration.html">the Beans integration</a>.
-Birbcrew owns its AG-UI compatibility behavior and persistent-conversation
-contract. Birbforge owns goals, factory actions, approval records and delivery
-policy. Birbverify owns the executable verification request and evidence schema.
+Crew owns its AG-UI compatibility behavior and persistent-conversation
+contract. Forge owns goals, factory actions, approval records and delivery
+policy. Verify owns the executable verification request and evidence schema.
 Birbhomes owns infrastructure placement and lifecycle controls. Birbparty owns
 application acceptance journeys and deployment procedures.</p>
-<p>Birbforge&#39;s design docs record the cross-repository agreements. During
+<p>Forge&#39;s design docs record the cross-repository agreements. During
 implementation, publish schemas and fixtures with the repository that owns
 them. Consumers pin versions rather than copy independently changing contracts.
 Prefer a package within an existing repository before creating another repo.</p>
@@ -74,7 +74,7 @@ selection gate, verification commands, evidence, and conditions requiring a
 human decision. The owner reports blockers with evidence and a recommended
 next action. Missing evidence stays visible.</p>
 <p>The initial agent runs are human-started implementation sessions. The eventual
-factory will automate comparable ownership through Birbcrew and Birbforge.
+factory will automate comparable ownership through Crew and Forge.
 Do not assume the factory is already running while building it.</p>
 <p>Implementation owners do not approve their own work. Review and merge remain
 separate roles. The current readiness task does not launch implementation
@@ -82,8 +82,8 @@ agents, grant production deployment access, or authorize messaging other tasks.<
 <h2 id="first-handoff">First handoff<a class="anchor" href="#first-handoff" aria-label="Link to First handoff">#</a></h2><p>The <a href="start-repository-owner.html">Codex launch guide</a> defines the selected host
 mapping and first prompt. The <a href="design-checkpoint.html">design checkpoint</a>
 records the agreed design and explicitly deferred deployment choices.</p>
-<p>The ready Birbcrew handoff lives in <code>birbcrew/docs/first-milestone.md</code>.
+<p>The ready Crew handoff lives in <code>birbcrew/docs/first-milestone.md</code>.
 It proves conversation durability and interaction behavior. Phone presentation,
 real PR approvals, k3s deployment and native Mac acceptance have separate gates
 in the downstream repositories. These gates remain part of the factory outcome.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#responsibilities">Responsibilities</a><a href="#contract-ownership">Contract ownership</a><a href="#reporting-and-intervention">Reporting and intervention</a><a href="#first-handoff">First handoff</a></nav></aside></body></html>
+</article><footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#responsibilities">Responsibilities</a><a href="#contract-ownership">Contract ownership</a><a href="#reporting-and-intervention">Reporting and intervention</a><a href="#first-handoff">First handoff</a></nav></aside></body></html>

@@ -78,7 +78,7 @@ async function plainRequest(url: string, headers: Record<string,string> = {}, lo
 }
 function certificate(root: string) {
   const run = (...args: string[]) => execFileSync('openssl', args, {cwd:root, stdio:'ignore'});
-  run('req','-x509','-newkey','rsa:2048','-nodes','-keyout','ca.key','-out','ca.pem','-days','1','-subj','/CN=Birbforge disposable test CA');
+  run('req','-x509','-newkey','rsa:2048','-nodes','-keyout','ca.key','-out','ca.pem','-days','1','-subj','/CN=Forge disposable test CA');
   run('req','-newkey','rsa:2048','-nodes','-keyout','server.key','-out','server.csr','-subj','/CN=127.0.0.1');
   writeFileSync(join(root,'extensions'), 'subjectAltName=IP:127.0.0.1\nextendedKeyUsage=serverAuth\n');
   run('x509','-req','-in','server.csr','-CA','ca.pem','-CAkey','ca.key','-CAcreateserial','-out','server.pem','-days','1','-extfile','extensions');

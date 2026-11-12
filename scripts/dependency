@@ -2,7 +2,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 revision=88b219c18adeb352d2f291f099ede990a3190a58
-source=${BIRBCREW_SOURCE:-../birbcrew}
+source=${CREW_SOURCE:-${BIRBCREW_SOURCE:-../crew}}
 mkdir -p .local
 git -C "$source" cat-file -e "$revision^{commit}"
 root=$(mktemp -d /tmp/birbforge-dependency-XXXXXX)

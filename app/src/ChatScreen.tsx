@@ -10,8 +10,8 @@ const errors: Record<string, string> = {
   provider_secret_required: 'Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message.',
   agent_removed: 'This agent was removed. Its chat history is still available.',
   catalog_unavailable: 'The crew roster is unavailable. Try again when the gateway can read it.',
-  birbcrew_runner_unconfigured: 'The gateway needs a Birbcrew Python runner to answer live chats.',
-  birbcrew_reply_unavailable: 'Birbcrew could not finish the reply. Check the gateway provider configuration and retry.',
+  birbcrew_runner_unconfigured: 'The gateway needs a Crew Python runner to answer live chats.',
+  birbcrew_reply_unavailable: 'Crew could not finish the reply. Check the gateway provider configuration and retry.',
   reply_pending: 'A reply is already pending. Reopen the chat to see its latest messages.',
 };
 class ChatRequestError extends Error {
@@ -93,14 +93,14 @@ function ThreadView({session, threadId, mode, onBack, removed, updated, visible}
       }
     } finally {sending.current = false; if (alive.current) setBusy(false);}
   }
-  const name = chat?.agentName ?? (threadId === chiefId ? chiefName : 'Birbcrew');
+  const name = chat?.agentName ?? (threadId === chiefId ? chiefName : 'Crew');
   const displayed = chat?.turns ?? [];
   const turns = pending && !displayed.some(turn => turn.id === pending.id) ? [...displayed, {...pending, answer: null}] : displayed;
   return <View style={styles.thread}>
     <View style={[styles.threadHeader, {borderBottomColor: colors.line}]}>
       {onBack && <Action secondary label="Chats" onPress={onBack} />}
       <View style={styles.fill}><Heading>{name}</Heading>
-        <Body muted>{mode === 'local' ? 'Local inspection · Live model off' : 'Birbcrew chat'}</Body></View>
+        <Body muted>{mode === 'local' ? 'Local inspection · Live model off' : 'Crew chat'}</Body></View>
     </View>
     <ScrollView ref={scroll} contentContainerStyle={styles.history} keyboardShouldPersistTaps="handled"
       onContentSizeChange={() => scroll.current?.scrollToEnd({animated: false})}>

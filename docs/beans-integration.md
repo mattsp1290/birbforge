@@ -8,11 +8,11 @@ read or changed, and the existing untracked milestone file was left untouched.
 ## Reuse shared knowledge
 
 The owner selected separate goal conversations and shared repository notes.
-Beans is the existing place for those notes. Birbcrew should retrieve relevant
+Beans is the existing place for those notes. Crew should retrieve relevant
 project memories and handoffs through `bn`, retain their identities and source
 revisions, and make them available to the coworker. Keep conversation messages
 in the conversation store. Do not put streamed tokens into Git or build another
-wiki and memory product in Birbcrew.
+wiki and memory product in Crew.
 
 For the initial fixture proof, provenance means note keys, paths, updated
 timestamps, content digests and the clean hub commit captured with those bytes.
@@ -21,7 +21,7 @@ Use a quiescent clean fixture snapshot. Do not attribute uncommitted note bytes
 to a Git commit merely because that commit is currently HEAD.
 
 The Beans source repository contains the software. Its hub is a separate Git
-repository containing the authored records. A public Beans or Birbforge repository
+repository containing the authored records. A public Beans or Forge repository
 does not make that hub public. Hub locations and remotes stay in private
 installation configuration.
 
@@ -32,13 +32,13 @@ The owner selected Beans for authored work records and shared notes.
 | Record | Authority |
 | --- | --- |
 | Requests, authored plans, issues, repository memories and handoffs | Beans hub |
-| Coworker run attempts, durable waits and retries | Birbcrew's Temporal workflows |
-| Delivery attempts and environment reservations | Birbforge's Temporal workflows, exposed through supported queries and application projections |
-| Accepted execution snapshot, approval decisions, PR revision bindings and deployment outcomes | Birbforge |
-| Finalized conversation messages | Birbcrew's conversation store |
+| Coworker run attempts, durable waits and retries | Crew's Temporal workflows |
+| Delivery attempts and environment reservations | Forge's Temporal workflows, exposed through supported queries and application projections |
+| Accepted execution snapshot, approval decisions, PR revision bindings and deployment outcomes | Forge |
+| Finalized conversation messages | Crew's conversation store |
 | Large screenshots, logs and recordings | Private artifact storage, referenced by manifests |
 
-Birbforge can index Beans records for its inbox, but indexes must carry source
+Forge can index Beans records for its inbox, but indexes must carry source
 IDs and revisions. Writes go through Beans. Do not maintain a second editable
 copy of the same plan in PostgreSQL. An approved execution captures the authored
 scope revision so later note or plan edits cannot silently expand active work.
@@ -57,7 +57,7 @@ The CLI returns commit identifiers and whether a mutation was pushed.
 Use the CLI first for capabilities that are not available over HTTP. The server
 has no built-in authentication, and its current HTTP API makes requests and
 plans read-only. Do not expose that server as the factory's trusted action API.
-Birbforge's authenticated handlers can call narrowly scoped Beans operations
+Forge's authenticated handlers can call narrowly scoped Beans operations
 from a protected worker. Shared network access alone is not authorization.
 
 Relevant inspected source files are `AGENTS.md`, `README.md`, `docs/cli.md`,
@@ -83,11 +83,11 @@ Keep expansions bounded and useful outside the factory. Candidates include
 caller operation identity, conditional memory updates, and missing structured
 mutation endpoints. Select only the gaps demonstrated by an acceptance journey.
 Continue using Beans' existing transaction code rather than writing hub files
-or committing them directly from Birbcrew.
+or committing them directly from Crew.
 
 ## First milestone impact
 
-The Birbcrew runtime proof remains first. Add a bounded read of project notes
+The Crew runtime proof remains first. Add a bounded read of project notes
 from a disposable Beans fixture hub. Record the note identities and show the
 same context survives reconnect. Do not consume unrelated private hub contents.
 

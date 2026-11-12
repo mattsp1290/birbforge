@@ -1,8 +1,8 @@
 # Contextless closure consumer
 
-Birbforge can keep one dispatched request outstanding after the activity worker loses its context. An operator closes that request through the pinned Birbverify supervisor. The queue advances only after the exact request has a validated closure receipt and a fresh, unchanged target snapshot reports no owner. A normal verification release remains a separate attributable path.
+Forge can keep one dispatched request outstanding after the activity worker loses its context. An operator closes that request through the pinned Verify supervisor. The queue advances only after the exact request has a validated closure receipt and a fresh, unchanged target snapshot reports no owner. A normal verification release remains a separate attributable path.
 
-This implementation pins Birbverify `e785dd8882222b18eaf59ce2b1ceecbd092dcd9e`. Birbverify owns the target journal, permanent seal, execution fence, stop, cleanup and release. Birbforge owns admission, the durable environment queue and delivery eligibility. Closure does not create a verification manifest or grant eligibility.
+This implementation pins Verify `e785dd8882222b18eaf59ce2b1ceecbd092dcd9e`. Verify owns the target journal, permanent seal, execution fence, stop, cleanup and release. Forge owns admission, the durable environment queue and delivery eligibility. Closure does not create a verification manifest or grant eligibility.
 
 ## Fresh configuration
 
@@ -14,7 +14,7 @@ The interactive fixture launcher defaults to v2. `scripts/verification-dev --leg
 
 ## Operator command
 
-Run the command with the queue's producer Python environment and Birbforge working directory. The authenticated supervisor reads its private key from the installation. Neither the gateway nor the observation activity reads that key.
+Run the command with the queue's producer Python environment and Forge working directory. The authenticated supervisor reads its private key from the installation. Neither the gateway nor the observation activity reads that key.
 
 ```sh
 python -m verification.supervisor /private/queue.json REQUEST_UUID CLOSURE_UUID request
@@ -39,7 +39,7 @@ Both conversation and inbox receive the same AG-UI state. Closure is absent, pen
 
 ## Isolated fixture proof
 
-Use a fresh Linux driver with a short daemon-shared directory such as `/private/tmp/bfi8`. The driver needs the host PID and cgroup view for the pinned launcher to register its worker. The worker keeps a private PID namespace, drops capabilities and has no restart policy. It receives the producer's existing scoped mounts. Its small Temporal entry and public config live in `launch/`; no broad Birbforge source mount or producer overlay is added.
+Use a fresh Linux driver with a short daemon-shared directory such as `/private/tmp/bfi8`. The driver needs the host PID and cgroup view for the pinned launcher to register its worker. The worker keeps a private PID namespace, drops capabilities and has no restart policy. It receives the producer's existing scoped mounts. Its small Temporal entry and public config live in `launch/`; no broad Forge source mount or producer overlay is added.
 
 Prepare pinned exports and locked dependencies using the repository setup guidance. On the host with the pinned Git checkouts available, create a private export attestation:
 

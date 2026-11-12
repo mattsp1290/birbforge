@@ -1,9 +1,9 @@
-# Birbforge: agreed product decisions
+# Forge: agreed product decisions
 
 Status: system design agreed. Recorded November 5, 2026. This document records
 product decisions, not implemented capabilities. Infrastructure and provider
 integrations still need validation. The owner has approved self-hosted Temporal
-and Pydantic AI as the first Birbcrew runtime to validate. Beans owns authored
+and Pydantic AI as the first Crew runtime to validate. Beans owns authored
 work and shared notes. Codex owners use Claude CLI for independent review.
 Deployment choices remain subject to their documented gates.
 
@@ -16,7 +16,7 @@ custom platform we maintain.
 
 Prefer open-source components. Paid products remain candidates when they
 remove substantial maintenance. Custom code is welcome where it implements
-Birbforge's distinctive behavior; rebuilding an existing agent harness is not.
+Forge's distinctive behavior; rebuilding an existing agent harness is not.
 
 CopilotKit Intelligence is explicitly excluded, including hosted and self-hosted
 editions. It is not an optional future dependency. CopilotKit open-source SDKs,
@@ -30,35 +30,35 @@ reusable by other people without exposing any installation's private settings.
 
 ## Repository boundaries
 
-[Birbcrew](https://github.com/mattsp1290/birbcrew) is the selected name and
+[Crew](https://github.com/mattsp1290/crew) is the selected name and
 repository for a replacement for crabber-coworkers. The owner has reopened the
 programming-language and runtime choices. The owner subsequently approved
 Python with Pydantic AI as the first integration path to validate and self-hosted
 Temporal as the shared durable execution engine. TypeScript with pi remains an
 alternative if the proof fails. Reuse an existing agent runtime.
 
-The agreed boundary is Birbcrew for reusable persistent coworkers and
-Birbforge for the factory interface, goal policy, and delivery workflows.
+The agreed boundary is Crew for reusable persistent coworkers and
+Forge for the factory interface, goal policy, and delivery workflows.
 crabber-coworkers remains a behavior and migration reference. crabber-channels
 remains a reuse candidate; its coupling to Crabber and suitability for the
 agreed notifications-only Slack flow require evaluation.
 
-[Birbverify](https://github.com/mattsp1290/birbverify) is the selected repository
+[Verify](https://github.com/mattsp1290/verify) is the selected repository
 for reusable verification execution and evidence collection. It checks exact
 candidate revisions using repository-owned tests and deployment procedures,
 coordinates workers with the required Linux or Mac capabilities, and returns
-evidence tied to the commit, deployed artifacts, and environment. Birbforge
+evidence tied to the commit, deployed artifacts, and environment. Forge
 retains acceptance policy, approval gates, and merge authority. Application
 tests stay in their application repositories; infrastructure stays in birbhomes.
 
 The intended distribution is public reusable code with private installation
 configuration and private verification artifacts by default. Worker credentials
-must be scoped to the permitted environment. Birbverify must reuse existing
+must be scoped to the permitted environment. Verify must reuse existing
 test tools and the selected durable execution system rather than introduce a
-new agent harness or scheduler. Its progress is surfaced through Birbforge's
+new agent harness or scheduler. Its progress is surfaced through Forge's
 AG-UI interface; the internal worker transport remains to be selected.
 
-The first proposed Birbverify delivery is a Birbparty candidate deployed to k3s
+The first proposed Verify delivery is a Birbparty candidate deployed to k3s
 staging with a reviewable evidence bundle. Missing or inconclusive checks must
 remain explicit. Execution contracts, isolation, artifact storage, and the
 boundary between workflow coordination and worker execution still need design.
@@ -73,12 +73,12 @@ and artifact storage still require design.
 ## Implementation readiness goal
 
 The current goal is to prepare the repositories for implementation with
-poteto-mode. Birbcrew is the first repository. The owner intends to start one
+poteto-mode. Crew is the first repository. The owner intends to start one
 owning agent with poteto-mode for each repository. Prepare separate bounded
 handoffs with dependencies, verification evidence and escalation rules.
 Do not interpret this as starting all implementation agents now.
 
-Use the first Birbcrew milestone to validate the selected runtime and durable
+Use the first Crew milestone to validate the selected runtime and durable
 AG-UI interaction before dependent product work. Each repository owner can
 delegate within its scope. Cross-repository contract changes require explicit
 coordination. The owner has agreed the consolidated design and authorized HTML.
@@ -93,17 +93,17 @@ knowledge are different records.
 Reuse the existing Beans project for shared notes. Its `bn` CLI already manages
 project memories and session handoffs in a separate Git-backed hub. Expand
 Beans where a demonstrated integration gap warrants it. Do not create another
-general-purpose memory or wiki service in Birbcrew. Record the Beans project,
+general-purpose memory or wiki service in Crew. Record the Beans project,
 note key and source revision used to inform a conversation.
 
 The owner selected Beans for requests, authored plans, issues and shared notes.
-Birbforge stores accepted scope snapshots, approvals and delivery records.
+Forge stores accepted scope snapshots, approvals and delivery records.
 Temporal remains responsible for execution.
 No arbitrary memory text or generic issue status can grant merge authority.
 
 ## AG-UI is required; A2UI is optional
 
-AG-UI is a required interface for Birbcrew and a central part of Birbforge,
+AG-UI is a required interface for Crew and a central part of Forge,
 including its phone and browser clients. It must carry agent conversations,
 run/tool progress, shared user-facing state, and human-interaction requests.
 The chief-of-staff conversation and agent-facing parts of the inbox must use
@@ -148,7 +148,7 @@ priorities and per-repository work queues. Exact scheduling remains open.
 
 ## Private access
 
-The initial Birbforge interface and API are accessible through private NetBird
+The initial Forge interface and API are accessible through private NetBird
 access from phone and desktop. A public repository does not imply a public
 installation. Actual hostnames and network configuration remain private.
 
@@ -256,14 +256,14 @@ Distinguish reported usage from estimates and unavailable data. The proposal is
 to keep authoritative workflow state in a durable backing store and use
 Datadog for telemetry and alerts. Temporal is selected for execution history.
 PostgreSQL is the proposed application store. Beans owns authored work records
-and shared notes. Birbforge can index them without creating a second editable
+and shared notes. Forge can index them without creating a second editable
 source of truth.
 
 ## Notifications and private configuration
 
 Deliver actionable notifications through phone push and a configurable Slack
-destination. Slack initially contains notifications and links into Birbforge;
-decisions and approvals happen in Birbforge.
+destination. Slack initially contains notifications and links into Forge;
+decisions and approvals happen in Forge.
 
 Do not commit real workspace/channel destinations, credentials, infrastructure
 access coordinates, or private installation settings. Public documentation and

@@ -1,23 +1,23 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Evaluated components, tradeoffs and primary sources."><title>Build less, reuse more · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link selected" aria-current="page" href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Build less, reuse more</h1><p class="lead">Evaluated components, tradeoffs and primary sources.</p></div><article><p>Research date: November 5, 2026. The owner approved self-hosted Temporal and
-Pydantic AI as the first Birbcrew runtime to validate. Other component proposals
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Evaluated components, tradeoffs and primary sources."><title>Build less, reuse more · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link selected" aria-current="page" href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Crew</a><a class="nav-link "  href="first-milestone.html">02 · Forge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Verify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Build less, reuse more</h1><p class="lead">Evaluated components, tradeoffs and primary sources.</p></div><article><p>Research date: November 5, 2026. The owner approved self-hosted Temporal and
+Pydantic AI as the first Crew runtime to validate. Other component proposals
 remain subject to their stated proofs. No services were deployed or paid integrations
 activated. Repository documentation and public upstream sources were inspected;
 compatibility and operational claims below still need a targeted live proof.</p>
 <h2 id="recommendation">Recommendation<a class="anchor" href="#recommendation" aria-label="Link to Recommendation">#</a></h2><p>Use <strong>CopilotKit&#39;s open-source TypeScript runtime and client SDKs, Temporal,
-PostgreSQL, and existing agent harnesses</strong>. Build Birbforge&#39;s delivery policy and
+PostgreSQL, and existing agent harnesses</strong>. Build Forge&#39;s delivery policy and
 user experience around them. Keep the initial deployment private on k3s, with
 a native Mac worker for validation that requires macOS.</p>
-<p>The owner has selected <a href="https://github.com/mattsp1290/birbcrew">Birbcrew</a> to
+<p>The owner has selected <a href="https://github.com/mattsp1290/crew">Crew</a> to
 replace crabber-coworkers. Its responsibility is reusable persistent coworkers.
 Python with Pydantic AI is the approved first runtime to validate. TypeScript
 with pi remains an alternative if that proof fails. AG-UI is mandatory and
-central to both Birbcrew and Birbforge;
-A2UI is optional. Birbforge retains the factory interface and delivery policy.
+central to both Crew and Forge;
+A2UI is optional. Forge retains the factory interface and delivery policy.
 Temporal is the selected durable execution engine. These decisions authorize
 readiness planning, not implementation. See <a href="ag-ui-architecture.html">AG-UI architecture</a>.</p>
 <p>The <a href="runtime-recommendation.html">runtime recommendation</a> develops the next
 decision. Temporal is the shared coordinator, with Pydantic AI as the first
-Birbcrew integration proof and pi SDK as the alternative. It also records the owner&#39;s confirmation
+Crew integration proof and pi SDK as the alternative. It also records the owner&#39;s confirmation
 that the Mac is already joined to the k3s setup and the requirement to reuse
 Birbhomes&#39; guest/native execution paths and lifecycle controls.</p>
 <p>Temporal is the preferred workflow engine for our combination of distributed
@@ -35,7 +35,7 @@ earlier suggestion to consider Intelligence as a paid option.</p>
 execution, session stores, tools, extension loading, WASM support, durable
 controls, event delivery, and telemetry. Its README discusses recovery and
 ambiguous outcomes in detail. These are legitimate runtime concerns, but most
-are not Birbforge&#39;s differentiating product behavior.</p>
+are not Forge&#39;s differentiating product behavior.</p>
 <p>Agentcraft&#39;s inspected README adds native Apple clients, remote workers,
 deployment tooling, a GitHub catalog service, and a custom Codex credential
 broker. Its vision of remote execution and inspectable results remains useful.
@@ -48,7 +48,7 @@ proven lessons and acceptance journeys before copying implementation.</p>
 <tr>
 <th>Responsibility</th>
 <th>Proposed owner</th>
-<th>Birbforge&#39;s remaining work</th>
+<th>Forge&#39;s remaining work</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -68,12 +68,12 @@ proven lessons and acceptance journeys before copying implementation.</p>
 </tr>
 <tr>
 <td>Reusable persistent coworkers</td>
-<td>Birbcrew using an existing agent framework</td>
+<td>Crew using an existing agent framework</td>
 <td>Required AG-UI interface; choose runtime and durability integration</td>
 </tr>
 <tr>
 <td>Verification execution and evidence</td>
-<td>Birbverify using repository-owned tests and deployment procedures</td>
+<td>Verify using repository-owned tests and deployment procedures</td>
 <td>Define acceptance policy, bind evidence to candidate revisions, and surface progress through AG-UI</td>
 </tr>
 <tr>
@@ -113,7 +113,7 @@ proven lessons and acceptance journeys before copying implementation.</p>
 </tr>
 </tbody></table></div>
 <p>No new model-provider SDK, shell/file tool library, agent context compactor, or
-generic job scheduler belongs in the initial Birbforge scope.</p>
+generic job scheduler belongs in the initial Forge scope.</p>
 <h2 id="copilotkit-buy-the-right-layer">CopilotKit: buy the right layer<a class="anchor" href="#copilotkit-buy-the-right-layer" aria-label="Link to CopilotKit: buy the right layer">#</a></h2><p>The open-source SDKs and <strong>TypeScript</strong> runtime can operate without an
 Intelligence service. They cover chat, agent state, frontend tools, and
 generative UI. Framework- or application-owned history remains supported but
@@ -131,7 +131,7 @@ Native Web; this does not imply every third-party component is universal.
 <tr>
 <th>Product</th>
 <th>Useful capabilities</th>
-<th>Decision for Birbforge</th>
+<th>Decision for Forge</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -201,7 +201,7 @@ software factory.
 Enterprise arrangement. It brings Postgres, Redis, identity configuration, and
 multiple platform services. The free Mac/Docker local evaluation is a distinct
 path, not an entitlement to run production on k3s. Neither path is in scope
-for Birbforge, regardless of price or licensing.
+for Forge, regardless of price or licensing.
 <a href="https://docs.copilotkit.ai/intelligence/self-hosting">Production self-hosting</a>,
 <a href="https://docs.copilotkit.ai/intelligence/self-hosting-local">local evaluation</a></p>
 <h2 id="durable-workflow-alternatives">Durable workflow alternatives<a class="anchor" href="#durable-workflow-alternatives" aria-label="Link to Durable workflow alternatives">#</a></h2><p>These are architecture judgments for our requirements, not benchmark results.</p>
@@ -319,7 +319,7 @@ GitHub, GitLab, and Forgejo need explicit provider capability checks; do not
 assume a provider&#39;s hosted GitHub integration supports all three.</p>
 <h2 id="proposed-architecture">Proposed architecture<a class="anchor" href="#proposed-architecture" aria-label="Link to Proposed architecture">#</a></h2><figure class="diagram"><div class="diagram-scroll" tabindex="0" aria-label="Scrollable system diagram"><img src="assets/architecture.svg" alt="Factory component map"/></div><figcaption>Design diagram · <a href="assets/architecture.svg">Open full size</a></figcaption></figure><details class="source-detail"><summary>Detailed logical source behind this simplified diagram</summary><pre><code>flowchart TB
     Human[Owner on phone or Mac browser] --&gt; UI[Expo interface: inbox and conversation]
-    UI --&gt; API[Private Birbforge API and CopilotKit runtime]
+    UI --&gt; API[Private Forge API and CopilotKit runtime]
     API &lt;--&gt; Chief[Chief of staff on an existing agent harness]
     Chief --&gt; Actions[Authorized factory actions]
     API --&gt; Actions
@@ -395,4 +395,4 @@ disposable test target; do not induce a production incident to test recovery.</l
 <p>The live pilot will expose adapter limitations earlier than building a large
 dashboard. No benchmark, account entitlement, native compatibility, or production
 recovery guarantee is implied by this research alone.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#recommendation">Recommendation</a><a href="#what-the-local-projects-teach-us">What the local projects teach us</a><a href="#who-owns-what">Who owns what</a><a href="#copilotkit-buy-the-right-layer">CopilotKit: buy the right layer</a><a href="#durable-workflow-alternatives">Durable workflow alternatives</a><a href="#agent-execution-without-recreating-pi">Agent execution without recreating pi</a><a href="#proposed-architecture">Proposed architecture</a><a href="#custom-code-that-earns-its-place">Custom code that earns its place</a><a href="#proof-before-committing-to-the-stack">Proof before committing to the stack</a></nav></aside></body></html>
+</article><footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#recommendation">Recommendation</a><a href="#what-the-local-projects-teach-us">What the local projects teach us</a><a href="#who-owns-what">Who owns what</a><a href="#copilotkit-buy-the-right-layer">CopilotKit: buy the right layer</a><a href="#durable-workflow-alternatives">Durable workflow alternatives</a><a href="#agent-execution-without-recreating-pi">Agent execution without recreating pi</a><a href="#proposed-architecture">Proposed architecture</a><a href="#custom-code-that-earns-its-place">Custom code that earns its place</a><a href="#proof-before-committing-to-the-stack">Proof before committing to the stack</a></nav></aside></body></html>

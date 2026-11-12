@@ -1,7 +1,7 @@
-# Component options for Birbforge
+# Component options for Forge
 
 Research date: November 5, 2026. The owner approved self-hosted Temporal and
-Pydantic AI as the first Birbcrew runtime to validate. Other component proposals
+Pydantic AI as the first Crew runtime to validate. Other component proposals
 remain subject to their stated proofs. No services were deployed or paid integrations
 activated. Repository documentation and public upstream sources were inspected;
 compatibility and operational claims below still need a targeted live proof.
@@ -9,22 +9,22 @@ compatibility and operational claims below still need a targeted live proof.
 ## Recommendation
 
 Use **CopilotKit's open-source TypeScript runtime and client SDKs, Temporal,
-PostgreSQL, and existing agent harnesses**. Build Birbforge's delivery policy and
+PostgreSQL, and existing agent harnesses**. Build Forge's delivery policy and
 user experience around them. Keep the initial deployment private on k3s, with
 a native Mac worker for validation that requires macOS.
 
-The owner has selected [Birbcrew](https://github.com/mattsp1290/birbcrew) to
+The owner has selected [Crew](https://github.com/mattsp1290/crew) to
 replace crabber-coworkers. Its responsibility is reusable persistent coworkers.
 Python with Pydantic AI is the approved first runtime to validate. TypeScript
 with pi remains an alternative if that proof fails. AG-UI is mandatory and
-central to both Birbcrew and Birbforge;
-A2UI is optional. Birbforge retains the factory interface and delivery policy.
+central to both Crew and Forge;
+A2UI is optional. Forge retains the factory interface and delivery policy.
 Temporal is the selected durable execution engine. These decisions authorize
 readiness planning, not implementation. See [AG-UI architecture](ag-ui-architecture.md).
 
 The [runtime recommendation](runtime-recommendation.md) develops the next
 decision. Temporal is the shared coordinator, with Pydantic AI as the first
-Birbcrew integration proof and pi SDK as the alternative. It also records the owner's confirmation
+Crew integration proof and pi SDK as the alternative. It also records the owner's confirmation
 that the Mac is already joined to the k3s setup and the requirement to reuse
 Birbhomes' guest/native execution paths and lifecycle controls.
 
@@ -48,7 +48,7 @@ Crabber's inspected workspace owns model providers, authentication, agent
 execution, session stores, tools, extension loading, WASM support, durable
 controls, event delivery, and telemetry. Its README discusses recovery and
 ambiguous outcomes in detail. These are legitimate runtime concerns, but most
-are not Birbforge's differentiating product behavior.
+are not Forge's differentiating product behavior.
 
 Agentcraft's inspected README adds native Apple clients, remote workers,
 deployment tooling, a GitHub catalog service, and a custom Codex credential
@@ -61,13 +61,13 @@ proven lessons and acceptance journeys before copying implementation.
 
 ## Who owns what
 
-| Responsibility | Proposed owner | Birbforge's remaining work |
+| Responsibility | Proposed owner | Forge's remaining work |
 | --- | --- | --- |
 | Phone and browser rendering | Expo, React Native, React Native Web | Inbox, goals, review/evidence screens, responsive layouts |
 | Agent conversation and interactive cards | CopilotKit clients and TypeScript runtime, AG-UI | Register factory actions and map runtime events |
 | Reasoning, coding tools, context management | Codex, Claude Code, pi | Configure roles, skills, permissions, and supported invocation paths |
-| Reusable persistent coworkers | Birbcrew using an existing agent framework | Required AG-UI interface; choose runtime and durability integration |
-| Verification execution and evidence | Birbverify using repository-owned tests and deployment procedures | Define acceptance policy, bind evidence to candidate revisions, and surface progress through AG-UI |
+| Reusable persistent coworkers | Crew using an existing agent framework | Required AG-UI interface; choose runtime and durability integration |
+| Verification execution and evidence | Verify using repository-owned tests and deployment procedures | Define acceptance policy, bind evidence to candidate revisions, and surface progress through AG-UI |
 | Workflow history, retries, durable waits, task routing | Temporal | Define the actual delivery workflow and activity contracts |
 | Authored work and shared knowledge | Beans | Scoped access, provenance and safe mutation integration |
 | Delivery records and queryable views | PostgreSQL | Accepted scope snapshots, policies, approvals, PR bindings, inbox projections |
@@ -77,7 +77,7 @@ proven lessons and acceptance journeys before copying implementation.
 | Slack and phone delivery | Existing Slack/push APIs or SDKs | Destinations, notification rules, delivery receipts, deep links |
 
 No new model-provider SDK, shell/file tool library, agent context compactor, or
-generic job scheduler belongs in the initial Birbforge scope.
+generic job scheduler belongs in the initial Forge scope.
 
 ## CopilotKit: buy the right layer
 
@@ -95,7 +95,7 @@ Native Web; this does not imply every third-party component is universal.
 [CopilotKit native guide](https://docs.copilotkit.ai/react-native),
 [Expo web guide](https://docs.expo.dev/workflow/web/)
 
-| Product | Useful capabilities | Decision for Birbforge |
+| Product | Useful capabilities | Decision for Forge |
 | --- | --- | --- |
 | CopilotKit OSS | Conversation, tools, state, UI integration | Adopt as a dependency |
 | Intelligence | Saved rich conversations, cross-device continuity, memories, learning | Explicitly excluded |
@@ -145,7 +145,7 @@ Production self-hosted Intelligence currently requires a Team self-hosted or
 Enterprise arrangement. It brings Postgres, Redis, identity configuration, and
 multiple platform services. The free Mac/Docker local evaluation is a distinct
 path, not an entitlement to run production on k3s. Neither path is in scope
-for Birbforge, regardless of price or licensing.
+for Forge, regardless of price or licensing.
 [Production self-hosting](https://docs.copilotkit.ai/intelligence/self-hosting),
 [local evaluation](https://docs.copilotkit.ai/intelligence/self-hosting-local)
 
@@ -245,7 +245,7 @@ assume a provider's hosted GitHub integration supports all three.
 ```mermaid
 flowchart TB
     Human[Owner on phone or Mac browser] --> UI[Expo interface: inbox and conversation]
-    UI --> API[Private Birbforge API and CopilotKit runtime]
+    UI --> API[Private Forge API and CopilotKit runtime]
     API <--> Chief[Chief of staff on an existing agent harness]
     Chief --> Actions[Authorized factory actions]
     API --> Actions

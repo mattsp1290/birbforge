@@ -1,6 +1,6 @@
 # Start a repository owner in Codex
 
-Status: ready for the owner to launch Birbcrew. The owner
+Status: ready for the owner to launch Crew. The owner
 agreed the design and authorized HTML. Preparing this prompt does not launch an agent.
 
 ## Launch gate
@@ -23,13 +23,13 @@ mapping for these repository sessions. Codex owns implementation and coordinatio
 Claude CLI supplies fresh independent review. Do not fabricate a successful
 Cursor tool invocation or alter global model preferences.
 
-## Launch Birbcrew
+## Launch Crew
 
-Paste this prompt into a new Codex conversation in the Birbcrew checkout after
+Paste this prompt into a new Codex conversation in the Crew checkout after
 the readiness package has been agreed.
 
 ```text
-Use $pstack:poteto-mode. You own Birbcrew for this bounded milestone.
+Use $pstack:poteto-mode. You own Crew for this bounded milestone.
 Read the repository instructions and docs/first-milestone.md before editing.
 Implement that milestone and verify every required acceptance journey.
 Keep the approved Python, Pydantic AI, Temporal and AG-UI direction.
@@ -59,7 +59,7 @@ Return the implementation, independent review findings and verification evidence
 ```
 
 The runtime handoff is `birbcrew/docs/first-milestone.md` in that repository.
-Birbforge and Birbverify have their own `docs/first-milestone.md` files.
+Forge and Verify have their own `docs/first-milestone.md` files.
 Their owners must honor the dependencies in [repository owners](repository-owners.md).
 Existing repositories use [integration briefs](integration-briefs.md) together
 with their current local instructions. Do not substitute a runtime implementation

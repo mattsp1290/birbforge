@@ -238,7 +238,7 @@ it should work.
 
 An existing authorized on-device SSH forward can provide a phone-local loopback
 endpoint through encrypted SSH to Linux, if that already installed client
-supports forwarding while Birbforge is foregrounded. The preferred route uses the existing private HTTPS service and an already
+supports forwarding while Forge is foregrounded. The preferred route uses the existing private HTTPS service and an already
 authorized enrolled-peer SSH bridge to the optional loopback proxy backend. It
 preserves the configured external HTTPS Host. The legacy HTTP listener still
 accepts only the loopback Host. For the stricter trust profile, prove the bridge port is inaccessible directly
@@ -270,7 +270,7 @@ authenticated network trace into public evidence.
 | --- | --- |
 | Phone to browser | Send a synthetic coding goal on native iPhone. Open its displayed conversation UUID in the actual Mac browser with the same owner. Capture matching finalized messages, pending ID/version, and context note identities. Record both target identities and transitions. |
 | Inbox to conversation | Resolve that request from the Mac inbox. Observe the same choice and cleared pending input in the iPhone conversation. On a separate fresh fixture conversation, reverse the surfaces and resolve from native conversation. Capture one decision per request. |
-| Racing answers | Preserve the displayed ID/version on both devices. Submit different choices concurrently through the same Birbforge decision action. Capture one accepted result, an explicit HTTP 409 conflict for the loser, and converged authoritative state. A stale version must also reject explicitly. |
+| Racing answers | Preserve the displayed ID/version on both devices. Submit different choices concurrently through the same Forge decision action. Capture one accepted result, an explicit HTTP 409 conflict for the loser, and converged authoritative state. A stale version must also reject explicitly. |
 | Connection loss | Interrupt observation through the already authorized route or device network without cancelling. Capture disconnected/connecting state, restoration, a new observation, identical conversation identity, and unchanged accepted input count. No send action or new prompt UUID may occur on reconnect. Test iPhone background/foreground recovery too. |
 | Unauthorized action | Use the fixture stranger or invalid credential and an attempted locally forged owner/request. Capture 404 or 401 rejection and unchanged owner state. An `actor` decision field must return 400. Redact all headers and tokens. |
 | Accessibility | For full accessibility acceptance, run the core journey with OS large text on iPhone and VoiceOver-labelled controls. These native checks are deferred for current owner use and must remain NOT VERIFIED until run. On Mac, use actual Tab traversal and Enter/Space activation with visible focus. Capture settings, device/browser versions, control labels, and successful transitions. The application body-text toggle is additional evidence, not OS font scaling. |

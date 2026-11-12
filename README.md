@@ -1,6 +1,31 @@
-# Birbforge
+# Forge
 
-Birbforge is a React Native workspace for a Birbforge server. Use the same five screens on a phone or in a browser.
+Forge is a React Native workspace for a Forge server. Use the same five screens on a phone or in a browser.
+
+
+Canonical repositories: [Forge](https://github.com/mattsp1290/forge),
+[Crew](https://github.com/mattsp1290/crew), and
+[Verify](https://github.com/mattsp1290/verify).
+
+## Repository rename compatibility
+
+These repository and product names replace Birbforge, Birbcrew and Birbverify.
+This change does **not** upgrade the pinned Crew/Verify revisions or migrate their
+published APIs. Python imports (`birbcrew`, `birbverify`), versioned contracts,
+Temporal activities, environment variables, the project-token header, machine
+error codes, native app identifiers, persisted settings and installation paths
+retain their existing identifiers. Existing Beans actor/issue IDs and recorded
+evidence are unchanged. Repository membership uses GitHub's stable numeric IDs.
+
+New local checkout defaults use sibling `crew` and `verify` directories.
+`scripts/dependency` accepts `CREW_SOURCE`, with `BIRBCREW_SOURCE` retained as a
+fallback. Guest setup accepts `--crew-source`/`--verify-source` and matching
+`--crew-export`/`--verify-export` options; their old `--birbcrew-*` and
+`--birbverify-*` spellings remain aliases. Guest producer selection accepts both
+sets of names. Existing saved guest configuration keys and dependency export
+paths remain valid. No private installation or native application is renamed.
+
+## Workspace
 
 - **Factory** shows the selected machine's runtime and verification queue. Open a goal workflow here to send a goal, answer a decision, or continue it from another device.
 - **Projects** supports GitHub-backed projects and their contextual chats on configured gateways. For a standalone Beans workspace, it reads the gateway's Beans hub. Create a `bn` project and link its GitHub repositories.

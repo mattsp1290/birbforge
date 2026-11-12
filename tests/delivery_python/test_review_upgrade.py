@@ -68,7 +68,7 @@ def test_legacy_inconclusive_workflow_upgrades_and_retries_without_author():
                 "base_branch": "main",
                 "provider": "github",
                 "number": 42,
-                "url": "https://github.com/mattsp1290/birbforge/pull/42",
+                "url": "https://github.com/mattsp1290/forge/pull/42",
                 "draft": True,
             }
 

@@ -1,6 +1,6 @@
 # Physical Mac and iPhone closure rendering check
 
-Source revision: e8a895976f9cee392bc3ac793b6cd77be3ffa613. Branch: impl/contextless-closure-integration-20261108. Producer: e785dd8882222b18eaf59ce2b1ceecbd092dcd9e. Birbcrew: 88b219c18adeb352d2f291f099ede990a3190a58.
+Source revision: e8a895976f9cee392bc3ac793b6cd77be3ffa613. Branch: impl/contextless-closure-integration-20261108. Producer: e785dd8882222b18eaf59ce2b1ceecbd092dcd9e. Crew: 88b219c18adeb352d2f291f099ede990a3190a58.
 
 Completed on 2026-11-08: [physical-device acceptance and execution limits](evidence/contextless-closure-native-acceptance.md). Keep this recipe for future revision-bound runs.
 

@@ -1,4 +1,4 @@
-# First milestone for Birbforge
+# First milestone for Forge
 
 ## Current status on 2026-11-08
 
@@ -43,13 +43,13 @@ An authenticated owner can begin a goal conversation on a phone, continue it in
 a Mac browser, and resolve the same pending input through either conversation
 or inbox. Both clients converge on authoritative state after reconnect.
 
-Use Birbcrew's human-input request, resolved by ID and version through an
-authenticated Birbforge action. Generated local test credentials suffice for
+Use Crew's human-input request, resolved by ID and version through an
+authenticated Forge action. Generated local test credentials suffice for
 this isolated proof. Production identity is a later deployment gate.
 
 ## Scope and dependencies
 
-Use the proven Birbcrew AG-UI contract and fixtures. Validate Expo and React
+Use the proven Crew AG-UI contract and fixtures. Validate Expo and React
 Native Web against the selected SDKs before expanding the interface. Share
 domain state and action handlers. Use platform-specific presentation where a
 browser-only CopilotKit component cannot run natively. Do not substitute an

@@ -12,7 +12,7 @@ export async function checkChat(page, {agentName, project}) {
     await page.getByRole('textbox', {name:'Message', exact:true}).fill('Inspect factory status');
     await button('Send message').click();
   }
-  await page.getByText(/Gateway: online\. Birbcrew runtime:/).last().waitFor();
+  await page.getByText(/Gateway: online\. Crew runtime:/).last().waitFor();
   const mobile = page.viewportSize().width < 840;
   if (mobile) await button('Chats').click();
   await button('New chat').click();
@@ -43,5 +43,5 @@ export async function checkChat(page, {agentName, project}) {
   } finally {await page.unroute(messages);}
   if (mobile) await button('Chats').click();
   await chief.click();
-  await page.getByText(/Gateway: online\. Birbcrew runtime:/).last().waitFor();
+  await page.getByText(/Gateway: online\. Crew runtime:/).last().waitFor();
 }

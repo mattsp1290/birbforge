@@ -14,10 +14,10 @@ from pathlib import Path
 from uuid import uuid4
 
 FORGE = Path(__file__).resolve().parents[1]
-CREW = FORGE.parent / "birbcrew"
+CREW = FORGE.parent / "crew"
 BEANS = FORGE.parent / "beans"
 PROJECT_QUESTION = (
-    "Using both mattsp1290/birbforge and mattsp1290/birbcrew source files, "
+    "Using both mattsp1290/forge and mattsp1290/crew source files, "
     "explain who owns approvals, finalized conversation history, and durable execution. "
     "Cite each repository, supplied file path and exact commit. "
     "Do not execute or change anything."
@@ -25,12 +25,12 @@ PROJECT_QUESTION = (
 
 
 PROJECT_FOLLOWUPS = [
-    "In at most120words, compare Birbforge approval ownership with Birbcrew request ordering. "
+    "In at most120words, compare Forge approval ownership with Crew request ordering. "
     "Cite both frozen repository sources and exact commits.",
     "In at most120words, explain why these source documents do not let a planning message "
     "authorize implementation. Cite both frozen repositories.",
     "After reconnect, in at most120words explain finalized versus provisional message history "
-    "using the supplied Birbcrew source. Relate it to Birbforge's owner controls.",
+    "using the supplied Crew source. Relate it to Forge's owner controls.",
     "In at most120words, identify one missing implementation fact in the supplied historical "
     "project documents. Label it as a gap, not a proven capability, and cite the sources.",
     "In at most120words, give a project-chat safety checklist grounded in both supplied "
@@ -395,7 +395,7 @@ async def main(args):
                                     ],
                                 },
                             )
-                            assert project["name"] == "birbforge"
+                            assert project["name"] == "forge"
                             assert [repository["id"] for repository in project["repositories"]] == [
                                 "1447665555",
                                 "1447699708",
@@ -584,7 +584,7 @@ async def main(args):
                             )
                             report.update(
                                 {
-                                    "default_name": "birbforge",
+                                    "default_name": "forge",
                                     "project_id": project_id,
                                     "separate_project_id": separate["id"],
                                     "scope_change_preserves_historical_chat": True,

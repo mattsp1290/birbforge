@@ -64,7 +64,7 @@ async function verifySession(endpoint: string, access: ClientAccess) {
   }
   if (response.status === 401) throw new Error('The gateway rejected this owner credential.');
   if (response.status === 403) throw new Error('Use the owner credential for this machine.');
-  throw new Error('This server did not confirm a Birbforge connection.');
+  throw new Error('This server did not confirm a Forge connection.');
 }
 
 export function useMachineSettings() {
@@ -107,7 +107,7 @@ export function useMachineSettings() {
         if (!current || attempt !== connectionAttempt.current || access.kind !== 'private-single-owner') return;
         const session = await verifySession(endpoint, access);
         if (!current || attempt !== connectionAttempt.current) return;
-        const machine = machines.find(item => item.endpoint === endpoint) ?? {id: randomUUID(), name: 'Birbforge', endpoint};
+        const machine = machines.find(item => item.endpoint === endpoint) ?? {id: randomUUID(), name: 'Forge', endpoint};
         setProfiles(items => [...items.filter(item => item.id !== machine.id), machine]);
         setActive({...machine, access, managedProjects: session.managedProjects, sessionId: randomUUID()});
       } catch {
