@@ -27,7 +27,7 @@ async function main() {
   });
   const shutdown = () => listeners.forEach(({server}) => {server.close(() => {}); server.closeAllConnections();});
   let stopping = false;
-  process.on('SIGTERM', () => {stopping = true; shutdown();});
+  process.on('SIGTERM', () => {stopping = true; shutdown(); void services.chat.stop();});
   try {
     for (const listener of listeners) {
       if (stopping) return shutdown();

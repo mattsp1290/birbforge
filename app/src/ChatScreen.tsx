@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions} from 'react-native';
 import {randomUUID} from 'expo-crypto';
-import {Chat, ChatIndex, chiefId, chiefName} from './chat';
+import {Chat, ChatIndex, awaitingReply, chiefId, chiefName, ended, type MemberStatus} from './chat';
+import {engineLabels} from './catalog';
 import {transport} from './transport';
 import {authorizationHeaders} from './access';
 import {Action, Body, Heading, useUI, type Session} from './ui';
@@ -13,6 +14,20 @@ const errors: Record<string, string> = {
   birbcrew_runner_unconfigured: 'The gateway needs a Crew Python runner to answer live chats.',
   birbcrew_reply_unavailable: 'Crew could not finish the reply. Check the gateway provider configuration and retry.',
   reply_pending: 'A reply is already pending. Reopen the chat to see its latest messages.',
+  engine_unavailable: 'This agent’s engine is not available on this gateway. Choose another engine for the agent in Crew.',
+  members_unconfigured: 'This chat runs on a Crew member, and this gateway no longer has Crew members configured.',
+  member_chat_closed: 'This conversation has ended. Start a new chat to continue.',
+  invalid_message: 'Crew cannot accept this message text. Edit it and try again.',
+};
+const outcomes: Record<MemberStatus, string> = {
+  pending: 'Waiting for a reply…',
+  waiting: 'This agent is waiting for a decision that Forge cannot answer yet.',
+  completed: '',
+  failed: 'Crew could not run this message. Start a new chat to continue.',
+  cancelled: 'This message was cancelled before it ran. Start a new chat to continue.',
+  uncertain: 'Crew could not confirm whether this reply finished, so it will not be retried. Start a new chat to continue.',
+  rejected: 'Crew rejected this message. Start a new chat to continue.',
+  limit: 'This chat reached Crew’s message limit. Start a new chat to continue.',
 };
 class ChatRequestError extends Error {
   constructor(readonly status: number, code: string) {
@@ -63,19 +78,21 @@ function ThreadView({session, threadId, mode, onBack, removed, updated, visible}
         if (previous && (previous.turns.length > snapshot.turns.length || previous.turns.some((turn, i) => turn.answer !== null && snapshot.turns[i]?.answer === null))) return previous;
         return snapshot;
       });
-      setPending(previous => previous && snapshot.turns.some(turn => turn.id === previous.id && turn.answer !== null) ? null : previous);
+      setPending(previous => previous && snapshot.turns.some(turn => turn.id === previous.id) ? null : previous);
       setError('');
     }).catch(reason => {if (current) setError(reason instanceof Error ? reason.message : 'Could not load messages.');});
     return () => {current = false;};
   }, [session.endpoint, session.access, threadId, reload, visible]);
 
-  const waiting = chat?.turns.some(turn => turn.answer === null);
+  const waiting = chat?.turns.some(awaitingReply);
   useEffect(() => {
     if (!visible || !waiting || busy || error) return;
     const timer = setInterval(() => setReload(n => n + 1), 5000);
     return () => clearInterval(timer);
   }, [visible, waiting, busy, error]);
-  const retry = chat?.turns.find(turn => turn.answer === null) ?? pending;
+  const retry = chat?.turns.find(turn => turn.answer === null && !turn.status) ?? pending;
+  const replying = chat?.turns.some(turn => turn.status && awaitingReply(turn));
+  const closed = chat?.turns.some(ended);
   async function send(text: string) {
     if (sending.current || removed || !text.trim()) return;
     sending.current = true;
@@ -94,37 +111,39 @@ function ThreadView({session, threadId, mode, onBack, removed, updated, visible}
     } finally {sending.current = false; if (alive.current) setBusy(false);}
   }
   const name = chat?.agentName ?? (threadId === chiefId ? chiefName : 'Crew');
+  const local = mode === 'local' && !chat?.engine;
   const displayed = chat?.turns ?? [];
   const turns = pending && !displayed.some(turn => turn.id === pending.id) ? [...displayed, {...pending, answer: null}] : displayed;
   return <View style={styles.thread}>
     <View style={[styles.threadHeader, {borderBottomColor: colors.line}]}>
       {onBack && <Action secondary label="Chats" onPress={onBack} />}
       <View style={styles.fill}><Heading>{name}</Heading>
-        <Body muted>{mode === 'local' ? 'Local inspection · Live model off' : 'Crew chat'}</Body></View>
+        <Body muted>{chat?.engine ? 'Crew member · ' + engineLabels[chat.engine] : mode === 'local' ? 'Local inspection · Live model off' : 'Crew chat'}</Body></View>
     </View>
     <ScrollView ref={scroll} contentContainerStyle={styles.history} keyboardShouldPersistTaps="handled"
       onContentSizeChange={() => scroll.current?.scrollToEnd({animated: false})}>
       {!chat && !error && <Body muted>Loading messages…</Body>}
       {chat && turns.length === 0 && <View style={styles.empty}>
         <Heading>{threadId === chiefId ? 'What’s happening in the factory?' : 'Start a conversation'}</Heading>
-        <Body muted>{mode === 'local' ? (threadId === chiefId ? 'Inspect the runtime, crew, and projects on this machine.' : 'Inspect this agent’s role and assigned projects.') : `Send a message to ${name}.`}</Body>
-        {mode === 'local' && !removed && <Action label={threadId === chiefId ? 'Inspect factory' : 'Inspect assignments'} secondary onPress={() => void send(threadId === chiefId ? 'Show the current factory status.' : 'Show my assigned projects.')} />}
+        <Body muted>{local ? (threadId === chiefId ? 'Inspect the runtime, crew, and projects on this machine.' : 'Inspect this agent’s role and assigned projects.') : `Send a message to ${name}.`}</Body>
+        {local && !removed && <Action label={threadId === chiefId ? 'Inspect factory' : 'Inspect assignments'} secondary onPress={() => void send(threadId === chiefId ? 'Show the current factory status.' : 'Show my assigned projects.')} />}
       </View>}
       {turns.map(turn => <View key={turn.id} style={styles.turn}>
         <View style={[styles.bubble, styles.user, {backgroundColor: colors.tint}]}><Body>{turn.text}</Body></View>
         {turn.answer ? <View style={styles.answer}><Body muted>{name}</Body><Body>{turn.answer}</Body></View> :
-          <Body muted>{busy ? 'Waiting for a reply…' : 'Reply pending.'}</Body>}
+          <Body muted>{turn.status ? outcomes[turn.status] : busy ? 'Waiting for a reply…' : 'Reply pending.'}</Body>}
       </View>)}
     </ScrollView>
     {error ? <View accessibilityLiveRegion="polite" style={styles.notice}><Body>{error}</Body>
       {!busy && <Action secondary label="Refresh messages" onPress={() => setReload(n => n + 1)} />}</View> : null}
     {removed ? <View style={styles.composer}><Body muted>This agent was removed. You can still read this conversation.</Body></View> :
+      closed ? <View style={styles.composer}><Body muted>This conversation has ended. Start a new chat to continue.</Body></View> :
       <View style={[styles.composer, {borderColor: colors.line, backgroundColor: colors.panel}]}>
         <TextInput accessibilityLabel="Message" placeholder={`Message ${name}`} placeholderTextColor={colors.muted}
           style={[styles.input, {color: colors.text, fontSize: largeText ? 21 : 16}]} multiline maxLength={4000}
           value={retry?.text ?? draft} onChangeText={setDraft} editable={Boolean(chat) && !busy && !retry} />
-        <Action label={busy ? 'Sending…' : retry ? 'Retry message' : 'Send message'}
-          disabled={busy || !chat || !(retry?.text ?? draft.trim())} onPress={() => void send(retry?.text ?? draft)} />
+        <Action label={busy ? 'Sending…' : retry ? 'Retry message' : replying ? 'Waiting for reply' : 'Send message'}
+          disabled={busy || replying || !chat || !(retry?.text ?? draft.trim())} onPress={() => void send(retry?.text ?? draft)} />
       </View>}
   </View>;
 }
@@ -176,7 +195,8 @@ export function ChatScreen({session, visible = true}: {session: Session; visible
       <Action label={choosing ? 'Close agent list' : 'New chat'} onPress={() => {setChoosing(!choosing); if (!choosing) update();}} disabled={!index || creating} />
       {choosing && <View style={[styles.picker, {backgroundColor: colors.panel, borderColor: colors.line}]}>
         <Body>Choose an agent</Body>
-        {index?.agents.map(agent => <Action secondary key={agent.id} label={agent.name} disabled={creating} onPress={() => void start(agent.id)} />)}
+        {index?.agents.map(agent => <Action secondary key={agent.id} label={agent.engine ? `${agent.name} · ${engineLabels[agent.engine]}` : agent.name}
+          disabled={creating} onPress={() => void start(agent.id)} />)}
         {index && !index.agents.length && <Body muted>{index.catalogAvailable ? 'Create an agent in Crew to start a chat.' : 'The crew roster is unavailable.'}</Body>}
       </View>}
       {error ? <View accessibilityLiveRegion="polite"><Body>{error}</Body><Action label="Refresh chats" secondary onPress={update} /></View> : null}
@@ -186,7 +206,7 @@ export function ChatScreen({session, visible = true}: {session: Session; visible
         return <Pressable key={thread.id} accessibilityRole="button" accessibilityState={{selected: active}}
           onPress={() => select(thread.id)} style={({pressed}) => [styles.item, {backgroundColor: active ? colors.tint : pressed ? colors.panel : 'transparent', borderColor: 'transparent'}]}>
           <Text numberOfLines={2} style={{color: colors.text, fontWeight: '600', fontSize: largeText ? 20 : 16}}>{thread.title}</Text>
-          <Body muted>{thread.agentName}</Body>
+          <Body muted>{thread.engine ? `${thread.agentName} · ${engineLabels[thread.engine]}` : thread.agentName}</Body>
         </Pressable>;
       })}
     </ScrollView></View>}

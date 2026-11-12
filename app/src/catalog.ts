@@ -2,13 +2,17 @@ import {z} from 'zod/v4';
 
 export const ProjectId = z.string().max(160).regex(/^[a-z0-9][a-z0-9-]*$/);
 export const Project = z.object({id: z.string(), name: z.string().optional(), repositories: z.array(z.string())});
+export const Engine = z.enum(['codex', 'pi']);
+export const engineLabels: Record<Engine, string> = {codex: 'Codex', pi: 'Pi'};
 export const Agent = z.object({
   id: z.uuid(),
   name: z.string().trim().min(1).max(100),
   instructions: z.string().trim().max(2000),
   projectIds: z.array(z.string().min(1)).refine(ids => new Set(ids).size === ids.length),
+  engine: Engine.optional(),
 }).strict();
-export const Catalog = z.object({projects: z.array(Project), projectsAvailable: z.boolean(), agents: z.array(Agent)});
+export const Catalog = z.object({projects: z.array(Project), projectsAvailable: z.boolean(), agents: z.array(Agent), engines: z.array(Engine).optional()});
+export type Engine = z.infer<typeof Engine>;
 export type Project = z.infer<typeof Project>;
 export type Agent = z.infer<typeof Agent>;
 export type Catalog = z.infer<typeof Catalog>;

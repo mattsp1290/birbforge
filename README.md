@@ -29,8 +29,8 @@ paths remain valid. No private installation or native application is renamed.
 
 - **Factory** shows the selected machine's runtime and verification queue. Open a goal workflow here to send a goal, answer a decision, or continue it from another device.
 - **Projects** supports GitHub-backed projects and their contextual chats on configured gateways. For a standalone Beans workspace, it reads the gateway's Beans hub. Create a `bn` project and link its GitHub repositories.
-- **Crew** manages agent profiles, their instructions, and their assigned projects.
-- **Chat** pins the Chief of Staff above your other conversations. Ask the chief about the factory or start a thread with a crew agent. Local inspection works without a live provider.
+- **Crew** manages agent profiles, their instructions, their assigned projects, and their engine. An agent can use the built-in workspace or, when the gateway configures Crew members, a Codex or Pi member.
+- **Chat** pins the Chief of Staff above your other conversations. Ask the chief about the factory or start a thread with a crew agent. Local inspection works without a live provider. A thread with a Codex or Pi agent runs on a durable Crew member and keeps the engine it started with. See [Crew member chats](docs/member-chats.md).
 - **Settings** manages machine connections, server-side secrets, theme, and text size.
 
 On a phone, connect to the server's private network, open **Settings**, and enter its HTTPS URL. Bearer-authenticated gateways also require an owner credential. The public mobile app ships with an empty server field. In a browser, open the gateway's own address. The app remembers machine profiles on the device and keeps the owner credential in memory.

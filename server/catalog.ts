@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {isDeepStrictEqual, promisify} from 'node:util';
 import {z} from 'zod/v4';
-import {Agent, CatalogCommand, githubRepository, type Catalog, type Project} from '../app/src/catalog';
+import {Agent, CatalogCommand, githubRepository, type Catalog, type Engine, type Project} from '../app/src/catalog';
 import {BeansProjects, type BeansConfig} from './beans-projects';
 
 const run = promisify(execFile);
@@ -20,7 +20,7 @@ export class CatalogError extends Error {
 export class CatalogService {
   private pending: Promise<void> = Promise.resolve();
   private readonly managedProjects: BeansProjects | null;
-  constructor(private options: {directory: string; hub?: string; managedBeans?: z.infer<typeof BeansConfig>}) {
+  constructor(private options: {directory: string; hub?: string; managedBeans?: z.infer<typeof BeansConfig>; engines?: Engine[]}) {
     this.managedProjects = options.managedBeans ? new BeansProjects(options.managedBeans) : null;
   }
 
@@ -73,7 +73,8 @@ export class CatalogService {
       this.projects().catch(() => null),
       this.agents(),
     ]);
-    return {projects: projects ?? [], agents, projectsAvailable: projects !== null};
+    const {engines} = this.options;
+    return {projects: projects ?? [], agents, projectsAvailable: projects !== null, ...(engines ? {engines} : {})};
   }
 
   apply(input: unknown): Promise<Catalog> {
@@ -115,6 +116,8 @@ export class CatalogService {
         !catalog.projects.some(project => project.id === projectId) && !current?.projectIds.includes(projectId))) {
         throw new CatalogError(409, 'unknown_project');
       }
+      if (command.kind === 'saveAgent' && command.agent.engine && command.agent.engine !== current?.engine &&
+        !this.options.engines?.includes(command.agent.engine)) throw new CatalogError(409, 'engine_unavailable');
       const agents = catalog.agents.filter(agent => agent.id !== id);
       if (command.kind === 'saveAgent') agents.push(command.agent);
       agents.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
