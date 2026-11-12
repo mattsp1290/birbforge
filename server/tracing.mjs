@@ -12,6 +12,8 @@ if (process.env.DD_TRACE_ENABLED === 'true') {
     DD_TRACE_CLIENT_IP_ENABLED: 'false',
     DD_TRACE_BAGGAGE_TAG_KEYS: '',
     DD_TRACE_OBFUSCATION_QUERY_STRING_REGEXP: '.*',
+    // Child process spans record full argv.
+    DD_TRACE_CHILD_PROCESS_ENABLED: 'false',
   });
   await import('dd-trace/initialize.mjs');
 }
