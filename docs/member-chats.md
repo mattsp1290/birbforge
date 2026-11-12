@@ -21,7 +21,7 @@ Add `members` to the existing gateway configuration. The paths and profile names
 
 `url` is the Crew member gateway on IPv4 loopback with an explicit port and no path. `token_file` is an absolute path to the owner bearer token for that gateway. Forge rereads it for each call. The file must be a regular file owned by the gateway user with no group or other permissions. Symbolic links are refused. Configure Crew's `tokenHashes` with the SHA-256 of the same token. Crew conversations belong to the owner that token maps to, so keep that mapping when rotating the token.
 
-`profiles` maps each engine to a profile name registered by the Crew worker. Names use letters, digits, dots, underscores and hyphens, up to 128 characters. At least one engine is required. An engine without a profile is not offered in the Crew screen and new chats cannot use it.
+`profiles` maps each engine to a profile name registered by the Crew worker. Names start with a letter or digit and use letters, digits, dots, underscores and hyphens, up to 128 characters. At least one engine is required. An engine without a profile is not offered in the Crew screen and new chats cannot use it.
 
 Without a `members` block the feature is off. Chat, crew roster and catalog responses are unchanged for agents without an engine. An agent saved with an engine cannot open a new chat until its engine is configured again. Existing member threads stay readable, and sending in them returns `members_unconfigured`.
 
@@ -46,11 +46,11 @@ The first request of a conversation starts with a delimited `<forge-agent-contex
 
 Sending a message commits the turn row and its outbox row in one SQLite transaction before any network call. The request returns at once with the pending turn. The app refreshes the chat every five seconds until the turn finishes.
 
-A background reconciler in the gateway process advances pending turns. It ensures the member, opens the conversation, looks up the request, and submits it only when Crew reports no such request. A lost acknowledgement, timeout, `401`, `503 retry_same_request` or `409 busy` keeps the turn pending. The next attempt looks the request up again and resubmits the same identity and text if it is still missing. Forge never creates a replacement request ID. Attempts back off from one to fifteen seconds and each call times out after thirty seconds. One reconciler runs per gateway process, and it resumes pending turns after a restart.
+A background reconciler in the gateway process advances pending turns. It ensures the member, opens the conversation, looks up the request, and submits it only when Crew reports no such request. A lost acknowledgement, timeout, `401`, `503 retry_same_request` or `409 busy` keeps the turn pending. Until Crew acknowledges the request, each attempt looks it up again and resubmits the same identity and text if it is still missing. After an acknowledgement Forge only polls, and a later `404` keeps the turn pending without a resubmission. Forge never creates a replacement request ID. Attempts back off from one to fifteen seconds and each call times out after thirty seconds. One reconciler runs per gateway process, and it resumes pending turns after a restart.
 
 Forge requires `apiVersion` major `1` from `GET /v1/capabilities` and from every receipt. It does not submit while the capabilities are unavailable or report another major version.
 
-A turn also stays pending while the token file is missing, unprotected or rejected with `401`, and while Crew reports the profile as `unknown_profile`. A worker can register its profiles after the gateway starts, so that turn proceeds once the profile exists. A `404` when opening the conversation clears the stored member ID, and the next attempt ensures the member again. The app shows these turns as waiting for a reply. The gateway does not yet report why a turn is waiting.
+A turn also stays pending while the token file is missing, unprotected or rejected with `401`, and while Crew reports the profile as `unknown_profile`. A worker can register its profiles after the gateway starts, so that turn proceeds once the profile exists. A `404` when opening the conversation clears the stored member ID, and the next attempt ensures the member again. A conversation lost from Crew's database after it was opened leaves its pending turn waiting. The app shows these turns as waiting for a reply. The gateway does not yet report why a turn is waiting.
 
 ## What the app shows
 
@@ -62,7 +62,7 @@ A turn also stays pending while the token file is missing, unprotected or reject
 | `failed` | Crew could not run this message. |
 | `cancelled` | The message was cancelled before it ran. |
 | `uncertain` | Crew could not confirm whether the reply finished, and it will not be retried. |
-| `400`, or `409` other than `busy` with no request found, from member creation, conversation opening or submission | Crew rejected this message. |
+| `400`, or `409` other than `busy` or `unknown_profile` with no request found, from member creation, conversation opening or submission | Crew rejected this message. |
 
 Every outcome except a reply ends the conversation. The app asks the owner to start a new chat. Forge does not replay an ended turn under a new identity.
 

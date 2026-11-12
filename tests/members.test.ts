@@ -172,6 +172,15 @@ test('ambiguous or transient submissions reconcile the same identity and payload
   assert.equal(crew.conversations.has(thread.id), false);
   crew.registered.push('pi/fixture.v1');
   await until(service, thread.id, message.id, ['completed']);
+
+  const spawn = memberSpawnId(agent.id, 'pi', 'fixture.v1');
+  const lost = crew.members.get(spawn)!.memberId;
+  crew.members.delete(spawn);
+  const reset = await open(service, agent.id);
+  const after = await send(service, reset.id, 'After Crew lost the member');
+  await until(service, reset.id, after.message.id, ['completed']);
+  assert.notEqual(crew.conversations.get(reset.id), lost);
+  assert.equal(crew.conversations.get(reset.id), crew.members.get(spawn)!.memberId);
 });
 
 test('explicit rejections and terminal Crew outcomes are shown, closed, and never replayed', async t => {
