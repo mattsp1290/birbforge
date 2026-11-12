@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
 import {z} from 'zod/v4';
-import {Agent, Catalog, ProjectId, githubRepository, type CatalogCommand} from './catalog';
+import {Agent, Catalog, ProjectId, engineLabels, githubRepository, type CatalogCommand, type Engine} from './catalog';
 import {authorizationHeaders} from './access';
 import {transport} from './transport';
 import {Action, Body, Card, Field, Heading, type Session} from './ui';
@@ -16,6 +16,7 @@ const errors: Record<string, string> = {
   use_managed_project_command: 'Use the managed Projects screen on this machine to edit repository membership.',
   unknown_project: 'That project is no longer available. Refresh the list.',
   crew_unavailable: 'The gateway could not open the crew roster.',
+  engine_unavailable: 'That engine is not available on this gateway. Choose another engine.',
 };
 
 function useCatalog({endpoint, access}: Session) {
@@ -142,6 +143,14 @@ export function CrewScreen({session}: SessionProps) {
   function change(patch: Partial<Agent>) {
     setEditor(current => current && {...current, draft: {...current.draft, ...patch}});
   }
+  function choose(engine?: Engine) {
+    setEditor(current => {
+      if (!current) return current;
+      const {engine: _, ...draft} = current.draft;
+      return {...current, draft: engine ? {...draft, engine} : draft};
+    });
+  }
+  const engines = [...new Set([...(catalog?.engines ?? []), ...(editor?.draft.engine ? [editor.draft.engine] : [])])];
   return <>
     <Feedback error={error} busy={busy} retry={() => void load()}/>
     {catalog && (editor ? <Card>
@@ -160,6 +169,15 @@ export function CrewScreen({session}: SessionProps) {
             onPress={() => change({projectIds: selected ? editor.draft.projectIds.filter(item => item !== id) : [...editor.draft.projectIds, id]})}/>;
         })}
       </View>
+      {engines.length > 0 && <>
+        <Body>Engine</Body>
+        <View style={row}>
+          <Action secondary selected={!editor.draft.engine} label="Workspace (built-in)" onPress={() => choose()}/>
+          {engines.map(engine => <Action key={engine} secondary selected={editor.draft.engine === engine} label={engineLabels[engine]}
+            onPress={() => choose(engine)}/>)}
+        </View>
+        <Body muted>Existing chats keep the engine they started with.</Body>
+      </>}
       <View style={row}>
         <Action label="Save agent" disabled={busy || !editor.draft.name.trim()} onPress={async () => {
           if (await load({kind: 'saveAgent', previous: editor.previous, agent: editor.draft})) setEditor(null);
@@ -178,6 +196,7 @@ export function CrewScreen({session}: SessionProps) {
         <Heading>{agent.name}</Heading>
         {agent.instructions ? <Body>{agent.instructions}</Body> : null}
         <Body muted>{agent.projectIds.length ? 'Projects · ' + agent.projectIds.map(id => projectNames.get(id) ?? id).join(', ') : 'No projects assigned'}</Body>
+        {agent.engine && <Body muted>{'Engine · ' + engineLabels[agent.engine]}</Body>}
         {removing?.id === agent.id ? <>
           <Body>Delete {agent.name} from the crew?</Body>
           <View style={row}>

@@ -9,7 +9,8 @@
     "web": "expo start --web --localhost",
     "export:web": "expo export --platform web",
     "export:native": "expo export --platform ios --platform android --no-bytecode",
-    "check:settings": "tsx --tsconfig tsconfig.node.json scripts/settings-browser-check.ts"
+    "check:settings": "tsx --tsconfig tsconfig.node.json scripts/settings-browser-check.ts",
+    "check:members": "tsx --tsconfig tsconfig.node.json scripts/member-chat-browser-check.ts"
   },
   "main": "app/index.ts",
   "dependencies": {

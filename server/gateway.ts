@@ -13,6 +13,7 @@ import {Projects, ProjectsConfig} from './projects';
 import {ProjectError} from './beans-projects';
 import {workspaceAction, type Workspace} from './workspace';
 import {GitHubUnavailable} from './github';
+import {MembersConfig} from './members';
 
 export const GatewayConfig = z.object({
   url: z.string().url().refine(value => {
@@ -24,6 +25,7 @@ export const GatewayConfig = z.object({
   mode: z.enum(['proof', 'approved-goal']).default('proof'),
   delivery: DeliveryConfig.optional(),
   projects: ProjectsConfig.optional(),
+  members: MembersConfig.optional(),
 }).superRefine((config, context) => {
   if (config.mode === 'approved-goal' && (!config.delivery || config.verification)) context.addIssue({code: 'custom', message: 'Approved goal mode requires delivery and disables fixture verification'});
 });
