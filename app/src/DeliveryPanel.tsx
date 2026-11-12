@@ -2,6 +2,7 @@ import React, {useSyncExternalStore} from 'react';
 import {Linking, Pressable, StyleSheet, Text, View} from 'react-native';
 import {randomUUID} from 'expo-crypto';
 import type {DeliveryClient} from './delivery';
+import {reviewerName} from './delivery-contract';
 
 export function DeliveryPanel({client, conversationId}: {client: DeliveryClient; conversationId: string}) {
   const state = useSyncExternalStore(client.subscribe, client.getSnapshot);
@@ -19,7 +20,7 @@ export function DeliveryPanel({client, conversationId}: {client: DeliveryClient;
     <Text style={styles.muted}>Allowed changes · {snapshot.offer.allowed_paths.join(', ')}</Text>
     <Text selectable style={styles.muted}>Base · {snapshot.offer.base_commit}</Text>
     <Text testID="delivery-stage" accessibilityLiveRegion="polite" style={styles.status}>{stage.kind.replaceAll('_', ' ')} · {state.connected ? 'connected' : 'offline'}</Text>
-    <Text style={styles.body}>Approval starts one coding job and an independent Claude review. Only an approved candidate can become a draft PR. This grants no merge or deployment authority.</Text>
+    <Text style={styles.body}>Approval starts one coding job and an independent review. Only an approved candidate can become a draft PR. This grants no merge or deployment authority.</Text>
     {elsewhere ? <Text selectable style={styles.body}>Continue the owning conversation · {snapshot.conversation_id}</Text> : <>
       {stage.kind === 'awaiting_approval' && <View style={styles.row}>
         {button('Approve goal and start', () => {void client.act('approve', randomUUID());})}
@@ -38,7 +39,7 @@ export function DeliveryPanel({client, conversationId}: {client: DeliveryClient;
     </>}
     {snapshot.cancellation !== 'none' && <Text testID="delivery-cancellation" style={styles.status}>Cancellation · {snapshot.cancellation}. A request does not confirm the worker stopped.</Text>}
     {'candidate' in stage && <Text selectable style={styles.muted}>Candidate · {stage.candidate.head_commit}</Text>}
-    {'review' in stage && <><Text style={styles.body}>Independent review · {stage.review.disposition.replaceAll('_', ' ')}</Text><Text selectable style={styles.body}>{stage.review.summary}</Text></>}
+    {'review' in stage && <><Text style={styles.body}>Independent review by {reviewerName[stage.review.reviewer]} · {stage.review.disposition.replaceAll('_', ' ')}</Text><Text selectable style={styles.body}>{stage.review.summary}</Text></>}
     <Text style={styles.muted}>Staging and native candidate verification have not run.</Text>
     {'reason' in stage && <Text style={styles.body}>{stage.reason.replaceAll('_', ' ')}</Text>}
     {stage.kind === 'draft_ready' && button(`Open draft PR #${stage.draft.number}`, () => {void Linking.openURL(stage.draft.url);}, false)}

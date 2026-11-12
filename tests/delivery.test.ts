@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {DeliveryCommand, DeliverySnapshot} from '../app/src/delivery-contract';
+import {DeliveryCommand, DeliverySnapshot, Reviewer, reviewerName} from '../app/src/delivery-contract';
 import {GatewayConfig} from '../server/gateway';
 import {DeliveryClient} from '../app/src/delivery';
 
@@ -86,4 +86,20 @@ test('shared clients retain the rejected receipt throughout classification check
   assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {
     kind: 'changes_requested', candidate, review, classification_check: 'approved',
   }}));
+});
+
+test('review receipts from either Crew reviewer parse and name the recorded reviewer', () => {
+  const candidate = {repository_id: 'owner/repo', base_commit: 'a'.repeat(40), head_commit: 'b'.repeat(40),
+    branch: 'birbforge/pilot/example', changed_paths: ['docs/operator.md'], acceptance: {
+      acceptance_id: 'docs-check', outcome: 'passed', evidence_digest: 'e'.repeat(64), evidence_ref: 'private/ref',
+    }};
+  const review = (reviewer: string) => ({candidate_commit: candidate.head_commit, reviewer, disposition: 'approved',
+    findings_digest: 'f'.repeat(64), evidence_ref: 'execution/example/review', summary: 'No findings.'});
+  for (const reviewer of ['claude-cli', 'opencode-go'] as const) {
+    const parsed = DeliverySnapshot.parse({...snapshot, stage: {kind: 'publishing', candidate, review: review(reviewer)}});
+    assert.ok(parsed.stage.kind === 'publishing' && parsed.stage.review.reviewer === reviewer);
+  }
+  assert.deepEqual(Reviewer.options.map(reviewer => reviewerName[reviewer]), ['Claude CLI', 'OpenCode Go']);
+  assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {kind: 'publishing', candidate, review: review('codex')}}));
+  assert.throws(() => DeliverySnapshot.parse({...snapshot, stage: {kind: 'publishing', candidate, review: {...review('opencode-go'), reviewer: undefined}}}));
 });

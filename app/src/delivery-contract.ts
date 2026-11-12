@@ -10,7 +10,9 @@ const GoalOffer = z.object({
 const Candidate = z.object({repository_id: z.string(), base_commit: Commit, head_commit: Commit,
   branch: z.string(), changed_paths: z.array(z.string()), acceptance: z.object({acceptance_id: z.string(),
     outcome: z.literal('passed'), evidence_digest: Digest, evidence_ref: z.string()}).strict()}).strict();
-const Review = z.object({candidate_commit: Commit, review_attempt: z.number().int().nonnegative().default(0), reviewer: z.literal('claude-cli'),
+export const Reviewer = z.enum(['claude-cli', 'opencode-go']);
+export const reviewerName: Record<z.infer<typeof Reviewer>, string> = {'claude-cli': 'Claude CLI', 'opencode-go': 'OpenCode Go'};
+const Review = z.object({candidate_commit: Commit, review_attempt: z.number().int().nonnegative().default(0), reviewer: Reviewer,
   disposition: z.enum(['approved', 'changes_requested', 'inconclusive']), findings_digest: Digest, evidence_ref: z.string(), summary: z.string().min(1).max(2000).default("Review details unavailable.")}).strict();
 const Draft = z.object({status: z.literal('draft_ready'), repository_id: z.string(), head_commit: Commit,
   base_branch: z.string(), provider: z.literal('github'), number: z.number().int().positive(),

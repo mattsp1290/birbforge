@@ -1,10 +1,11 @@
 import asyncio
 from hashlib import sha256
+from typing import get_args
 from unittest.mock import patch
 from uuid import uuid4
 
 import pytest
-from birbcrew.execution.contract import GoalOffer
+from birbcrew.execution.contract import GoalOffer, ReviewReceipt
 
 from delivery.workflow import DeliveryWorkflow
 
@@ -306,3 +307,34 @@ def test_interrupted_review_never_offers_or_accepts_retry():
     assert not instance.retry_review_requested
     assert instance.review_attempt == 0
     assert calls == ["birbcrew.author_goal.v1", "birbcrew.review_candidate.v1"]
+
+
+@pytest.mark.skipif(
+    "opencode-go" not in get_args(ReviewReceipt.model_fields["reviewer"].annotation),
+    reason="the installed Crew contract predates the OpenCode Go reviewer",
+)
+def test_opencode_review_receipt_reaches_draft_unchanged():
+    instance = installed()
+    approve(instance)
+
+    async def activity(name, value):
+        if "author" in name:
+            return {"status": "candidate", "candidate": candidate(instance)}
+        if "review" in name:
+            return {**review(), "reviewer": "opencode-go"}
+        return {
+            "status": "draft_ready",
+            "repository_id": instance.offer.repository_id,
+            "head_commit": "c" * 40,
+            "base_branch": "main",
+            "provider": "github",
+            "number": 7,
+            "url": "https://github.com/mattsp1290/forge/pull/7",
+            "draft": True,
+        }
+
+    instance.activity = activity
+    asyncio.run(instance.deliver())
+    stage = instance.snapshot()["stage"]
+    assert stage["kind"] == "draft_ready"
+    assert stage["review"]["reviewer"] == "opencode-go"
