@@ -20,11 +20,11 @@ try {
   first.on('request', request => {if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/projects') commands.push(request.postDataJSON());});
   await enter(first);
   await first.getByRole('button', {name: 'Import repositories into a new project', exact: true}).click();
-  for (const repository of ['mattsp1290/birbforge', 'mattsp1290/birbcrew']) {
+  for (const repository of ['mattsp1290/forge', 'mattsp1290/crew']) {
     await first.getByLabel('Search accessible repositories', {exact: true}).fill(repository);
     await first.getByRole('button', {name: `Select ${repository}`, exact: true}).click();
   }
-  assert.equal(await first.getByLabel('New project name', {exact: true}).getAttribute('placeholder'), 'birbforge');
+  assert.equal(await first.getByLabel('New project name', {exact: true}).getAttribute('placeholder'), 'forge');
   await first.getByLabel('New project name', {exact: true}).fill(name);
   await first.getByRole('button', {name: 'Create project', exact: true}).click();
   await first.getByRole('heading', {name, exact: true}).waitFor();
@@ -63,9 +63,9 @@ try {
   await first.getByRole('button', {name: 'Confirm cancel conversation', exact: true}).click();
   await first.getByText('cancelled', {exact: false}).first().waitFor();
   await first.getByRole('button', {name: 'Back to project', exact: true}).click();
-  await first.getByRole('button', {name: 'Remove mattsp1290/birbcrew', exact: true}).click();
-  await first.getByRole('button', {name: 'Remove mattsp1290/birbcrew', exact: true}).waitFor({state: 'detached'});
-  await first.getByRole('button', {name: 'Remove mattsp1290/birbforge', exact: true}).click();
+  await first.getByRole('button', {name: 'Remove mattsp1290/crew', exact: true}).click();
+  await first.getByRole('button', {name: 'Remove mattsp1290/crew', exact: true}).waitFor({state: 'detached'});
+  await first.getByRole('button', {name: 'Remove mattsp1290/forge', exact: true}).click();
   await first.getByText('last repository', {exact: true}).waitFor();
   await first.getByRole('button', {name: 'Discard rejected edit and refresh', exact: true}).click();
   await first.getByRole('button', {name: 'Remove project from active use', exact: true}).click();

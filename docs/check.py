@@ -52,7 +52,7 @@ for path, doc in docs.items():
 for path, doc in docs.items():
     source = root / (path.stem + '.md')
     if path.stem in ('birbcrew-first-milestone', 'birbverify-first-milestone'):
-        repo = path.stem.split('-')[0]
+        repo = {'birbcrew-first-milestone': 'crew', 'birbverify-first-milestone': 'verify'}[path.stem]
         source = root.parent.parent / repo / 'docs' / 'first-milestone.md'
     if source.is_file():
         external = re.findall(r'\]\((https?://[^)]+)\)', source.read_text())

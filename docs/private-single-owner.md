@@ -1,4 +1,4 @@
-# Open Birbforge through a trusted private network
+# Open Forge through a trusted private network
 
 A single-owner deployment can let every client on its private route use the configured owner account without entering an application credential. Enable this only when the private network is the intended access boundary and its peers are trusted. This is an explicit deployment choice, not automatic detection of NetBird membership.
 
@@ -12,7 +12,7 @@ Add the authentication setting to the private proxy configuration file outside G
 }
 ```
 
-The principal must already exist in the gateway's private `tokens` configuration. Startup fails if it does not. Birbcrew continues to require its internal bearer credential. The gateway forwards that credential server-side; clients receive only the access kind from `GET /api/access`. A client-supplied bearer cannot select another identity on this listener.
+The principal must already exist in the gateway's private `tokens` configuration. Startup fails if it does not. Crew continues to require its internal bearer credential. The gateway forwards that credential server-side; clients receive only the access kind from `GET /api/access`. A client-supplied bearer cannot select another identity on this listener.
 
 The private listener retains its loopback socket-source check, exact Host check and same-origin check for requests with an Origin header. Native clients may omit Origin. Keep the public-facing route private and forward it to this listener through the existing proxy. Do not expose the listener through an unrestricted public route.
 

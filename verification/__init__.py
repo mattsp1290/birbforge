@@ -1,1 +1,1 @@
-"""Birbforge's bounded, fixture-only verification queue."""
+"""Forge's bounded, fixture-only verification queue."""

@@ -1,4 +1,4 @@
-# AG-UI across Birbcrew and Birbforge
+# AG-UI across Crew and Forge
 
 Status: required protocol, proposed architecture. Researched November 5, 2026.
 AG-UI is mandatory in both projects. A2UI is optional. No integration has been
@@ -11,17 +11,17 @@ been proven end to end.
 
 ## Product boundary
 
-Birbcrew provides persistent coworkers through an AG-UI interface. Birbforge
+Crew provides persistent coworkers through an AG-UI interface. Forge
 uses AG-UI throughout the chief-of-staff conversation, agent activity, and
 interactive decision surfaces on phone and browser. This is a shared interface
 between the products, not a chat widget added after the factory is built.
 
 ```mermaid
 flowchart TB
-    Phone[Birbforge phone interface] <--> Client[CopilotKit OSS / AG-UI clients]
-    Browser[Birbforge browser interface] <--> Client
-    Client <-->|AG-UI| Gateway[Authenticated Birbforge interaction endpoint]
-    Gateway <-->|AG-UI| Crew[Birbcrew coworkers]
+    Phone[Forge phone interface] <--> Client[CopilotKit OSS / AG-UI clients]
+    Browser[Forge browser interface] <--> Client
+    Client <-->|AG-UI| Gateway[Authenticated Forge interaction endpoint]
+    Gateway <-->|AG-UI| Crew[Crew coworkers]
     Crew --> Runtime[Pydantic AI runtime proof]
     Crew --> Actions[Authorized factory tools]
     Gateway --> Actions
@@ -67,7 +67,7 @@ the inspected pi repository search found none; this is not a claim that no
 community adapter exists.
 
 TypeScript with pi remains viable: its SDK exposes sessions, custom tools,
-streamed messages, tool events, and run lifecycle signals. Birbcrew would map
+streamed messages, tool events, and run lifecycle signals. Crew would map
 those to AG-UI using the official protocol types/encoders. That adapter must
 handle stable IDs, ordering, terminal outcomes, cancellation, snapshots, and
 reconnection. This is bounded integration work, but it is more than renaming

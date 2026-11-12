@@ -16,9 +16,9 @@ import {useMachineSettings, type MachineSettings, type ActiveMachine} from './sr
 import {Action, Body, Card, Heading, UIProvider, useUI} from './src/ui';
 
 const destinations = [
-  {name: 'Chat', icon: 'chat-outline', description: 'Conversations with your Birbcrew.'},
+  {name: 'Chat', icon: 'chat-outline', description: 'Conversations with your Crew.'},
   {name: 'Projects', icon: 'folder-multiple-outline', description: 'The repositories that belong together.'},
-  {name: 'Crew', icon: 'account-group-outline', description: 'Your Birbcrew agents and their project assignments.'},
+  {name: 'Crew', icon: 'account-group-outline', description: 'Your Crew agents and their project assignments.'},
   {name: 'Factory', icon: 'factory', description: 'Machine health and work in progress.'},
   {name: 'Settings', icon: 'tune-variant', description: 'Machine connections and preferences for this device.'},
 ] as const;
@@ -28,7 +28,7 @@ function Brand() {
   const {colors} = useUI();
   return <View style={styles.brand}>
     <View style={styles.logo}><MaterialCommunityIcons name="bird" color="#293a2a" size={25} /></View>
-    <Text style={[styles.wordmark, {color: colors.text}]}>Birbforge</Text>
+    <Text style={[styles.wordmark, {color: colors.text}]}>Forge</Text>
   </View>;
 }
 
@@ -109,7 +109,7 @@ function Shell({settings}: {settings: MachineSettings}) {
           contentContainerStyle={[styles.page, wide && styles.widePage]} keyboardShouldPersistTaps="handled">
           {title}
           {screen === 'Settings' ? <SettingsScreen settings={settings} /> : !machine ?
-            <Card><Heading>Connect a machine</Heading><Body muted>Open Settings to connect to the Birbforge server for this workspace.</Body>
+            <Card><Heading>Connect a machine</Heading><Body muted>Open Settings to connect to the Forge server for this workspace.</Body>
               <Action label="Open settings" onPress={() => select('Settings')} /></Card>
             : screen === 'Projects' ? <ProjectsScreen session={machine} /> : <CrewScreen session={machine} />}
         </ScrollView>}

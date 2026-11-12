@@ -1,4 +1,4 @@
-"""Run a read-only workspace chat with the selected Birbcrew coworker and provider."""
+"""Run a read-only workspace chat with the selected Crew coworker and provider."""
 
 import asyncio
 import json

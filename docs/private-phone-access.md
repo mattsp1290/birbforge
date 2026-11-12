@@ -46,8 +46,8 @@ Missing Origin is allowed for native clients. It accepts only socket source
 select a host, scheme, actor, or trusted source. The shared handler also checks
 the source on every proxy request.
 
-Bearer validation and per-conversation ownership remain mandatory at Birbforge
-and Birbcrew. A loopback connection is not a person or device identity. Local
+Bearer validation and per-conversation ownership remain mandatory at Forge
+and Crew. A loopback connection is not a person or device identity. Local
 processes and the authorized SSH endpoint remain in the same host trust boundary
 as the original gateway. No IP or forwarded header grants conversation rights.
 The action ID/version, durable decision, reconnect, and cancellation contracts
@@ -191,7 +191,7 @@ Neither the existing loopback Mac forward nor this documented command alone
 proves the external private service can reach the target. Test the complete path. Apply the separate bridge-port isolation checks above
 when the stricter profile is required. The reported peer-only exception does
 not establish protection from, or acceptance of, LAN/other-overlay callers.
-The SSH forward hides the original TCP source from Birbforge. Consequently the
+The SSH forward hides the original TCP source from Forge. Consequently the
 application cannot distinguish the real proxy from a direct caller reaching
 that forward. Any claim of proxy-only port isolation must be proved at the peer/network
 boundary. It is not claimed for the reported trusted-peer setup. Local

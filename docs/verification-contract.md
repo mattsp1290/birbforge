@@ -1,21 +1,21 @@
-# Verification contract: Birbforge, Birbcrew, and Birbverify
+# Verification contract: Forge, Crew, and Verify
 
 Status: broad design proposal, November 5, 2026. Repository roles, k3s staging,
 and queuing against shared staging are agreed. The detailed contract below is
 a proposal wherever it exceeds the pinned producer contract.
 
 The November 6 [durable verification queue](durable-verification-queue.md)
-milestone adds the first concrete Birbforge queue around the unchanged pinned
-Birbverify producer in a synthetic fixture. Its reference defines the selected
+milestone adds the first concrete Forge queue around the unchanged pinned
+Verify producer in a synthetic fixture. Its reference defines the selected
 wire boundary and one-attempt semantics. Local execution and independent source
 review evidence are recorded in that reference. This proposal does not establish real staging
 admission or native phone acceptance.
 
 ## The promise
 
-Given an approved verification plan and an immutable candidate, Birbverify runs
+Given an approved verification plan and an immutable candidate, Verify runs
 the specified checks in the permitted environment and returns attributable
-evidence. Birbforge decides whether that evidence satisfies delivery policy.
+evidence. Forge decides whether that evidence satisfies delivery policy.
 An agent's narrative cannot replace a missing check or authorize a merge.
 
 The first version queues runs against the existing shared k3s staging
@@ -27,20 +27,20 @@ interfere. Per-PR preview environments remain a later option.
 
 | Component | Owns | Does not own |
 | --- | --- | --- |
-| Birbforge | Approved goals, acceptance plan, policy, durable delivery workflow, environment queue, evidence index, reviews and merge gates | Agent reasoning engine or application tests |
-| Birbcrew | Persistent coworker sessions, authorized factory tools, explanations and review assistance through AG-UI | Authority to invent human approval or change required checks |
-| Birbverify | Verification activities, worker capability matching, execution adapters, evidence manifests and result reporting | A second scheduler, merge policy or a new testing framework |
+| Forge | Approved goals, acceptance plan, policy, durable delivery workflow, environment queue, evidence index, reviews and merge gates | Agent reasoning engine or application tests |
+| Crew | Persistent coworker sessions, authorized factory tools, explanations and review assistance through AG-UI | Authority to invent human approval or change required checks |
+| Verify | Verification activities, worker capability matching, execution adapters, evidence manifests and result reporting | A second scheduler, merge policy or a new testing framework |
 | Application repository | Feature tests, user journeys, deployment and recovery procedures | Authority for an unreviewed candidate to weaken installation policy |
 | Birbhomes | Worker and cluster provisioning, private access and infrastructure configuration | Application acceptance rules |
 
 Separate repositories do not require separate databases or a new service per
-responsibility. Initially, Birbforge's Temporal workflows should
-dispatch Birbverify's worker activities. Birbcrew invokes authorized Birbforge
+responsibility. Initially, Forge's Temporal workflows should
+dispatch Verify's worker activities. Crew invokes authorized Forge
 tools; it does not bypass admission by sending arbitrary jobs to workers.
 Temporal is selected. Concrete worker transport and language bindings remain
 implementation choices to prove.
 
-## Request: what Birbforge supplies
+## Request: what Forge supplies
 
 Requests are versioned, immutable records. Multiple execution attempts under
 one request remain a future proposal. The pinned producer permits one attempt
@@ -77,9 +77,9 @@ add restrictions. Conflicts stop admission and surface a decision request.
 
 ```mermaid
 sequenceDiagram
-    participant F as Birbforge
+    participant F as Forge
     participant D as Durable execution engine
-    participant V as Birbverify workers
+    participant V as Verify workers
     participant S as Shared k3s staging
     participant U as Phone / browser via AG-UI
     F->>D: Admit immutable request and queue for staging
@@ -106,8 +106,8 @@ before and after the journey; record deployment changes during the interval
 where the environment supports that evidence. A single successful rollout is
 insufficient proof that the intended candidate was tested throughout.
 
-Birbforge's Temporal workflows coordinate durable queue ownership and
-leases. Do not implement another general-purpose queue in Birbverify. Expired
+Forge's Temporal workflows coordinate durable queue ownership and
+leases. Do not implement another general-purpose queue in Verify. Expired
 ownership must not let an old worker continue mutating staging while a new run
 starts. Use supported fencing at mutation boundaries and reconcile running
 processes and deployments before handing over the environment. If ownership
@@ -160,7 +160,7 @@ such as deploys, uploads and fixture creation require their own stable operation
 identities and reconciliation. Workflow durability alone does not make those
 effects exactly once. Never blindly repeat a deployment with an unknown result.
 
-## Result: what Birbverify returns
+## Result: what Verify returns
 
 The result is a machine-readable manifest plus a concise human summary. Large
 artifacts live in private artifact storage, not inside protocol events.
@@ -188,7 +188,7 @@ Exact retention duration and storage software are still open decisions.
 
 ## Freshness and merge decisions
 
-Birbforge checks the result against the current PR, approved plan, required
+Forge checks the result against the current PR, approved plan, required
 reviews and current policy at decision time. A new PR head invalidates the old
 candidate's verification. If verification covered an integration commit, a
 changed base requires evaluating that relationship again; never relabel a
@@ -196,18 +196,18 @@ different commit as tested. The merge strategy must preserve a documented
 relationship between tested and merged artifacts. CI and production health
 then verify the actual deployed revision after merge.
 
-No Birbverify result approves a PR by itself. Independent AI review and required
+No Verify result approves a PR by itself. Independent AI review and required
 human decisions remain separate records bound to the revision. Changing a test
 or acceptance rule requires review appropriate to that change, rather than
 treating a new green report as sufficient.
 
-Production observation can later reuse read-only Birbverify adapters, including
+Production observation can later reuse read-only Verify adapters, including
 pup. The first staging contract does not grant production deployment or rollback
-authority. Birbforge retains those separate, repository-governed workflows.
+authority. Forge retains those separate, repository-governed workflows.
 
 ## AG-UI, inbox and Datadog
 
-Birbforge projects authoritative verification state through AG-UI so the chief
+Forge projects authoritative verification state through AG-UI so the chief
 of staff, inbox and phone/browser screens share the same request, attempt and
 decision identities. Display check progress, evidence links, queue position
 when known, and reasons for intervention. Use supported AG-UI state/tool events;

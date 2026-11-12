@@ -19,8 +19,8 @@ try {
   await page.getByLabel('Project message', {exact: true}).waitFor();
   await page.getByText('This project has changed. This chat keeps its historical context. Start a new project chat to use current membership.', {exact: true}).waitFor();
   const body = await page.locator('body').innerText();
-  assert.ok(body.includes('mattsp1290/birbforge'));
-  assert.ok(body.includes('mattsp1290/birbcrew'));
+  assert.ok(body.includes('mattsp1290/forge'));
+  assert.ok(body.includes('mattsp1290/crew'));
   assert.ok(body.includes('4946e16169c82d541b32f8b69072feac2e4af4a4'));
   assert.ok(body.includes('815ab3d61beb3756a799cfe0160a9e8d19188401'));
   assert.ok(body.includes('docs/architecture.md'));

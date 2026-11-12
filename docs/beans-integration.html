@@ -1,20 +1,20 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Authored work has one home. Execution and approval have separate owners."><title>Beans and shared work · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Contracts</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link selected" aria-current="page" href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Contracts <span>· DESIGN RECORD</span></div><h1>Beans and shared work</h1><p class="lead">Authored work has one home. Execution and approval have separate owners.</p></div><article><p>Inspected November 5, 2026 at Beans commit
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Authored work has one home. Execution and approval have separate owners."><title>Beans and shared work · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ Contracts</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link selected" aria-current="page" href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Crew</a><a class="nav-link "  href="first-milestone.html">02 · Forge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Verify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Contracts <span>· DESIGN RECORD</span></div><h1>Beans and shared work</h1><p class="lead">Authored work has one home. Execution and approval have separate owners.</p></div><article><p>Inspected November 5, 2026 at Beans commit
 <code>5df68a6a325ec8181c5c58d266d08aad8b090188</code>. The installed CLI reports v0.3.0.
 This is source inspection, not a live integration proof. No hub records were
 read or changed, and the existing untracked milestone file was left untouched.</p>
 <h2 id="reuse-shared-knowledge">Reuse shared knowledge<a class="anchor" href="#reuse-shared-knowledge" aria-label="Link to Reuse shared knowledge">#</a></h2><p>The owner selected separate goal conversations and shared repository notes.
-Beans is the existing place for those notes. Birbcrew should retrieve relevant
+Beans is the existing place for those notes. Crew should retrieve relevant
 project memories and handoffs through <code>bn</code>, retain their identities and source
 revisions, and make them available to the coworker. Keep conversation messages
 in the conversation store. Do not put streamed tokens into Git or build another
-wiki and memory product in Birbcrew.</p>
+wiki and memory product in Crew.</p>
 <p>For the initial fixture proof, provenance means note keys, paths, updated
 timestamps, content digests and the clean hub commit captured with those bytes.
 Beans does not currently promise a per-note commit field in its read output.
 Use a quiescent clean fixture snapshot. Do not attribute uncommitted note bytes
 to a Git commit merely because that commit is currently HEAD.</p>
 <p>The Beans source repository contains the software. Its hub is a separate Git
-repository containing the authored records. A public Beans or Birbforge repository
+repository containing the authored records. A public Beans or Forge repository
 does not make that hub public. Hub locations and remotes stay in private
 installation configuration.</p>
 <h2 id="agreed-record-ownership">Agreed record ownership<a class="anchor" href="#agreed-record-ownership" aria-label="Link to Agreed record ownership">#</a></h2><p>The owner selected Beans for authored work records and shared notes.</p>
@@ -31,26 +31,26 @@ installation configuration.</p>
 </tr>
 <tr>
 <td>Coworker run attempts, durable waits and retries</td>
-<td>Birbcrew&#39;s Temporal workflows</td>
+<td>Crew&#39;s Temporal workflows</td>
 </tr>
 <tr>
 <td>Delivery attempts and environment reservations</td>
-<td>Birbforge&#39;s Temporal workflows, exposed through supported queries and application projections</td>
+<td>Forge&#39;s Temporal workflows, exposed through supported queries and application projections</td>
 </tr>
 <tr>
 <td>Accepted execution snapshot, approval decisions, PR revision bindings and deployment outcomes</td>
-<td>Birbforge</td>
+<td>Forge</td>
 </tr>
 <tr>
 <td>Finalized conversation messages</td>
-<td>Birbcrew&#39;s conversation store</td>
+<td>Crew&#39;s conversation store</td>
 </tr>
 <tr>
 <td>Large screenshots, logs and recordings</td>
 <td>Private artifact storage, referenced by manifests</td>
 </tr>
 </tbody></table></div>
-<p>Birbforge can index Beans records for its inbox, but indexes must carry source
+<p>Forge can index Beans records for its inbox, but indexes must carry source
 IDs and revisions. Writes go through Beans. Do not maintain a second editable
 copy of the same plan in PostgreSQL. An approved execution captures the authored
 scope revision so later note or plan edits cannot silently expand active work.
@@ -65,7 +65,7 @@ The CLI returns commit identifiers and whether a mutation was pushed.</p>
 <p>Use the CLI first for capabilities that are not available over HTTP. The server
 has no built-in authentication, and its current HTTP API makes requests and
 plans read-only. Do not expose that server as the factory&#39;s trusted action API.
-Birbforge&#39;s authenticated handlers can call narrowly scoped Beans operations
+Forge&#39;s authenticated handlers can call narrowly scoped Beans operations
 from a protected worker. Shared network access alone is not authorization.</p>
 <p>Relevant inspected source files are <code>AGENTS.md</code>, <code>README.md</code>, <code>docs/cli.md</code>,
 <code>docs/server.md</code>, <code>docs/format.md</code>, <code>src/ops/content.rs</code>, and <code>src/gitops/hub.rs</code>
@@ -85,8 +85,8 @@ Beans addition. Do not assert that it already exists.</p>
 caller operation identity, conditional memory updates, and missing structured
 mutation endpoints. Select only the gaps demonstrated by an acceptance journey.
 Continue using Beans&#39; existing transaction code rather than writing hub files
-or committing them directly from Birbcrew.</p>
-<h2 id="first-milestone-impact">First milestone impact<a class="anchor" href="#first-milestone-impact" aria-label="Link to First milestone impact">#</a></h2><p>The Birbcrew runtime proof remains first. Add a bounded read of project notes
+or committing them directly from Crew.</p>
+<h2 id="first-milestone-impact">First milestone impact<a class="anchor" href="#first-milestone-impact" aria-label="Link to First milestone impact">#</a></h2><p>The Crew runtime proof remains first. Add a bounded read of project notes
 from a disposable Beans fixture hub. Record the note identities and show the
 same context survives reconnect. Do not consume unrelated private hub contents.</p>
 <p>The benign effect used for the worker-interruption test remains an isolated
@@ -100,4 +100,4 @@ Record provenance and revisions so stale or incorrect knowledge can be repaired.
 Repository notes stay scoped to that repository unless the operator deliberately
 uses hub-wide knowledge. Do not automatically promote every conversation into
 shared memory.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#reuse-shared-knowledge">Reuse shared knowledge</a><a href="#agreed-record-ownership">Agreed record ownership</a><a href="#existing-capabilities">Existing capabilities</a><a href="#gaps-worth-proving-before-expanding-beans">Gaps worth proving before expanding Beans</a><a href="#first-milestone-impact">First milestone impact</a><a href="#notes-are-context-not-policy">Notes are context, not policy</a></nav></aside></body></html>
+</article><footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#reuse-shared-knowledge">Reuse shared knowledge</a><a href="#agreed-record-ownership">Agreed record ownership</a><a href="#existing-capabilities">Existing capabilities</a><a href="#gaps-worth-proving-before-expanding-beans">Gaps worth proving before expanding Beans</a><a href="#first-milestone-impact">First milestone impact</a><a href="#notes-are-context-not-policy">Notes are context, not policy</a></nav></aside></body></html>

@@ -27,7 +27,7 @@ def offer():
             "revision": "1",
             "content_sha256": sha256(text.encode()).hexdigest(),
         },
-        repository_id="mattsp1290/birbforge",
+        repository_id="mattsp1290/forge",
         base_commit="a" * 40,
         policy_revision="b" * 64,
         allowed_paths=("docs/operator.md",),
@@ -147,7 +147,7 @@ def test_receipts_bind_exact_approved_source(mismatch):
             "base_branch": "main",
             "provider": "github",
             "number": 1,
-            "url": "https://github.com/mattsp1290/birbforge/pull/1",
+            "url": "https://github.com/mattsp1290/forge/pull/1",
             "draft": True,
         }
 
@@ -218,7 +218,7 @@ def test_explicit_review_retry_is_idempotent_and_never_reauthors():
             "base_branch": "main",
             "provider": "github",
             "number": 42,
-            "url": "https://github.com/mattsp1290/birbforge/pull/42",
+            "url": "https://github.com/mattsp1290/forge/pull/42",
             "draft": True,
         }
 

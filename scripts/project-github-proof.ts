@@ -7,7 +7,7 @@ if (!directory) throw new Error('Explicit private evidence directory required');
 const privateDirectory = resolve(directory, 'private');
 const connection = await GitHubConnection.configured({token_file: resolve(privateDirectory, 'github.token'), owner_login: (await readFile(resolve(privateDirectory, 'github-login.txt'), 'utf8')).trim()});
 const contexts = [];
-for (const name of ['mattsp1290/birbforge', 'mattsp1290/birbcrew']) {
+for (const name of ['mattsp1290/forge', 'mattsp1290/crew']) {
   const page = await connection.repositories(name, 1, contexts.length === 0);
   const repository = page.repositories.find(repo => repo.full_name === name);
   if (!repository) throw new Error('Authorized source repository unavailable');

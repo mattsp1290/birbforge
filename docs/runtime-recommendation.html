@@ -1,18 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Why Temporal and Pydantic AI are the first combination to prove."><title>Runtime choice · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link selected" aria-current="page" href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Runtime choice</h1><p class="lead">Why Temporal and Pydantic AI are the first combination to prove.</p></div><article><p>Researched November 5, 2026. The owner approved self-hosted Temporal and
-Pydantic AI as the first Birbcrew runtime to validate. These choices authorize
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="Why Temporal and Pydantic AI are the first combination to prove."><title>Runtime choice · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ Research</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link selected" aria-current="page" href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Crew</a><a class="nav-link "  href="first-milestone.html">02 · Forge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Verify</a><a class="nav-link "  href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Research <span>· DESIGN RECORD</span></div><h1>Runtime choice</h1><p class="lead">Why Temporal and Pydantic AI are the first combination to prove.</p></div><article><p>Researched November 5, 2026. The owner approved self-hosted Temporal and
+Pydantic AI as the first Crew runtime to validate. These choices authorize
 readiness planning, not implementation. No factory account integrations,
 workers, or restart behavior have been live-tested.</p>
 <h2 id="accepted-direction-and-remaining-proof">Accepted direction and remaining proof<a class="anchor" href="#accepted-direction-and-remaining-proof" aria-label="Link to Accepted direction and remaining proof">#</a></h2><p>Use one self-hosted Temporal service for factory coordination and durable
-coworker execution, with PostgreSQL persistence. Keep Birbforge&#39;s interface and
+coworker execution, with PostgreSQL persistence. Keep Forge&#39;s interface and
 CopilotKit OSS runtime in TypeScript. Evaluate Python with Pydantic AI as the
-preferred Birbcrew implementation because it has documented AG-UI and Temporal
+preferred Crew implementation because it has documented AG-UI and Temporal
 integrations. Retain TypeScript with the pi SDK as the alternative if the
 end-to-end proof shows lower integration or account-access cost.</p>
 <p>This recommendation prioritizes existing integrations over using one language
 everywhere. It does not replace Codex, Claude Code, or pi as coding tools. Cloud
 authors and coding harnesses remain separately invoked execution backends.
-Birbcrew&#39;s chief of staff uses constrained factory tools to coordinate them.
-Birbcrew is the first implementation repository. Each repository gets its own
+Crew&#39;s chief of staff uses constrained factory tools to coordinate them.
+Crew is the first implementation repository. Each repository gets its own
 poteto-mode owner handoff.</p>
 <h2 id="why-temporal">Why Temporal<a class="anchor" href="#why-temporal" aria-label="Link to Why Temporal">#</a></h2><p>Our durable unit is a delivery lifecycle: author a change, wait for review,
 reserve staging, verify it, wait for human input where required, merge, and
@@ -33,7 +33,7 @@ and Temporal persistence must have separate ownership and migrations even if
 they share an operated PostgreSQL installation.
 <a href="https://docs.temporal.io/self-hosted-guide/deployment">Deployment guidance</a>,
 <a href="https://docs.temporal.io/temporal-service/persistence">persistence</a></p>
-<h2 id="two-viable-birbcrew-paths">Two viable Birbcrew paths<a class="anchor" href="#two-viable-birbcrew-paths" aria-label="Link to Two viable Birbcrew paths">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
+<h2 id="two-viable-crew-paths">Two viable Crew paths<a class="anchor" href="#two-viable-crew-paths" aria-label="Link to Two viable Crew paths">#</a></h2><div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable reference table"><table>
 <thead>
 <tr>
 <th>Concern</th>
@@ -58,7 +58,7 @@ they share an operated PostgreSQL installation.
 </tr>
 <tr>
 <td>Language footprint</td>
-<td>Shares TypeScript with Birbforge</td>
+<td>Shares TypeScript with Forge</td>
 <td>Adds Python across a versioned interface</td>
 </tr>
 <tr>
@@ -89,7 +89,7 @@ credible existing-runtime choice rather than an invitation to recreate pi in
 Python. Datadog remains the observability destination; a new hosted observability
 product is not part of this recommendation.
 <a href="https://pydantic.dev/docs/ai/harness/">Harness capabilities</a></p>
-<p>The standalone CopilotKit runtime stays TypeScript even if Birbcrew is Python.
+<p>The standalone CopilotKit runtime stays TypeScript even if Crew is Python.
 That runtime can connect to an AG-UI agent without Intelligence. Do not confuse
 a Python agent backend with CopilotKit&#39;s Python runtime, which has a different
 service dependency.
@@ -117,11 +117,11 @@ cancel, tools and state. Revisit it if it removes more code than it adds.
 </tr>
 <tr>
 <td>Accepted scope snapshot, policy and approval records</td>
-<td>Birbforge application records</td>
+<td>Forge application records</td>
 </tr>
 <tr>
 <td>Conversation and finalized messages</td>
-<td>Chosen Birbcrew framework/session store</td>
+<td>Chosen Crew framework/session store</td>
 </tr>
 <tr>
 <td>Workspace contents and code changes</td>
@@ -129,7 +129,7 @@ cancel, tools and state. Revisit it if it removes more code than it adds.
 </tr>
 <tr>
 <td>Verification observations and artifacts</td>
-<td>Birbverify manifests and private artifact storage</td>
+<td>Verify manifests and private artifact storage</td>
 </tr>
 <tr>
 <td>Cloud task lifecycle</td>
@@ -158,9 +158,9 @@ work running, and reconnecting recovers coherent state.</li>
 <li>Restart a worker during a tool call. Recover or explicitly reconcile the
 outcome without duplicate external action.</li>
 <li>Pause for a durable human-input request and resolve it from another client.
-Birbforge later proves revision-bound approvals through the phone interface.</li>
+Forge later proves revision-bound approvals through the phone interface.</li>
 <li>Recover finalized conversation history after process restart.</li>
-<li>In the later Birbverify integration milestone, dispatch a real check through
+<li>In the later Verify integration milestone, dispatch a real check through
 the existing Mac path. Respect its lifecycle gates and preserve the
 shared-staging reservation through interruption.</li>
 </ol>
@@ -175,4 +175,4 @@ a general-purpose runtime abstraction. A local Temporal development service is
 appropriate for this isolated proof. Birbhomes owns the subsequent sustained
 k3s deployment. The Birbparty acceptance milestone still requires deployed k3s
 verification.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#accepted-direction-and-remaining-proof">Accepted direction and remaining proof</a><a href="#why-temporal">Why Temporal</a><a href="#two-viable-birbcrew-paths">Two viable Birbcrew paths</a><a href="#where-pi-durable-fits">Where pi-durable fits</a><a href="#recovery-boundaries">Recovery boundaries</a><a href="#reuse-the-enrolled-mac">Reuse the enrolled Mac</a><a href="#proof-needed-before-implementation-commitment">Proof needed before implementation commitment</a></nav></aside></body></html>
+</article><footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#accepted-direction-and-remaining-proof">Accepted direction and remaining proof</a><a href="#why-temporal">Why Temporal</a><a href="#two-viable-crew-paths">Two viable Crew paths</a><a href="#where-pi-durable-fits">Where pi-durable fits</a><a href="#recovery-boundaries">Recovery boundaries</a><a href="#reuse-the-enrolled-mac">Reuse the enrolled Mac</a><a href="#proof-needed-before-implementation-commitment">Proof needed before implementation commitment</a></nav></aside></body></html>

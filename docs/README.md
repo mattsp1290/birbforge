@@ -1,12 +1,12 @@
-# Birbforge design documentation
+# Forge design documentation
 
 Open `index.html` in a browser. The generated site works offline and includes
 the agreed architecture, research, contracts and repository handoffs.
 
 Markdown files are the editable source. HTML files and assets are checked-in
 reading artifacts. Update the source and rebuild instead of editing generated
-HTML. The Birbcrew and Birbverify milestone pages are generated from their
-authoritative sibling checkouts. Keep those checkouts beside Birbforge when
+HTML. The Crew and Verify milestone pages are generated from their
+authoritative sibling checkouts. Keep those checkouts beside Forge when
 rebuilding. The built site needs neither checkout nor a running service.
 
 ## Rebuild

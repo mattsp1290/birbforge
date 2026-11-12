@@ -13,7 +13,7 @@ const themes: {value: Theme; label: string}[] = [
 
 function MachineEditor({editor, settings, close}: {editor: Editor; settings: MachineSettings; close: () => void}) {
   const machine = editor.kind === 'edit' ? editor.machine : undefined;
-  const [name, setName] = useState(machine?.name ?? 'Birbforge');
+  const [name, setName] = useState(machine?.name ?? 'Forge');
   const [endpoint, setEndpoint] = useState(machine?.endpoint ?? defaultEndpoint());
   const [credential, setCredential] = useState('');
   const [busy, setBusy] = useState(false);
@@ -68,7 +68,7 @@ function MachineEditor({editor, settings, close}: {editor: Editor; settings: Mac
     <Field label="Machine name" maxLength={100} value={name} editable={!busy} onChangeText={setName} />
     <Field label="Server URL" placeholder="https://your-server.example" autoCapitalize="none" autoCorrect={false}
       keyboardType="url" value={endpoint} editable={!busy} onChangeText={next => {setEndpoint(next); setCredential('');}} />
-    <Body muted>Connect to NetBird to reach your private Birbforge server.</Body>
+    <Body muted>Connect to NetBird to reach your private Forge server.</Body>
     {browserOrigin ? <>
       <Body muted>Open this machine at its own address to sign in.</Body>
       <Action secondary label="Open machine in browser" disabled={busy}

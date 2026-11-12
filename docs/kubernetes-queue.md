@@ -1,6 +1,6 @@
 # Durable Kubernetes target queue
 
-Birbforge admits an approved request into one Temporal FIFO for a physical Kubernetes target. It invokes Birbverify's registered target activities and retains the request until an attributable closure receipt proves release. Beans remains the owner of authored work. The queue stores a Beans issue reference and authored revision, not an editable copy of the issue.
+Forge admits an approved request into one Temporal FIFO for a physical Kubernetes target. It invokes Verify's registered target activities and retains the request until an attributable closure receipt proves release. Beans remains the owner of authored work. The queue stores a Beans issue reference and authored revision, not an editable copy of the issue.
 
 This is a bounded local account/auth target integration. The CLI trusts the operator who supplies the installed configuration. It does not authenticate arbitrary remote callers. A closed request means the target lifecycle ended. It does not mean application verification passed or authorize delivery. Every projected result remains delivery-ineligible.
 
@@ -20,13 +20,13 @@ An activity result is transport evidence. Only the exact producer closure receip
 
 Terminating the canonical Temporal workflow does not release its target. Its UID-derived ID and `REJECT_DUPLICATE` reuse policy also prevent starting a replacement workflow for that namespace. Stopping and restarting the worker process is different and resumes durable history. Do not terminate a workflow as a recovery procedure.
 
-The Kubernetes workflow has a separate type from the existing counter fixture workflow. It does not change legacy histories. Temporal remains the sole scheduler. The Birbverify target journal is the final authority for acquisition and release.
+The Kubernetes workflow has a separate type from the existing counter fixture workflow. It does not change legacy histories. Temporal remains the sole scheduler. The Verify target journal is the final authority for acquisition and release.
 
 ## Run the local operator interface
 
-Install the exact producer revision recorded in `packaging/kubernetes-producer.json` with its locked Python dependencies. Worker and adapter startup compare the configured revision and installed producer source files with that pin before connecting to Temporal. This detects installation drift after Python imports; use trusted producer distributions. The runtime requires Python 3.13 and Temporal. Provision the producer target according to Birbverify's Kubernetes runtime documentation. Keep its credential and journal outside the Birbforge worker.
+Install the exact producer revision recorded in `packaging/kubernetes-producer.json` with its locked Python dependencies. Worker and adapter startup compare the configured revision and installed producer source files with that pin before connecting to Temporal. This detects installation drift after Python imports; use trusted producer distributions. The runtime requires Python 3.13 and Temporal. Provision the producer target according to Verify's Kubernetes runtime documentation. Keep its credential and journal outside the Forge worker.
 
-Create a private JSON file matching `KubernetesConfig`. Its `queue.authority` contains the immutable authority above. Set `queue.activity_task_queue`, `temporal_address`, `namespace`, and `workflow_task_queue`. The default Temporal namespace is `default`. These task queues must match the registered producer worker and the Birbforge workflow worker.
+Create a private JSON file matching `KubernetesConfig`. Its `queue.authority` contains the immutable authority above. Set `queue.activity_task_queue`, `temporal_address`, `namespace`, and `workflow_task_queue`. The default Temporal namespace is `default`. These task queues must match the registered producer worker and the Forge workflow worker.
 
 Start the workflow worker with the configuration path.
 
@@ -73,7 +73,7 @@ The proof follows the full Continue-As-New chain. Private logs and full historie
 
 ## Package without deployment
 
-`packaging/kubernetes-worker.Dockerfile` adds the consumer to an exact tested Birbverify image. Supply `BIRBVERIFY_IMAGE` as an immutable image digest. The worker runs as UID `10001` and needs only read-only configuration and a Temporal connection. It needs no kubeconfig, target socket, target database, or Beans write token.
+`packaging/kubernetes-worker.Dockerfile` adds the consumer to an exact tested Verify image. Supply `BIRBVERIFY_IMAGE` as an immutable image digest. The worker runs as UID `10001` and needs only read-only configuration and a Temporal connection. It needs no kubeconfig, target socket, target database, or Beans write token.
 
 Health requires a Temporal poller serving the configured queue and a successful query of the canonical workflow. Container liveness alone is insufficient. The current entry point does not provide a network health endpoint.
 

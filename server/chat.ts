@@ -22,7 +22,7 @@ type ChatOptions = {
 
 const chief: Agent = {
   id: chiefId, name: chiefName,
-  instructions: 'Answer questions about this Birbforge workspace. Use inspect_factory to check its current state before reporting status.',
+  instructions: 'Answer questions about this Forge workspace. Use inspect_factory to check its current state before reporting status.',
   projectIds: [],
 };
 
@@ -30,7 +30,7 @@ function report(agent: Agent, catalog: Catalog | null, factory: FactoryStatus | 
   const isChief = agent.id === chiefId;
   const lines = [];
   if (isChief) {
-    lines.push(factory ? `Gateway: ${factory.gateway}. Birbcrew runtime: ${factory.runtime}. Verification: ${factory.verification}. Checked ${factory.checkedAt}.` : 'Factory status is unavailable.');
+    lines.push(factory ? `Gateway: ${factory.gateway}. Crew runtime: ${factory.runtime}. Verification: ${factory.verification}. Checked ${factory.checkedAt}.` : 'Factory status is unavailable.');
     if (factory?.queue) {
       const {environment, queued, running, finished} = factory.queue;
       lines.push(`Verification queue: ${queued} queued, ${running} running, ${finished} finished. Environment: ${environment}.`);
@@ -41,7 +41,7 @@ function report(agent: Agent, catalog: Catalog | null, factory: FactoryStatus | 
   }
   if (!catalog) return [...lines, 'The project and agent catalog is unavailable.'].join('\n\n');
   const projects = isChief ? catalog.projects : catalog.projects.filter(project => agent.projectIds.includes(project.id));
-  if (isChief) lines.push(catalog.agents.length ? 'Birbcrew: ' + catalog.agents.map(item => item.name).join(', ') + '.' : 'The crew roster is empty.');
+  if (isChief) lines.push(catalog.agents.length ? 'Crew: ' + catalog.agents.map(item => item.name).join(', ') + '.' : 'The crew roster is empty.');
   if (!catalog.projectsAvailable) return [...lines, 'The Beans project hub is unavailable.'].join('\n\n');
   lines.push(projects.length
     ? 'Projects\n' + projects.map(project => `${project.id}: ${project.repositories.join(', ') || 'No repositories'}`).join('\n')

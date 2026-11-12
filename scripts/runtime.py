@@ -43,21 +43,21 @@ try:
     gateway = subprocess.Popen([str(repo / '.local/bin/node'), '--import', 'tsx', 'server/main.ts'], cwd=repo, env=environment, stdout=log, stderr=log)
     def gateway_ready():
         if gateway.poll() is not None:
-            raise RuntimeError('Birbforge gateway exited during startup')
+            raise RuntimeError('Forge gateway exited during startup')
         return ready_file.exists() and httpx.get('http://127.0.0.1:8787').status_code == 200
-    wait_for(gateway_ready, 'Birbforge gateway')
+    wait_for(gateway_ready, 'Forge gateway')
     write_private(proof.root / 'runtime-versions.json', proof.report['versions'])
     write_private(repo / '.local/session.json', {
         'fixture_root': str(proof.root), 'url': 'http://127.0.0.1:8787',
         'tokens': proof.tokens,
         'proxy_origin': json.loads(ready_file.read_text())['proxyOrigin'],
     })
-    print('Birbforge loopback UI at http://127.0.0.1:8787. Private credentials are in .local/session.json.', flush=True)
+    print('Forge loopback UI at http://127.0.0.1:8787. Private credentials are in .local/session.json.', flush=True)
     while gateway.poll() is None:
         if any(process.poll() is not None for process in proof.processes.values()):
             raise RuntimeError('A disposable producer service exited')
         time.sleep(0.5)
-    raise RuntimeError('Birbforge gateway exited; inspect private fixture log')
+    raise RuntimeError('Forge gateway exited; inspect private fixture log')
 except KeyboardInterrupt:
     pass
 finally:

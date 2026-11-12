@@ -6,7 +6,7 @@ import {compileFromFile} from 'json-schema-to-typescript';
 const configPath = (await readFile('.local/guest-setup-path', 'utf8')).trim();
 const setup = JSON.parse(await readFile(configPath, 'utf8'));
 const revision = 'e785dd8882222b18eaf59ce2b1ceecbd092dcd9e';
-if (setup.revisions.birbverify !== revision) throw new Error('Birbverify pin mismatch');
+if (setup.revisions.birbverify !== revision) throw new Error('Verify pin mismatch');
 const root = setup.exports.birbverify;
 const hashes = JSON.parse(await readFile(join(root, 'docs/evidence/contextless-closure-acceptance.json'), 'utf8')).source_hashes;
 for (const [name, expected] of Object.entries(hashes)) {

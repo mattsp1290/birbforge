@@ -14,10 +14,10 @@ const pages = [
   ['design-decisions', 'Decision register', 'Contracts', 'The full accepted product behavior and its remaining deployment gates.'],
   ['runtime-recommendation', 'Runtime choice', 'Research', 'Why Temporal and Pydantic AI are the first combination to prove.'],
   ['component-options', 'Build less, reuse more', 'Research', 'Evaluated components, tradeoffs and primary sources.'],
-  ['start-repository-owner', 'Start an owner', 'Build', 'Codex implementation with fresh Claude CLI review. Birbcrew goes first.'],
-  ['birbcrew-first-milestone', '01 · Birbcrew', 'Build', 'Prove durable conversations before downstream product work.', '../../birbcrew/docs/first-milestone.md'],
-  ['first-milestone', '02 · Birbforge', 'Build', 'One conversation and one input decision across phone and browser.'],
-  ['birbverify-first-milestone', '03 · Birbverify', 'Build', 'Prove attributable execution and recovery before real staging admission.', '../../birbverify/docs/first-milestone.md'],
+  ['start-repository-owner', 'Start an owner', 'Build', 'Codex implementation with fresh Claude CLI review. Crew goes first.'],
+  ['birbcrew-first-milestone', '01 · Crew', 'Build', 'Prove durable conversations before downstream product work.', '../../crew/docs/first-milestone.md'],
+  ['first-milestone', '02 · Forge', 'Build', 'One conversation and one input decision across phone and browser.'],
+  ['birbverify-first-milestone', '03 · Verify', 'Build', 'Prove attributable execution and recovery before real staging admission.', '../../verify/docs/first-milestone.md'],
   ['durable-verification-queue', '04 · Durable verification', 'Build', 'The pinned fixture queue, immutable results, recovery, and evidence gates.'],
   ['integration-briefs', 'Existing repositories', 'Build', 'Bounded work for Beans, Birbhomes and the Birbparty pilot.'],
 ];
@@ -31,15 +31,15 @@ function svgFrame(id, title, description, body, height = 570) {
 function box(x,y,w,title,sub) {return `<rect class="box" x="${x}" y="${y}" width="${w}" height="76"/><text class="label" x="${x+18}" y="${y+30}">${title}</text><text class="sub" x="${x+18}" y="${y+55}">${sub}</text>`;}
 const line = d => `<path class="line" d="${d}"/>`;
 const diagrams = {
-  architecture: svgFrame('architecture', 'Factory component and delivery map', 'Phone and browser use AG-UI through Birbforge to Birbcrew. Birbcrew reads scoped Beans notes. Temporal coordinates authors, candidate PR review and verification on shared k3s staging. Gates recheck approvals before existing CI deploys and the owner observes production health.',
+  architecture: svgFrame('architecture', 'Factory component and delivery map', 'Phone and browser use AG-UI through Forge to Crew. Crew reads scoped Beans notes. Temporal coordinates authors, candidate PR review and verification on shared k3s staging. Gates recheck approvals before existing CI deploys and the owner observes production health.',
     box(310,15,320,'Phone + Mac browser','Conversation and the decision inbox')+
-    box(310,135,320,'Birbforge','Policy, actions and delivery ownership')+
+    box(310,135,320,'Forge','Policy, actions and delivery ownership')+
     box(20,135,240,'Beans','Authored work and shared notes')+
-    box(680,135,240,'Birbcrew','Pydantic AI · durable AG-UI')+
+    box(680,135,240,'Crew','Pydantic AI · durable AG-UI')+
     box(310,250,320,'Temporal','Delivery + coworker workflows')+
     box(20,365,250,'Cloud authors','Eligible subscriptions')+
     box(345,365,250,'Candidate PR + review','Independent review · exact SHA')+
-    box(670,365,250,'Birbverify','Linux + native Mac activities')+
+    box(670,365,250,'Verify','Linux + native Mac activities')+
     box(670,485,250,'Shared k3s staging','Deploy · check · clean up')+
     box(345,485,250,'Recheck merge gates','Evidence + required approvals')+
     box(20,485,250,'Existing CI + health','Owner observes; pup + Datadog')+
@@ -49,10 +49,10 @@ const diagrams = {
     line('M270 403H345')+line('M595 403H670')+line('M795 441V485')+
     line('M670 523H595')+line('M345 523H270')+
     `<text class="sub" x="490" y="108">AG-UI</text><text class="sub" x="680" y="100">Scoped note reads</text>`, 590),
-  interaction: svgFrame('interaction', 'AG-UI through the authenticated gateway', 'Client A starts a conversation through Birbforge. Birbcrew returns events through Birbforge. Client B later resolves the same request by ID and version. Responses again pass through the gateway. The isolated first Birbcrew proof tests this contract without the full Birbforge app.',
+  interaction: svgFrame('interaction', 'AG-UI through the authenticated gateway', 'Client A starts a conversation through Forge. Crew returns events through Forge. Client B later resolves the same request by ID and version. Responses again pass through the gateway. The isolated first Crew proof tests this contract without the full Forge app.',
     box(10,20,200,'Client A','Phone or browser')+
-    box(250,20,210,'Birbforge','Authenticated gateway')+
-    box(500,20,210,'Birbcrew','Durable conversation')+
+    box(250,20,210,'Forge','Authenticated gateway')+
+    box(500,20,210,'Crew','Durable conversation')+
     box(750,20,180,'Client B','Second device')+
     `<path d="M110 110V620M355 110V620M605 110V620M840 110V620" stroke="#31473d" stroke-dasharray="4 7" fill="none"/>`+
     line('M110 155H355')+`<text class="sub" x="120" y="142">Input + request ID</text>`+
@@ -66,7 +66,7 @@ const diagrams = {
     `<text class="accent" x="20" y="655" font-size="17">Disconnect ≠ cancel. Client state ≠ approval.</text>`, 680),
   verification: svgFrame('verification', 'Verification reservation lifecycle', 'An immutable request waits for staging, then deploys, checks identity, verifies journeys, persists evidence and cleans up. Only confirmed cleanup releases staging. Worker loss or uncertain ownership quarantines the environment.',
     box(25,20,260,'Admit exact candidate','Commit + plan + policy revision')+
-    box(340,20,260,'Wait for staging','Birbforge Temporal workflow')+
+    box(340,20,260,'Wait for staging','Forge Temporal workflow')+
     box(655,20,260,'Reserve environment','Fence stale mutation attempts')+
     box(655,175,260,'Deploy and identify','Pinned artifacts; observe revision')+
     box(340,175,260,'Run journeys','Repository tests + native checks')+
@@ -84,10 +84,10 @@ const diagramFor = {'design-checkpoint':'architecture','component-options':'arch
 function diagram(name) { return `<figure class="diagram"><div class="diagram-scroll" tabindex="0" aria-label="Scrollable system diagram"><img src="assets/${name}.svg" alt="${{architecture:'Factory component map',interaction:'AG-UI interaction and authority',verification:'Verification reservation lifecycle'}[name]}"/></div><figcaption>Design diagram · <a href="assets/${name}.svg">Open full size</a></figcaption></figure>`; }
 function nav(current) {
   let group='';
-  return `<a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link ${current==='index'?'selected':''}" ${current==='index'?'aria-current="page"':''} href="index.html">Start here</a>${pages.map(([id,title,g])=>{const header=g!==group?`<div class="nav-group">${g}</div>`:''; group=g; return `${header}<a class="nav-link ${id===current?'selected':''}" ${id===current?'aria-current="page"':''} href="${id}.html">${title}</a>`;}).join('')}<p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div>`;
+  return `<a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link ${current==='index'?'selected':''}" ${current==='index'?'aria-current="page"':''} href="index.html">Start here</a>${pages.map(([id,title,g])=>{const header=g!==group?`<div class="nav-group">${g}</div>`:''; group=g; return `${header}<a class="nav-link ${id===current?'selected':''}" ${id===current?'aria-current="page"':''} href="${id}.html">${title}</a>`;}).join('')}<p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div>`;
 }
 function shell(id,title,summary,body,toc=[], group='Field guide') {
- return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="${esc(summary)}"><title>${esc(title)} · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ ${esc(group)}</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar">${nav(id)}</aside><main id="main"><div class="page-heading"><div class="eyebrow">${esc(group)} <span>· DESIGN RECORD</span></div><h1>${esc(title)}</h1><p class="lead">${esc(summary)}</p></div>${body}<footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main>${toc.length?`<aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page">${toc.map(([id,text])=>`<a href="#${id}">${text}</a>`).join('')}</nav></aside>`:''}</body></html>`;
+ return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="${esc(summary)}"><title>${esc(title)} · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ ${esc(group)}</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar">${nav(id)}</aside><main id="main"><div class="page-heading"><div class="eyebrow">${esc(group)} <span>· DESIGN RECORD</span></div><h1>${esc(title)}</h1><p class="lead">${esc(summary)}</p></div>${body}<footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main>${toc.length?`<aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page">${toc.map(([id,text])=>`<a href="#${id}">${text}</a>`).join('')}</nav></aside>`:''}</body></html>`;
 }
 for (const [id,title,group,summary,path] of pages) {
   let source = await readFile(join(root,path || `${id}.md`),'utf8');
@@ -103,7 +103,10 @@ for (const [id,title,group,summary,path] of pages) {
   };
   renderer.link=function(token) {
     const isExternal = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(token.href);
-    const href = isExternal ? token.href : token.href.replace(/\.md(?=#|$)/, '.html');
+    const repository = path ? path.split('/')[2] : null;
+    const href = isExternal || token.href.startsWith('#') ? token.href
+      : repository ? new URL(token.href, `https://github.com/mattsp1290/${repository}/blob/main/docs/`).href
+      : token.href.replace(/\.md(?=#|$)/, '.html');
     return `<a href="${esc(href)}">${this.parser.parseInline(token.tokens)}</a>`;
   };
   renderer.code=function(token) {
@@ -119,5 +122,5 @@ for (const [id,title,group,summary,path] of pages) {
   await writeFile(join(root,`${id}.html`),shell(id,title,summary,`<article>${html}</article>`,toc,group));
 }
 const home=`<section class="home-status"><span class="status-dot"></span>First UI proof recorded <span class="divider">/</span> Native queue fixture <span class="pill">STAGING STILL PENDING</span></section><p class="home-intro">A private software factory that turns your approved goals into independently reviewed changes, verifies them in k3s, and stays responsible after merge.</p><div class="start-actions"><a class="primary" href="design-checkpoint.html">Read the system overview <span>↗</span></a><a class="secondary" href="start-repository-owner.html">Start a repository owner →</a></div>${diagram('architecture')}<section class="reading-paths"><h2>Choose your depth.</h2><a href="design-checkpoint.html"><span class="step">01</span><div><h3>Understand the system</h3><p>Behavior, ownership and the path from a goal to a healthy deployment.</p></div><span aria-hidden="true">↗</span></a><a href="verification-contract.html"><span class="step">02</span><div><h3>Inspect the guarantees</h3><p>Revision-bound evidence, durable recovery and authority boundaries.</p></div><span aria-hidden="true">↗</span></a><a href="birbcrew-first-milestone.html"><span class="step">03</span><div><h3>Build the first proof</h3><p>One coworker, two AG-UI clients, a worker restart and no repeated effect.</p></div><span aria-hidden="true">↗</span></a></section><section class="boundaries"><div><div class="eyebrow">USE WHAT ALREADY EXISTS</div><h2>Own the workflow.<br>Reuse the machinery.</h2></div><p>Beans for authored work. Temporal for durable execution. Pydantic AI for the first coworker proof. AG-UI and CopilotKit OSS for interaction. Existing repository tests for verification.</p></section><section class="callout"><div class="eyebrow">THE IMPORTANT DISTINCTION</div><h2>Agreed does not mean proven.</h2><p>The architecture is agreed. Subscription integration, recovery, deployed verification and production follow-through still need their acceptance evidence. Each repository brief names those gates.</p><a href="repository-owners.html">See the implementation order →</a></section><section><h2>What stays with the human?</h2><p>Approve goals. Review authentication, permissions, destructive migrations, secrets and production infrastructure changes. Resolve decisions that the agents cannot safely settle within approved scope.</p><p>The phone supports the full daily workflow. Slack and push notifications link back to the same decision inbox.</p></section>`;
-await writeFile(join(root,'index.html'),shell('index','Approved goals.\nVerified changes.','The Birbforge software factory design and implementation field guide.',home));
+await writeFile(join(root,'index.html'),shell('index','Approved goals.\nVerified changes.','The Forge software factory design and implementation field guide.',home));
 console.log(`Built ${pages.length+1} self-contained HTML pages and 3 SVG diagrams.`);

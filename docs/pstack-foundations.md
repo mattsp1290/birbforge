@@ -15,14 +15,14 @@ Our goal is to reproduce those working disciplines with the tools we have.
 We are not claiming to reproduce Lauren's private infrastructure or measured
 throughput. The linked profile is secondary reporting, not an architecture
 specification. Reported PR volume does not establish correctness or a capacity
-target for Birbforge.
+target for Forge.
 [Original profile link](https://x.com/mvanhorn/status/2111481455906103390)
 
 ## Practices translated into the factory
 
-| Practice | Birbforge consequence |
+| Practice | Forge consequence |
 | --- | --- |
-| Prove the result by using it | Birbverify retains deployed user-journey evidence tied to the candidate |
+| Prove the result by using it | Verify retains deployed user-journey evidence tied to the candidate |
 | Give each PR an accountable owner | Ownership continues through feedback, merge, deployment and health observation |
 | Review independently | A separate reviewer evaluates the exact revision; the author cannot approve itself |
 | Keep scope and progress reviewable | Beans stores authored work; accepted scope and approval records remain explicit |
@@ -34,7 +34,7 @@ procedures remain in the installed skill and repository policies.
 [Poteto mode](https://github.com/cursor/plugins/blob/main/pstack/skills/poteto-mode/SKILL.md)
 
 The published full-autopilot playbook carries work through merge. The stacked
-variant prepares a reviewed stack for an operator to land. Birbforge's agreed
+variant prepares a reviewed stack for an operator to land. Forge's agreed
 target permits owner-agent merges after independent and required human approval.
 Our current implementation sessions do not inherit unrestricted deployment
 authority from a playbook name.
@@ -46,8 +46,8 @@ authority from a playbook name.
 Ben Holmes's published framework includes shared configuration, conversation
 history, evaluation, conversational access, artifacts, computer-use verification
 and an action timeline. This is a useful coverage check for our design. Our
-mapping uses repository policies, Birbcrew history, repeatable acceptance,
-Birbforge conversation, Birbverify evidence and Datadog correlation. Model
+mapping uses repository policies, Crew history, repeatable acceptance,
+Forge conversation, Verify evidence and Datadog correlation. Model
 benchmarking remains a later capability rather than a prerequisite to the first
 runtime proof.
 [Ben Holmes's article](https://www.warp.dev/blog/7-ways-to-build-a-software-factory),

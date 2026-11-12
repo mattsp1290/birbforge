@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The pinned fixture queue, immutable results, recovery, and evidence gates."><title>04 · Durable verification · Birbforge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">birbforge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">b/</span><span>birbforge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Birbcrew</a><a class="nav-link "  href="first-milestone.html">02 · Birbforge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Birbverify</a><a class="nav-link selected" aria-current="page" href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>04 · Durable verification</h1><p class="lead">The pinned fixture queue, immutable results, recovery, and evidence gates.</p></div><article><p>Status on November 6, 2026. This milestone adds Birbforge&#39;s first durable
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="description" content="The pinned fixture queue, immutable results, recovery, and evidence gates."><title>04 · Durable verification · Forge</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div><header class="topbar"><a href="index.html">forge <span>/ Build</span></a><div><button id="focus-mode" type="button" aria-pressed="false">Focus view</button><button id="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Browse docs</button></div></header><aside id="sidebar" class="sidebar"><a class="brand" href="index.html"><span class="mark" aria-hidden="true">f/</span><span>forge<small>FACTORY FIELD GUIDE</small></span></a><label class="find">Find a page<input type="search" id="page-search" placeholder="Try “verification”" autocomplete="off"></label><nav aria-label="Documentation"><a class="nav-link "  href="index.html">Start here</a><div class="nav-group">Understand</div><a class="nav-link "  href="design-checkpoint.html">System overview</a><a class="nav-link "  href="pstack-foundations.html">Why pstack</a><a class="nav-link "  href="repository-owners.html">Repository map</a><div class="nav-group">Contracts</div><a class="nav-link "  href="ag-ui-architecture.html">AG-UI everywhere</a><a class="nav-link "  href="beans-integration.html">Beans and shared work</a><a class="nav-link "  href="verification-contract.html">Verification & evidence</a><a class="nav-link "  href="design-decisions.html">Decision register</a><div class="nav-group">Research</div><a class="nav-link "  href="runtime-recommendation.html">Runtime choice</a><a class="nav-link "  href="component-options.html">Build less, reuse more</a><div class="nav-group">Build</div><a class="nav-link "  href="start-repository-owner.html">Start an owner</a><a class="nav-link "  href="birbcrew-first-milestone.html">01 · Crew</a><a class="nav-link "  href="first-milestone.html">02 · Forge</a><a class="nav-link "  href="birbverify-first-milestone.html">03 · Verify</a><a class="nav-link selected" aria-current="page" href="durable-verification-queue.html">04 · Durable verification</a><a class="nav-link "  href="integration-briefs.html">Existing repositories</a><p id="no-pages" hidden>No matching pages.</p></nav><div class="sidebar-foot">First UI proof recorded<br>Native queue fixture recorded.</div></aside><main id="main"><div class="page-heading"><div class="eyebrow">Build <span>· DESIGN RECORD</span></div><h1>04 · Durable verification</h1><p class="lead">The pinned fixture queue, immutable results, recovery, and evidence gates.</p></div><article><p>Status on November 6, 2026. This milestone adds Forge&#39;s first durable
 environment queue and shared verification view. The local execution checks and independent source review passed.
 Physical iPhone fixture acceptance is now recorded for product revision
 <code>6b46dac</code>, using the separate native test build at <code>88a8182</code>. The
@@ -9,13 +9,13 @@ checks remain owner-deferred; real staging remains unverified.</p>
 production, PR, or merge authority. The broader
 <a href="verification-contract.html">verification contract</a> remains a proposal wherever
 it exceeds the concrete pinned producer behavior below.</p>
-<h2 id="pinned-producer-and-queue-ownership">Pinned producer and queue ownership<a class="anchor" href="#pinned-producer-and-queue-ownership" aria-label="Link to Pinned producer and queue ownership">#</a></h2><p>Birbforge consumes Birbcrew commit
-<code>88b219c18adeb352d2f291f099ede990a3190a58</code> and Birbverify commit
+<h2 id="pinned-producer-and-queue-ownership">Pinned producer and queue ownership<a class="anchor" href="#pinned-producer-and-queue-ownership" aria-label="Link to Pinned producer and queue ownership">#</a></h2><p>Forge consumes Crew commit
+<code>88b219c18adeb352d2f291f099ede990a3190a58</code> and Verify commit
 <code>a70315a276837ffdde32049fdb77670a3468e151</code> without source overlays.
-Birbverify supplies its real <code>Activities.verify</code> activity, target fencing,
+Verify supplies its real <code>Activities.verify</code> activity, target fencing,
 immutable request/result contract, artifact reader, and fixture procedures.
-Birbforge supplies <code>verification.workflow.EnvironmentQueue</code>.
-Birbverify&#39;s <code>FixtureWorkflow</code> is not the environment queue.</p>
+Forge supplies <code>verification.workflow.EnvironmentQueue</code>.
+Verify&#39;s <code>FixtureWorkflow</code> is not the environment queue.</p>
 <p>Each admitted producer request has one attempt budget and one immutable
 terminal result. An identical terminal request returns its original result.
 Neither reconnect nor supervisor recovery reruns that request. Automatic
@@ -29,18 +29,18 @@ execution retries and replacement terminal manifests are outside this milestone.
 </thead>
 <tbody><tr>
 <td>Authenticated gateway</td>
-<td>Checks existing Birbcrew conversation ownership and accepts only admission, cancellation, and observation payloads</td>
+<td>Checks existing Crew conversation ownership and accepts only admission, cancellation, and observation payloads</td>
 </tr>
 <tr>
 <td>Installation policy</td>
 <td>Binds the exact candidate, approved plan, policy, permitted operations, deadline, and fixture capabilities</td>
 </tr>
 <tr>
-<td>Birbforge Temporal workflow</td>
+<td>Forge Temporal workflow</td>
 <td>Owns admission order, immutable bindings, idempotency receipts, request revisions, and dispatch</td>
 </tr>
 <tr>
-<td>Birbverify activity and target</td>
+<td>Verify activity and target</td>
 <td>Execute the pinned procedure, own acquired attempt identity, fence effects, and record the producer result</td>
 </tr>
 <tr>
@@ -177,7 +177,7 @@ treat killing the interactive launcher as the queue-worker recovery test.</p>
 using the validated producer interpreter. After checking quarantine, invoke the
 same command without <code>fence</code>. The coordinator first confirms its exact activity
 worker has stopped. The supervisor verifies that independently and reuses
-Birbverify&#39;s stop, cleanup and release operations. It rejects recovery of a
+Verify&#39;s stop, cleanup and release operations. It rejects recovery of a
 normally released attempt and a different recovery identity for an already
 recovered attempt. It never runs through the client action API.</p>
 <p>One installation subprocess was observed hanging after Temporal had accepted
@@ -323,4 +323,4 @@ and VoiceOver remain explicitly deferred. Unknown dispatch or missing-context
 recovery, actual k3s staging, native candidate isolation, artifact access and
 retention, and production identity remain separate gates. No merge or
 deployment is authorized by this evidence.</p>
-</article><footer><p>Birbforge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a><a href="#private-route-launcher-follow-up">Private route launcher follow-up</a><a href="#physical-iphone-acceptance">Physical iPhone acceptance</a></nav></aside></body></html>
+</article><footer><p>Forge / private factory, public workflow.</p><p>Design and milestone documentation. Evidence applies to its recorded revision.</p><a href="#main">Back to top ↑</a></footer></main><aside class="contents"><div class="eyebrow">On this page</div><nav aria-label="On this page"><a href="#pinned-producer-and-queue-ownership">Pinned producer and queue ownership</a><a href="#immutable-admission-and-command-replay">Immutable admission and command replay</a><a href="#dispatch-cancellation-and-uncertain-execution">Dispatch, cancellation, and uncertain execution</a><a href="#recovery-and-immutable-history">Recovery and immutable history</a><a href="#evidence-eligibility-and-shared-observations">Evidence eligibility and shared observations</a><a href="#reproduce-the-local-checks">Reproduce the local checks</a><a href="#acceptance-evidence-for-this-milestone">Acceptance evidence for this milestone</a><a href="#private-route-launcher-follow-up">Private route launcher follow-up</a><a href="#physical-iphone-acceptance">Physical iPhone acceptance</a></nav></aside></body></html>

@@ -78,8 +78,8 @@ export function FactoryScreen({machine, visible, settings}: {machine: ActiveMach
         <Heading>Service status</Heading>
         {machine && <Action secondary label={refreshing ? 'Checking…' : 'Refresh status'} disabled={refreshing} onPress={retry} />}
       </View>
-      <Service icon="server-outline" name="Birbforge gateway" value={status ? 'Online' : unknown} ok={!!status} />
-      <Service icon="bird" name="Birbcrew runtime" value={status ? status.runtime === 'ready' ? 'Ready' : 'Unavailable' : unknown} ok={status?.runtime === 'ready'} />
+      <Service icon="server-outline" name="Forge gateway" value={status ? 'Online' : unknown} ok={!!status} />
+      <Service icon="bird" name="Crew runtime" value={status ? status.runtime === 'ready' ? 'Ready' : 'Unavailable' : unknown} ok={status?.runtime === 'ready'} />
       <Service icon="tray-full" name="Verification service" value={status ? {installed: 'Ready', unconfigured: 'Not installed', unavailable: 'Unavailable'}[status.verification] : unknown} ok={status?.verification === 'installed'} />
       {error ? <Body style={{color: colors.danger}}>{error}</Body> : status && <Body muted>Last checked {new Date(status.checkedAt).toLocaleTimeString()}</Body>}
     </Card>

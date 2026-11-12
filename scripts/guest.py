@@ -18,6 +18,7 @@ PINS = {
     'birbcrew': '88b219c18adeb352d2f291f099ede990a3190a58',
     'birbverify': 'e785dd8882222b18eaf59ce2b1ceecbd092dcd9e',
 }
+REPOSITORIES = {'birbcrew': 'crew', 'birbverify': 'verify'}
 TOOLS = (
     ('uv', 'https://github.com/astral-sh/uv/releases/download/0.11.3/uv-aarch64-unknown-linux-gnu.tar.gz',
      '711382e3158433f06b11d99afb440f4416359fc3c84558886d8ed8826a921bff', 'uv-aarch64-unknown-linux-gnu/uv'),
@@ -159,8 +160,8 @@ def verify_exports(setup):
                 'git', '-C', setup.sources[name], 'show', f'{revision}:docs/evidence/contextless-closure-acceptance.json']))['source_hashes']
             for relative, digest in manifest.items():
                 if hashlib.sha256((root / relative).read_bytes()).hexdigest() != digest:
-                    raise ValueError(f'Birbverify source manifest mismatch: {relative}')
-            print(f'Verified {len(manifest)} pinned Birbverify source hashes', file=sys.stderr, flush=True)
+                    raise ValueError(f'Verify source manifest mismatch: {relative}')
+            print(f'Verified {len(manifest)} pinned Verify source hashes', file=sys.stderr, flush=True)
 
 
 def guest_command(setup, cwd, command):
@@ -176,16 +177,20 @@ def guest_command(setup, cwd, command):
         'env', '-u', 'PYTHONPATH', '-u', 'LD_PRELOAD', '-u', 'NODE_OPTIONS', *environment, *command])
 
 
-def setup_main():
+def setup_parser():
     parser = argparse.ArgumentParser(description='Prepare private pinned tools and producer exports for an existing Linux ARM64 Colima guest.')
     parser.add_argument('--root', type=Path, default=Path.home() / '.local/state/birbforge/guest')
     parser.add_argument('--profile', default='default')
     parser.add_argument('--tools-root', type=Path)
-    parser.add_argument('--prepare-only', action='store_true', help='Write configuration without running producer or Birbforge setup commands')
+    parser.add_argument('--prepare-only', action='store_true', help='Write configuration without running producer or Forge setup commands')
     for name in PINS:
-        parser.add_argument(f'--{name}-source', type=Path, default=REPO.parent / name)
-        parser.add_argument(f'--{name}-export', type=Path)
-    args = parser.parse_args(sys.argv[2:])
+        parser.add_argument(f'--{REPOSITORIES[name]}-source', f'--{name}-source', dest=f'{name}_source', type=Path, default=REPO.parent / REPOSITORIES[name])
+        parser.add_argument(f'--{REPOSITORIES[name]}-export', f'--{name}-export', dest=f'{name}_export', type=Path)
+    return parser
+
+
+def setup_main():
+    args = setup_parser().parse_args(sys.argv[2:])
     healthy(args.profile)
     root = args.root.expanduser().resolve()
     root.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -220,7 +225,7 @@ def setup_main():
 
 def guest_main():
     parser = argparse.ArgumentParser(description='Run a command in the configured Linux guest without forwarding host credentials.')
-    parser.add_argument('--producer', choices=tuple(PINS), help='Run from this pinned producer export instead of Birbforge')
+    parser.add_argument('--producer', choices=(*REPOSITORIES.values(), *PINS), help='Run from this pinned producer export instead of Forge')
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ['--'] else args.command
@@ -233,7 +238,8 @@ def guest_main():
     healthy(setup.profile)
     tools_ready(Path(setup.tools))
     verify_exports(setup)
-    cwd = setup.exports[args.producer] if args.producer else REPO
+    producer = {value: key for key, value in REPOSITORIES.items()}.get(args.producer, args.producer)
+    cwd = setup.exports[producer] if producer else REPO
     command_line = guest_command(setup, cwd, command)
     os.execvp('colima', ['colima', 'ssh', '--profile', setup.profile, '--', 'sh', '-c', command_line])
 

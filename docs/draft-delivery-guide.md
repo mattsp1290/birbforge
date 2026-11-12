@@ -1,6 +1,6 @@
 # Follow an approved goal to a draft PR
 
-Birbforge's **BIRBFORGE / PRIVATE PILOT** lets you approve one installed goal
+Forge's **BIRBFORGE / PRIVATE PILOT** lets you approve one installed goal
 and follow its delivery on your phone or Mac browser. Preparing the goal record
 does not approve execution. Publication must remain a draft PR.
 

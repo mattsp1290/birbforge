@@ -1,5 +1,5 @@
 {
-  "name": "birbforge",
+  "name": "forge",
   "private": true,
   "type": "module",
   "scripts": {
@@ -39,5 +39,13 @@
     "json-schema-to-typescript": "15.0.4",
     "tsx": "^4.20.0",
     "typescript": "~5.9.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattsp1290/forge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mattsp1290/forge/issues"
+  },
+  "homepage": "https://github.com/mattsp1290/forge#readme"
 }

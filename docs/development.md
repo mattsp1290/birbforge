@@ -13,10 +13,10 @@ sha256sum, OpenSSL CLI, and Python prerequisites. No OS package installation is 
 All runtime listeners bind to loopback. Do not use the private Beans hub.
 
 1. Run `scripts/setup` to restore the locked repository JavaScript dependencies.
-2. Run `scripts/dependency` to extract the exact pinned Birbcrew commit into a
-   new temporary directory and run its documented setup. Set `BIRBCREW_SOURCE`
+2. Run `scripts/dependency` to extract the exact pinned Crew commit into a
+   new temporary directory and run its documented setup. Set `CREW_SOURCE` (or the retained `BIRBCREW_SOURCE` alias)
    only to an existing source checkout containing that commit. The default is
-   `../birbcrew`. This reads the producer without changing it or merging a branch.
+   `../crew`. This reads the producer without changing it or merging a branch.
 3. Run `scripts/npm run export:web`.
 4. Run `scripts/dev` and keep it running while either client is in use.
 5. Read the generated `.local/session.json` privately. Enter only its owner
@@ -25,7 +25,7 @@ All runtime listeners bind to loopback. Do not use the private Beans hub.
 7. Stop the launcher with Ctrl-C. It stops only its own processes and disposable
    container. Its fixture directory remains outside Git for inspection.
 
-The launcher reuses Birbcrew's `Proof.boot` and `FixtureHub` helpers. It disables
+The launcher reuses Crew's `Proof.boot` and `FixtureHub` helpers. It disables
 only the producer's interruption failpoint before starting the UI conversations.
 It uses deterministic TestModel fixtures and makes no live model calls. It
 retains the producer's Temporal workflow, PostgreSQL store, AG-UI encoder, and
@@ -38,7 +38,7 @@ folder. No credential belongs in an EXPO_PUBLIC variable.
 
 ## Run a persistent workspace on a private server
 
-On the server, use Node 22.23.3, install the locked JavaScript dependencies, and export the web app. Supply the Birbcrew producer's loopback HTTP `url` and `tokens` map in an owner-readable JSON file outside the web export. Each token must match the producer credential for the same principal and contain at least 32 characters. Workspace access uses `projects.owner_principal` when configured, then the private single-owner proxy's principal, and otherwise `owner`. For an installed verification queue, supply the adapter's `python` and `configuration` paths in the optional `verification` object.
+On the server, use Node 22.23.3, install the locked JavaScript dependencies, and export the web app. Supply the Crew producer's loopback HTTP `url` and `tokens` map in an owner-readable JSON file outside the web export. Each token must match the producer credential for the same principal and contain at least 32 characters. Workspace access uses `projects.owner_principal` when configured, then the private single-owner proxy's principal, and otherwise `owner`. For an installed verification queue, supply the adapter's `python` and `configuration` paths in the optional `verification` object.
 
 Set these variables for the gateway process. Choose durable paths outside the checkout and web export for a persistent installation.
 
@@ -47,8 +47,8 @@ Set these variables for the gateway process. Choose durable paths outside the ch
 | `BIRBFORGE_CLIENT_CONFIG` | Path to the private gateway configuration file. |
 | `BIRBFORGE_WORKSPACE_DIR` | Directory for the crew roster, chat database, and named secrets. Defaults to a directory named `workspace` beside the private configuration file. Protect its backups like the credentials themselves. |
 | `BIRBFORGE_BEANS_HUB` | Standalone mode only. Absolute path to the Beans hub clone you want to manage. A gateway with a `projects` configuration uses its managed Beans and GitHub integration instead. The gateway runs the installed `bn` executable and commits project changes locally. Sync the clone using your normal Beans workflow. |
-| `BIRBFORGE_CHAT_PYTHON` | Path to the Python interpreter with the pinned Birbcrew runtime installed. The disposable launcher sets this for local inspection. |
-| `BIRBFORGE_CHAT_ATTESTATION` | Optional path to the current Birbcrew provider attestation for live model calls. Set it together with the Python interpreter. Configure `OPENCODE_GO_API_KEY` in **Settings → Machine secrets**. |
+| `BIRBFORGE_CHAT_PYTHON` | Path to the Python interpreter with the pinned Crew runtime installed. The disposable launcher sets this for local inspection. |
+| `BIRBFORGE_CHAT_ATTESTATION` | Optional path to the current Crew provider attestation for live model calls. Set it together with the Python interpreter. Configure `OPENCODE_GO_API_KEY` in **Settings → Machine secrets**. |
 | `BIRBFORGE_PROXY_CONFIG` | Optional private proxy configuration for the HTTPS origin your mobile devices can reach. |
 
 Start the gateway from the repository root with `scripts/npm run gateway`. Use one gateway process per workspace directory. Both its loopback and private proxy listeners share the same workspace. A persistent path retains chats, crew, and secrets when you restart the process. The disposable `scripts/dev` launcher creates a fresh workspace and hub on each run.
@@ -109,7 +109,7 @@ interface documentation and installed-registry metadata.
 [CopilotKit native useAgent](https://docs.copilotkit.ai/reference/react-native/hooks/useAgent).
 
 For a complete disposable run, set `BIRBFORGE_CHROMIUM` to the existing binary
-and run `scripts/verify` with no other Birbforge launcher active. The command
+and run `scripts/verify` with no other Forge launcher active. The command
 starts and cleans up its own runtime. A second launcher refuses an existing
 session file. If a launcher was killed without cleanup, inspect its processes
 before removing a stale private session file.
@@ -130,10 +130,10 @@ proxy is a fixture only. No test CA is installed in OS or phone trust.
 
 On Mac, prepare the existing Linux guest with `scripts/guest-setup` as described
 in [host execution](host-execution.md). The verification launcher requires its
-validated Birbverify export and private setup record. It runs Linux binaries in
-the guest, including the real pinned Birbverify activity.
+validated Verify export and private setup record. It runs Linux binaries in
+the guest, including the real pinned Verify activity.
 
-1. Stop any earlier Birbforge launcher through its owning terminal.
+1. Stop any earlier Forge launcher through its owning terminal.
 2. Run `scripts/guest -- scripts/npm run export:web`.
 3. Run `scripts/guest -- scripts/verification-dev` in a dedicated terminal.
 4. Open the fresh loopback URL printed by the launcher through the existing

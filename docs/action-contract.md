@@ -1,20 +1,20 @@
 # Local conversation action contract
 
-Birbforge consumes Birbcrew revision
+Forge consumes Crew revision
 `88b219c18adeb352d2f291f099ede990a3190a58`.
 The producer checkout and its unmerged branch remain unchanged.
 
 ## Authority
 
-Birbcrew owns conversation identities, finalized messages, accepted input IDs,
-Temporal execution, pending requests, and accepted decisions. Birbforge does not
+Crew owns conversation identities, finalized messages, accepted input IDs,
+Temporal execution, pending requests, and accepted decisions. Forge does not
 store a second editable conversation or notes database. Beans remains the
 source of authored fixture context. The launcher reuses the producer's fixture
 hub setup, with explicit hub selection, no remotes, and scoped note capture.
 
-Generated local bearer credentials identify an owner or stranger. Birbforge
+Generated local bearer credentials identify an owner or stranger. Forge
 validates the credential on every API call, then forwards that principal's
-credential to Birbcrew. Birbcrew enforces conversation ownership and the expected
+credential to Crew. Crew enforces conversation ownership and the expected
 responder in its durable Update. The client cannot select an actor. This is an
 isolated development identity system. Human authentication and permission
 review is mandatory before merge.
