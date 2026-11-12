@@ -44,8 +44,9 @@ const Opened = z.object({state: z.object({conversationId: z.uuid(), memberId: z.
 const Failure = z.object({error: z.string()});
 
 type Reply = {status: number; body: unknown} | null;
+const transient = ['busy', 'unknown_profile'];
 const rejected = (reply: Reply): reply is {status: number; body: unknown} =>
-  reply !== null && (reply.status === 400 || (reply.status === 409 && Failure.safeParse(reply.body).data?.error !== 'busy'));
+  reply !== null && (reply.status === 400 || (reply.status === 409 && !transient.includes(Failure.safeParse(reply.body).data?.error ?? '')));
 
 async function credential(path: string) {
   const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
@@ -60,12 +61,12 @@ async function credential(path: string) {
 
 export class MemberClient {
   private capabilities: {value: z.infer<typeof Capabilities>; at: number} | null = null;
-  constructor(private readonly config: MembersConfig, private readonly timeout = 30_000) {}
+  constructor(private readonly config: MembersConfig, private readonly timeout: number, private readonly signal: AbortSignal) {}
 
   private async call(method: 'GET' | 'POST', path: string, body?: unknown): Promise<Reply> {
     try {
       const response = await fetch(this.config.url + '/v1' + path, {
-        method, redirect: 'manual', signal: AbortSignal.timeout(this.timeout),
+        method, redirect: 'manual', signal: AbortSignal.any([AbortSignal.timeout(this.timeout), this.signal]),
         headers: {Authorization: 'Bearer ' + await credential(this.config.token_file), ...(body === undefined ? {} : {'Content-Type': 'application/json'})},
         body: body === undefined ? undefined : JSON.stringify(body),
       });
@@ -94,7 +95,7 @@ export class MemberClient {
     return reply?.status === 200 ? this.receipt(turn, reply.body) : null;
   }
 
-  async advance(turn: MemberTurn, record: {member: (id: string) => void; opened: () => void}): Promise<TurnState> {
+  async advance(turn: MemberTurn, record: {member: (id: string) => void; opened: () => void; forget: () => void}): Promise<TurnState> {
     const unchanged: TurnState = {state: turn.state};
     if (turn.state !== 'queued') {
       const found = await this.lookup(turn);
@@ -114,6 +115,7 @@ export class MemberClient {
     }
     if (!turn.opened) {
       const reply = await this.call('POST', '/conversations', {conversationId: turn.conversationId, memberId});
+      if (reply?.status === 404) record.forget();
       const opened = Opened.safeParse(reply?.status === 201 ? reply.body : null);
       if (!opened.success || opened.data.state.conversationId !== turn.conversationId.toLowerCase() ||
         opened.data.state.memberId !== memberId.toLowerCase()) return rejected(reply) ? {state: 'rejected'} : unchanged;

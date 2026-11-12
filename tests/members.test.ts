@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import {randomBytes, randomUUID} from 'node:crypto';
-import {chmod, mkdtemp, readdir, readFile, rm, writeFile} from 'node:fs/promises';
+import {chmod, mkdtemp, readdir, readFile, rm, symlink, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {DatabaseSync} from 'node:sqlite';
 import test, {type TestContext} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
-import {Chat, ChatIndex, type MemberStatus} from '../app/src/chat';
+import {Chat, ChatIndex, awaitingReply, ended, type MemberStatus} from '../app/src/chat';
 import type {Agent, Catalog} from '../app/src/catalog';
 import {CatalogService} from '../server/catalog';
 import {createChatService} from '../server/chat';
@@ -65,16 +66,24 @@ async function until(service: Service, chatId: string, turnId: string, statuses:
 }
 
 test('a crew agent with an engine chats through a durable Crew member without holding the request open', async t => {
-  const {crew, agent, catalog, start} = await setup(t);
+  const {crew, agent, catalog, options, start} = await setup(t);
   crew.steps = ['running', 'running', 'completed'];
   const service = start();
+  await assert.rejects(service.handle('POST', '/api/chats', {id: randomUUID().toUpperCase(), agentId: agent.id}), /invalid_chat/);
   const thread = await open(service, agent.id);
   assert.equal(thread.engine, 'pi');
+  await assert.rejects(service.handle('POST', `/api/chats/${thread.id}/messages`, {id: randomUUID().toUpperCase(), text: 'Upper'}), /invalid_message/);
+  const outbox = new DatabaseSync(join(options.directory, 'workspace-chats.sqlite'), {readOnly: true});
+  t.after(() => outbox.close());
+  const committed: unknown[] = [];
+  crew.onRequest = path => committed.push([path, outbox.prepare('SELECT state FROM member_turns WHERE thread=?').all(thread.id).map(row => ({...row}))]);
   const first = await send(service, thread.id, 'What are my assignments?');
   assert.deepEqual(first.chat.turns, [{...first.message, answer: null, status: 'pending'}]);
   assert.equal(first.chat.title, 'What are my assignments?');
   const done = await until(service, thread.id, first.message.id, ['completed']);
   assert.equal(done.turn.answer, 'Member reply: What are my assignments?');
+  assert.deepEqual(committed[0], ['/v1/capabilities', [{state: 'queued'}]]);
+  crew.onRequest = () => {};
 
   const [member] = [...crew.members.entries()];
   assert.deepEqual(member, [memberSpawnId(agent.id, 'pi', 'fixture.v1'), {memberId: member[1].memberId, engine: 'pi', profile: 'fixture.v1'}]);
@@ -108,6 +117,17 @@ test('a crew agent with an engine chats through a durable Crew member without ho
   assert.ok(Buffer.byteLength(text) <= 16_384 && Buffer.byteLength(text) > 16_000);
   assert.ok(text.endsWith('\n[context truncated]\n</forge-agent-context>\n\n' + long));
   assert.doesNotMatch(text, /\uFFFD/);
+
+  const nul: Agent = {id: randomUUID(), name: 'Tern', instructions: 'be \0 nice', projectIds: [], engine: 'pi'};
+  catalog.agents.push(nul);
+  crew.peak = 0;
+  const parallel = await Promise.all([nul, verbose, agent].map(async item => {
+    const chat = await open(service, item.id);
+    return {chat, sent: await send(service, chat.id, 'In parallel')};
+  }));
+  for (const {chat, sent} of parallel) await until(service, chat.id, sent.message.id, ['completed']);
+  assert.equal(crew.peak, 1);
+  assert.ok(crew.submissions.some(item => item.text.includes('Tern: be  nice')));
 });
 
 test('a reply committed before the submit response arrives is stored once', async t => {
@@ -122,7 +142,7 @@ test('a reply committed before the submit response arrives is stored once', asyn
 });
 
 test('ambiguous or transient submissions reconcile the same identity and payload', async t => {
-  const {crew, agent, start} = await setup(t);
+  const {crew, agent, catalog, start} = await setup(t);
   const service = start();
   const cases = [
     {submit: 'lose-ack', sends: 1},
@@ -141,6 +161,17 @@ test('ambiguous or transient submissions reconcile the same identity and payload
     assert.equal(attempts.length, sends, JSON.stringify(submit));
     assert.ok(attempts.every(item => item.requestId === message.id && item.text === attempts[0].text), JSON.stringify(submit));
   }
+
+  crew.registered.splice(crew.registered.indexOf('pi/fixture.v1'), 1);
+  const late: Agent = {...agent, id: randomUUID(), name: 'Kite'};
+  catalog.agents.push(late);
+  const thread = await open(service, late.id);
+  const {message} = await send(service, thread.id, 'Before the worker registers its profile');
+  await delay(60);
+  assert.equal((await until(service, thread.id, message.id, ['pending'])).turn.status, 'pending');
+  assert.equal(crew.conversations.has(thread.id), false);
+  crew.registered.push('pi/fixture.v1');
+  await until(service, thread.id, message.id, ['completed']);
 });
 
 test('explicit rejections and terminal Crew outcomes are shown, closed, and never replayed', async t => {
@@ -149,6 +180,7 @@ test('explicit rejections and terminal Crew outcomes are shown, closed, and neve
   const outcomes = [
     {submit: {status: 409, error: 'conflict'}, steps: [], status: 'rejected'},
     {submit: {status: 400, error: 'invalid_input'}, steps: [], status: 'rejected'},
+    {submit: {status: 409, error: 'request_rejected', record: true}, steps: ['failed'], status: 'failed'},
     {steps: ['failed'], status: 'failed'},
     {steps: ['running', 'cancelled'], status: 'cancelled'},
     {steps: ['uncertain'], status: 'uncertain'},
@@ -161,6 +193,7 @@ test('explicit rejections and terminal Crew outcomes are shown, closed, and neve
     const {message} = await send(service, thread.id, 'Outcome ' + outcome.status);
     const {chat, turn} = await until(service, thread.id, message.id, [outcome.status]);
     assert.equal(turn.answer, null);
+    assert.ok(ended(turn) && !awaitingReply(turn));
     await delay(60);
     assert.equal(crew.submissions.filter(item => item.conversationId === thread.id).length, 1, outcome.status);
     assert.deepEqual(Chat.parse(await service.handle('GET', '/api/chats/' + thread.id, undefined)), chat);
@@ -171,7 +204,8 @@ test('explicit rejections and terminal Crew outcomes are shown, closed, and neve
   crew.steps = ['waiting'];
   const thread = await open(service, agent.id);
   const {message} = await send(service, thread.id, 'Needs a decision');
-  await until(service, thread.id, message.id, ['waiting']);
+  const waiting = await until(service, thread.id, message.id, ['waiting']);
+  assert.ok(awaitingReply(waiting.turn) && !ended(waiting.turn));
   await assert.rejects(send(service, thread.id, 'Another'), /reply_pending/);
   crew.requests.get(thread.id + '/' + message.id)!.steps.push('completed');
   await until(service, thread.id, message.id, ['completed']);
@@ -182,13 +216,17 @@ test('a restarted gateway reconciles a pending turn without creating a new reque
   crew.submits.push('hang');
   const first = start();
   const thread = await open(first, agent.id);
+  const started = Date.now();
   const sent = await send(first, thread.id, 'Survive a restart');
+  assert.ok(Date.now() - started < 300, 'sending must not wait for Crew');
+  assert.equal(sent.chat.turns[0].status, 'pending');
   for (let waited = 0; !crew.submissions.length && waited < 5000; waited += 5) await delay(5);
   await first.stop();
   assert.equal((await first.handle('GET', '/api/chats/' + thread.id, undefined) as Chat).turns[0].status, 'pending');
   const second = start();
   await until(second, thread.id, sent.message.id, ['completed']);
   assert.deepEqual(crew.submissions.map(item => item.requestId), [sent.message.id]);
+  await second.stop();
 
   const unsent = start({members: {...options.members, token_file: join(root, 'missing-token')}});
   const later = await open(unsent, agent.id);
@@ -251,6 +289,12 @@ test('without a members block chats and the catalog are byte-for-byte unchanged'
 
   const withEngine = start({members: undefined, directory: join(root, 'disabled')});
   await assert.rejects(open(withEngine, agent.id), /engine_unavailable/);
+  const bound = start({directory: join(root, 'bound')});
+  const chat = await open(bound, agent.id);
+  await bound.stop();
+  const off = start({members: undefined, directory: join(root, 'bound')});
+  await assert.rejects(send(off, chat.id, 'Hello'), /members_unconfigured/);
+  assert.equal(Chat.parse(await off.handle('GET', '/api/chats/' + chat.id, undefined)).engine, 'pi');
   const plainCatalog = new CatalogService({directory: join(root, 'catalog')});
   assert.deepEqual(await plainCatalog.snapshot(), {projects: [], agents: [], projectsAvailable: false});
   await assert.rejects(plainCatalog.apply({kind: 'saveAgent', previous: null, agent: {...agent, projectIds: []}}), /engine_unavailable/);
@@ -279,7 +323,15 @@ test('the gateway offers only configured engines and validates the members block
 });
 
 test('the members token never reaches responses, errors or the chat database', async t => {
-  const {crew, token, tokenFile, agent, options, start} = await setup(t);
+  const {crew, token, tokenFile, agent, options, start, root} = await setup(t);
+  const link = join(root, 'members-token-link');
+  await symlink(tokenFile, link);
+  const linked = start({directory: join(root, 'linked'), members: {...options.members, token_file: link}});
+  const refusedLink = await open(linked, agent.id);
+  await send(linked, refusedLink.id, 'Through a symbolic link');
+  await delay(60);
+  assert.equal(crew.authorizations.size, 0);
+  await linked.stop();
   const service = start();
   const outputs: unknown[] = [];
   const thread = await open(service, agent.id);
@@ -307,7 +359,7 @@ test('the members token never reaches responses, errors or the chat database', a
 
 test('a thread at Crew’s turn limit asks for a new chat and an unsupported API version is never used', async t => {
   const {crew, agent, start} = await setup(t);
-  crew.maximumTurns = 2;
+  crew.maximumTurns = 3;
   crew.apiVersion = '2';
   const service = start();
   const thread = await open(service, agent.id);
@@ -316,11 +368,43 @@ test('a thread at Crew’s turn limit asks for a new chat and an unsupported API
   assert.equal(crew.members.size + crew.submissions.length, 0);
   crew.apiVersion = '1.4';
   await until(service, thread.id, first.message.id, ['completed']);
+  crew.receiptVersion = '2';
   const second = await send(service, thread.id, 'Two');
+  await delay(60);
+  assert.equal((await until(service, thread.id, second.message.id, ['pending'])).turn.answer, null);
+  crew.receiptVersion = '1';
   await until(service, thread.id, second.message.id, ['completed']);
+
+  crew.submits.push('hang');
   const third = await send(service, thread.id, 'Three');
-  const {turn} = await until(service, thread.id, third.message.id, ['limit']);
+  for (let waited = 0; crew.submissions.length < 3 && waited < 5000; waited += 5) await delay(5);
+  await service.stop();
+  crew.maximumTurns = 2;
+  const restarted = start();
+  await until(restarted, thread.id, third.message.id, ['completed']);
+  const fourth = await send(restarted, thread.id, 'Four');
+  const {turn} = await until(restarted, thread.id, fourth.message.id, ['limit']);
   assert.equal(turn.answer, null);
-  assert.equal(crew.submissions.length, 2);
-  await assert.rejects(send(service, thread.id, 'Four'), /member_chat_closed/);
+  assert.equal(crew.submissions.length, 3);
+  await assert.rejects(send(restarted, thread.id, 'Five'), /member_chat_closed/);
+});
+
+test('a reply Forge cannot persist is retried with backoff instead of a tight loop', async t => {
+  const {crew, agent, options, start} = await setup(t);
+  crew.steps = ['waiting'];
+  const service = start();
+  const thread = await open(service, agent.id);
+  const {message} = await send(service, thread.id, 'Hold the database');
+  await until(service, thread.id, message.id, ['waiting']);
+  await delay(60);
+  const lock = new DatabaseSync(join(options.directory, 'workspace-chats.sqlite'));
+  t.after(() => lock.close());
+  lock.exec('BEGIN IMMEDIATE');
+  const before = crew.lookups;
+  crew.requests.get(thread.id + '/' + message.id)!.steps.push('completed');
+  await delay(300);
+  const during = crew.lookups - before;
+  lock.exec('ROLLBACK');
+  assert.ok(during >= 2 && during <= 30, `lookups while locked: ${during}`);
+  await until(service, thread.id, message.id, ['completed']);
 });

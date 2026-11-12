@@ -57,7 +57,7 @@ function preface(agent: Agent, catalog: Catalog, text: string) {
   const open = '<forge-agent-context>\nForge sends this read-only workspace context once, before the first message. It is not part of the message.\n\n';
   const close = '\n</forge-agent-context>\n\n';
   const marker = '\n[context truncated]';
-  const context = Buffer.from(report(agent, catalog, null));
+  const context = Buffer.from(report(agent, catalog, null).replaceAll('\0', ''));
   const budget = textLimit - Buffer.byteLength(open + close + text);
   if (context.length <= budget) return open + context.toString() + close + text;
   let end = budget - Buffer.byteLength(marker);
@@ -92,7 +92,8 @@ export function createChatService(options: ChatOptions) {
   let database: DatabaseSync | undefined;
   const replying = new Map<string, Promise<Chat>>();
   const timing = options.memberTiming ?? {retry: 1000, maxRetry: 15_000, timeout: 30_000};
-  const members = options.members ? new MemberClient(options.members, timing.timeout) : null;
+  const abort = new AbortController();
+  const members = options.members ? new MemberClient(options.members, timing.timeout, abort.signal) : null;
   function db() {
     if (!database) {
       mkdirSync(options.directory, {recursive: true, mode: 0o700});
@@ -147,7 +148,7 @@ export function createChatService(options: ChatOptions) {
         (SELECT count(*) FROM turns x WHERE x.thread=t.thread AND x.rowid<=t.rowid) AS position
       FROM member_turns m JOIN turns t ON t.thread=m.thread AND t.id=m.id
       JOIN member_threads b ON b.thread=m.thread LEFT JOIN members s ON s.spawn=b.spawn
-      WHERE m.state IN ('queued','accepted','running','waiting','cancellation_requested') ORDER BY t.rowid`).all());
+      WHERE m.state IN (SELECT value FROM json_each(?)) ORDER BY t.rowid`).all(JSON.stringify(PendingState.options)));
   }
   function save(row: z.infer<typeof PendingTurn>, next: TurnState) {
     if (next.state === row.state) return;
@@ -159,18 +160,21 @@ export function createChatService(options: ChatOptions) {
   }
   async function pass(client: MemberClient) {
     for (const row of pendingTurns()) {
+      if (stopped) return;
       const key = row.thread + '/' + row.id;
       if ((delays.get(key)?.due ?? 0) > Date.now()) continue;
       let next: TurnState = {state: row.state};
       try {
-        next = await client.advance({
+        const advanced = await client.advance({
           conversationId: row.thread, requestId: row.id, payload: row.payload, position: row.position,
           engine: row.engine, profile: row.profile, spawn: row.spawn, memberId: row.member, opened: row.opened === 1, state: row.state,
         }, {
           member: id => db().prepare('INSERT OR IGNORE INTO members(spawn,id) VALUES(?,?)').run(row.spawn, id),
           opened: () => db().prepare('UPDATE member_threads SET opened=1 WHERE thread=?').run(row.thread),
+          forget: () => db().prepare('DELETE FROM members WHERE spawn=?').run(row.spawn),
         });
-        save(row, next);
+        save(row, advanced);
+        next = advanced;
       } catch {}
       if (!PendingState.safeParse(next.state).success) {delays.delete(key); continue;}
       const delay = next.state === row.state ? Math.min((delays.get(key)?.delay ?? timing.retry / 2) * 2, timing.maxRetry) : timing.retry;
@@ -204,7 +208,8 @@ export function createChatService(options: ChatOptions) {
   }
   function sendMember(id: string, chat: Chat, input: z.infer<typeof NewMessage>, current: Catalog | null) {
     if (chat.turns.some(item => item.id === input.id)) {reconcile(); return chat;}
-    if (!members) throw new ChatError(503, 'members_unconfigured');
+    if (input.id !== input.id.toLowerCase()) throw new ChatError(400, 'invalid_message');
+    if (!members) throw new ChatError(409, 'members_unconfigured');
     const agent = lookup(chat.agentId, current);
     if (chat.turns.some(ended)) throw new ChatError(409, 'member_chat_closed');
     if (chat.turns.some(item => item.answer === null)) throw new ChatError(409, 'reply_pending');
@@ -249,6 +254,7 @@ export function createChatService(options: ChatOptions) {
     async stop() {
       stopped = true;
       clearTimeout(timer);
+      abort.abort();
       await running;
     },
     async handle(method: string, path: string, payload: unknown) {
@@ -266,6 +272,7 @@ export function createChatService(options: ChatOptions) {
         const agent = lookup(agentId, await catalog());
         if (!db().prepare('SELECT 1 FROM threads WHERE id=?').get(id)) {
           const binding = bind(agent);
+          if (binding && id !== id.toLowerCase()) throw new ChatError(400, 'invalid_chat');
           transaction(() => {
             db().prepare('INSERT INTO threads VALUES (?, ?, ?, ?, ?)').run(id, agentId, agent.name, 'New chat', Date.now());
             if (binding) db().prepare('INSERT INTO member_threads(thread,engine,profile,spawn) VALUES(?,?,?,?)').run(id, binding.engine, binding.profile, binding.spawn);

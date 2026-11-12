@@ -78,7 +78,7 @@ function ThreadView({session, threadId, mode, onBack, removed, updated, visible}
         if (previous && (previous.turns.length > snapshot.turns.length || previous.turns.some((turn, i) => turn.answer !== null && snapshot.turns[i]?.answer === null))) return previous;
         return snapshot;
       });
-      setPending(previous => previous && snapshot.turns.some(turn => turn.id === previous.id && turn.answer !== null) ? null : previous);
+      setPending(previous => previous && snapshot.turns.some(turn => turn.id === previous.id) ? null : previous);
       setError('');
     }).catch(reason => {if (current) setError(reason instanceof Error ? reason.message : 'Could not load messages.');});
     return () => {current = false;};

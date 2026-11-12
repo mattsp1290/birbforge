@@ -150,7 +150,7 @@ export function CrewScreen({session}: SessionProps) {
       return {...current, draft: engine ? {...draft, engine} : draft};
     });
   }
-  const engines = [...new Set([...(catalog?.engines ?? []), ...(editor?.draft.engine ? [editor.draft.engine] : [])])];
+  const engines = [...new Set([...(catalog?.engines ?? []), ...[editor?.previous?.engine, editor?.draft.engine].filter(engine => engine !== undefined)])];
   return <>
     <Feedback error={error} busy={busy} retry={() => void load()}/>
     {catalog && (editor ? <Card>
