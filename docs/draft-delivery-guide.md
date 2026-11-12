@@ -26,7 +26,7 @@ editor. A changed goal requires a new explicitly reviewed installation, not a
 second submission of this one.
 
 At **awaiting approval**, choose **Approve goal and start** to authorize one
-coding job and an independent Claude review, or **Reject goal** to decline.
+coding job and an independent review, or **Reject goal** to decline.
 Neither choice authorizes merge or deployment. If the panel says **Continue
 the owning conversation**, return to the displayed identity; another
 conversation cannot take over approval.
@@ -44,7 +44,7 @@ not just the connection status near the conversation identity:
 | --- | --- |
 | **awaiting approval** | Execution has not been authorized. |
 | **authoring** | The approved coding and acceptance work is underway. |
-| **reviewing** | Independent Claude review is underway for the displayed candidate. |
+| **reviewing** | Independent review is underway for the displayed candidate. |
 | **publishing** | Review approved that candidate; draft publication is underway. |
 | **draft ready** | The approved coding and review path completed, and a draft receipt is recorded. |
 | **changes requested** | Read the independent review summary; this candidate did not pass the publication gate. |
@@ -83,10 +83,11 @@ There is no owner-facing resume or override control for these outcomes.
 
 ## Check the exact reviewed candidate
 
-Read the full commit under **Candidate**, then **Independent review · approved**
-and its summary. Choose **Open draft PR #N** and compare the PR's head commit
-with that candidate. The workflow requires Claude's review receipt to name
-the exact candidate commit and the publication receipt to match its repository
+Read the full commit under **Candidate**, then **Independent review by
+_reviewer_ · approved** and its summary. The reviewer is the one Crew recorded
+in the receipt: **Claude CLI** or **OpenCode Go**. Choose **Open draft PR #N**
+and compare the PR's head commit with that candidate. The workflow requires
+the review receipt to name the exact candidate commit and the publication receipt to match its repository
 and commit. A later PR commit is not covered by that approval.
 
 **Draft-ready is not staging or native candidate verification, approval to

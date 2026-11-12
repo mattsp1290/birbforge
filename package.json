@@ -5,7 +5,7 @@
   "scripts": {
     "check": "tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.node.json --test tests/*.test.ts",
-    "gateway": "tsx --tsconfig tsconfig.node.json server/main.ts",
+    "gateway": "tsx --tsconfig tsconfig.node.json --import ./server/tracing.mjs server/main.ts",
     "web": "expo start --web --localhost",
     "export:web": "expo export --platform web",
     "export:native": "expo export --platform ios --platform android --no-bytecode",
@@ -21,6 +21,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
+    "dd-trace": "6.23.0",
     "expo": "~55.0.0",
     "expo-crypto": "~55.0.19",
     "expo-font": "~55.0.8",
