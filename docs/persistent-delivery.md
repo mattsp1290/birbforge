@@ -4,7 +4,7 @@ The approved-goal pilot presents one installed, revision-bound Beans goal on the
 
 Approval binds the goal digest, repository, base commit, allowed paths, acceptance policy, owner, and conversation. Forge stores the decision in one long-lived Temporal workflow. A second conversation cannot approve the same offer again. A retried command keeps its identity and original bytes. Reusing that identity with another action conflicts.
 
-Crew owns three versioned activities. The author produces a candidate and acceptance receipt. An independent reviewer, Claude CLI or OpenCode Go as configured in Crew, reviews that exact candidate and the receipt records which one ran. Receipts naming `opencode-go` need a Crew image whose `ReviewReceipt` accepts it; older Crew rejects them. Only an approved receipt can reach draft publication. Changed candidate or review identities stop the workflow. The installed offer is immutable; this pilot deliberately admits one goal rather than offering a second scheduler.
+Crew owns three versioned activities. The author produces a candidate and acceptance receipt. An independent reviewer, Claude CLI or OpenCode Go as configured in Crew, reviews that exact candidate and the receipt records which one ran. Receipts naming `opencode-go` need a Crew image whose `ReviewReceipt` accepts it; older Crew rejects them. Installed native apps built before Forge accepted `opencode-go` cannot parse those snapshots, so rebuild them before switching Crew to the OpenCode Go reviewer. Only an approved receipt can reach draft publication. Changed candidate or review identities stop the workflow. The installed offer is immutable; this pilot deliberately admits one goal rather than offering a second scheduler.
 
 Cancellation remains requested until the producer reports confirmed cancellation. A disconnected observer, an activity timeout, or a missing reply does not prove termination. Unconfirmed effects remain uncertain. A draft may already exist if cancellation races publication; the recorded draft receipt remains visible.
 
@@ -47,10 +47,10 @@ Real subscription execution, draft publication, persistent cluster restart, and 
 
 ## Build the pilot image
 
-The Dockerfile takes immutable `NODE_IMAGE` and `CREW_IMAGE` build arguments. Use a Node 22 Debian slim image compatible with the pinned Python 3.13 Crew image. The build exports the web application and includes the Crew execution contract through the base image. It excludes host dependencies, private configuration, credentials, and local evidence from the build context. The runtime defaults to UID/GID 10001 and needs private configuration files readable by that identity.
+The Dockerfile takes immutable `NODE_IMAGE`, `CREW_IMAGE` and `RUST_IMAGE` build arguments. Use a Node 22 Debian slim image compatible with the pinned Python 3.13 Crew image. `RUST_IMAGE` builds the Beans CLI and must provide the toolchain named in Beans' `rust-toolchain.toml`. [Production deployment](production-deployment.md#image) lists the values and the image contents. The build exports the web application and includes the Crew execution contract through the base image. It excludes host dependencies, private configuration, credentials, and local evidence from the build context. The runtime defaults to UID/GID 10001 and needs private configuration files readable by that identity.
 
 ```sh
-docker build --build-arg NODE_IMAGE="$NODE_IMAGE" --build-arg CREW_IMAGE="$CREW_IMAGE" -t "$FORGE_IMAGE" .
+docker build --build-arg NODE_IMAGE="$NODE_IMAGE" --build-arg CREW_IMAGE="$CREW_IMAGE" --build-arg RUST_IMAGE="$RUST_IMAGE" -t "$FORGE_IMAGE" .
 ```
 
 `python -m delivery health /config/delivery.json` queries the fixed workflow without changing it. Successful queries establish workflow service availability. They do not establish subscription authentication, authoring-worker readiness, or end-to-end delivery.
