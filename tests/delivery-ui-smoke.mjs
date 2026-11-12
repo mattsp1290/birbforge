@@ -22,9 +22,13 @@ try {
   const offer = {offer_id: 'pilot', title: 'Document the factory restart procedure', goal_text: 'Write the operator restart procedure for the private factory pilot.',
     repository_id: 'owner/repo', base_commit: 'a'.repeat(40), policy_revision: 'b'.repeat(64), allowed_paths: ['docs/operator.md'], acceptance_id: 'docs-check',
     goal_ref: {project: 'forge', record_id: 'example', revision: '1', content_sha256: 'c'.repeat(64)}};
+  const candidate = {repository_id: 'owner/repo', base_commit: 'a'.repeat(40), head_commit: 'e'.repeat(40), branch: 'birbforge/pilot/smoke',
+    changed_paths: ['docs/operator.md'], acceptance: {acceptance_id: 'docs-check', outcome: 'passed', evidence_digest: 'f'.repeat(64), evidence_ref: 'private/ref'}};
+  const review = {candidate_commit: candidate.head_commit, reviewer: 'opencode-go', disposition: 'approved', findings_digest: 'f'.repeat(64),
+    evidence_ref: 'execution/smoke/review', summary: 'No findings.'};
   const state = () => ({revision: commands.length, offer, offer_sha256: 'd'.repeat(64), conversation_id: commands.length ? id : null,
     delivery_id: commands.length ? '11111111-1111-4111-8111-111111111111' : null, cancellation: 'none', command_ids: commands,
-    stage: {kind: commands.length ? 'authoring' : 'awaiting_approval'}});
+    stage: commands.length ? {kind: 'publishing', candidate, review} : {kind: 'awaiting_approval'}});
   const conversation = () => ({id, mode: 'approved-goal', revision: 0, phase: 'idle', cursor: 0, inputs: [], human: null, decisions: [], messages: [],
     context: {project: 'forge', commit: 'a'.repeat(40), notes: []}, failure: null});
   await page.route('**/api/**', async route => {
@@ -51,12 +55,14 @@ try {
   await page.getByRole('button', {name: 'Approve goal and start', exact: true}).waitFor();
   await page.getByRole('button', {name: 'Inbox (1)', exact: true}).click();
   await page.getByRole('button', {name: 'Approve goal and start', exact: true}).click();
-  await page.getByTestId('delivery-stage').filter({hasText: 'authoring'}).waitFor();
+  await page.getByTestId('delivery-stage').filter({hasText: 'publishing'}).waitFor();
+  await page.getByText('Independent review by OpenCode Go · approved', {exact: true}).waitFor();
+  if (await page.getByText(/Claude/).count()) throw Error('Review copy must name the recorded reviewer');
   if (commands.length !== 1) throw Error('Expected exactly one approval');
   if (await page.getByRole('button', {name: 'Send goal', exact: true}).count()) throw Error('Synthetic input visible in pilot');
   if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Horizontal overflow');
   if (process.env.SCREENSHOT_PATH) await page.screenshot({path: process.env.SCREENSHOT_PATH, fullPage: true});
-  process.stdout.write('Built web smoke passed with simulated API. One approval, shared inbox card, hidden proof composer, no horizontal overflow.\n');
+  process.stdout.write('Built web smoke passed with simulated API. One approval, shared inbox card, recorded reviewer named, hidden proof composer, no horizontal overflow.\n');
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));
