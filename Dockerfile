@@ -9,8 +9,7 @@ WORKDIR /src/beans
 RUN git init -q . && git fetch -q --depth 1 "$BEANS_REPOSITORY" "$BEANS_COMMIT" \
   && git checkout -q --detach FETCH_HEAD && test "$(git rev-parse HEAD)" = "$BEANS_COMMIT"
 # Build with the image's toolchain; the repository's toolchain file would otherwise download extra components.
-RUN --mount=type=cache,target=/usr/local/cargo/registry --mount=type=cache,target=/src/beans/target \
-  RUSTUP_TOOLCHAIN="$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" RUSTUP_AUTO_INSTALL=0 \
+RUN RUSTUP_TOOLCHAIN="$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" RUSTUP_AUTO_INSTALL=0 \
   BN_VERSION="v$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -n 1)+$BEANS_COMMIT" \
   cargo build --release --locked --bin bn && install -m 0755 target/release/bn /bn
 
