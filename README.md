@@ -42,6 +42,7 @@ On a phone, connect to the server's private network, open **Settings**, and ente
 - [Prepare private phone access](docs/private-phone-access.md).
 - [Deploy the production image](docs/production-deployment.md).
 - [Verify on Mac and iPhone](docs/mac-iphone-verification.md).
+- [Verify the iPhone app against production](docs/iphone-production-verification.md).
 - [Read the authenticated action contract](docs/action-contract.md).
 - [Check milestone acceptance and review gates](docs/evidence/acceptance.md).
 - [Open the existing dark documentation site](docs/index.html).
