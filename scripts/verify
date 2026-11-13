@@ -24,6 +24,8 @@ for (let attempt = 0; attempt < 180; attempt++) {
 throw new Error('Launcher did not become ready; inspect the temporary verifier log');
 JS
 scripts/npm test
+# The chat runner's own tests need a Python with Crew, so they run in the pinned dependency.
+(repo=$PWD && cd "$(cat .local/dependency-path)" && uv run --locked python -I -m pytest -q -p no:cacheprovider "$repo/tests/test_chat_agent.py")
 scripts/npm run check:settings
 .local/bin/node scripts/browser-check.mjs
 .local/bin/node docs/build.mjs

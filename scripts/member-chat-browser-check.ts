@@ -21,7 +21,7 @@ const crew = await startFakeCrew(membersToken, ['pi/fixture.v1', 'codex/fixture.
 crew.steps = ['running', 'running', 'running', 'completed'];
 const config = GatewayConfig.parse({url: 'http://127.0.0.1:1', tokens: {owner: token},
   members: {url: crew.url, token_file: tokenFile, profiles: {pi: 'fixture.v1', codex: 'fixture.v1'}}});
-const services = workspace(config, {directory: join(directory, 'workspace')});
+const services = workspace(config, {directory: join(directory, 'workspace'), chatMode: 'local'});
 const server = gateway(config, resolve(process.argv[2] ?? 'dist'), services);
 await new Promise<void>(done => server.listen(0, '127.0.0.1', done));
 const address = server.address();

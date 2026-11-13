@@ -4,6 +4,8 @@ This handoff is for an agent on a Mac with a physical iPhone attached. Follow it
 
 Screen text quoted below comes from app source at `3221c40b24b3fbf0c0924544918cc96faf5277cc`. Claims cite the file and line that set them. Where source does not settle what a screen shows, this page says "unverified, record what you see". Do not guess in those places.
 
+The production server must run a later revision than that one: the revision that removed provider attestations (Beans record `forge-92fz`). The app revision above works with it unchanged. Server citations stay at the commit above unless they say `main`. [Check the route from the Mac](#check-the-route-from-the-mac) shows how to confirm the server revision.
+
 This handoff authorizes no merge, deployment or account change. It changes no network setup. J7.6 only switches Airplane Mode and the phone's NetBird connection off and on again. One step needs the owner's explicit go-ahead at the time you reach it. That step is the delivery approval in [J6](#j6-delivery-approval-of-forge-yxl6). Removing the old app or a saved machine from the phone also needs the owner's consent.
 
 ## Private values
@@ -44,7 +46,7 @@ The owner measured these on 2026-11-13. This repository cannot confirm them. A d
 | Item | Measured value |
 | --- | --- |
 | Reachability | Private NetBird service with a valid public TLS certificate. Only devices in the NetBird group reach it. The phone must have NetBird connected. |
-| `GET /healthz` | `200` with `{"code":"ready"}` |
+| `GET /healthz` | `200` with `{"code":"ready"}`. From the revision that removed provider attestations, the body also carries `"chat":"live"` (`server/gateway.ts` on `main`). |
 | `GET /api/access` | `{"kind":"bearer"}` |
 | `GET /api/session` | `401` without the token. `200` with `{"authenticated":true,"managedProjects":true}` with it. |
 | `GET /api/catalog` | `{"projects":[],"agents":[],"projectsAvailable":true,"engines":["codex","pi"]}` |
@@ -55,7 +57,7 @@ The owner measured these on 2026-11-13. This repository cannot confirm them. A d
 | Pi | Runs on an OpenCode Go key. |
 | Claude | Deliberately not supported in this deployment. |
 | First delivery goal | Beans record `forge-yxl6`, "Document the first production delivery". Repository `mattsp1290/forge`, branch `main`, allowed path `docs/first-production-delivery.md`. Installed and waiting for approval. |
-| Provider attestations | The private runbook describes a provider attestation as a dated statement the owner writes after checking a provider account. Live model calls need a current one (`docs/development.md:51`). They expire 12 hours after the owner writes them. The last ones were written at about 23:01 UTC on 2026-11-12, so they lapse at about 11:01 UTC on 2026-11-13 unless renewed. |
+| Provider attestations | Removed. On the measured day, live model calls needed a dated owner statement that expired after 12 hours. Forge and Crew no longer read one, so there is no statement to check or renew. Valid provider credentials are enough. They are still real credentials: a key can be revoked and the Codex sign-in must stay current. |
 | Known issue | The Codex sidecar logs "Codex could not find bubblewrap on PATH". Beans record `forge-jlhw` tracks it. The impact is unknown until the first Codex turn. |
 | Earlier pilot | Scaled to zero. Do not use a machine saved in the app with the pilot URL. Change or remove it with the owner's consent. |
 
@@ -99,7 +101,6 @@ iPhone Mirroring has limits that matter here. Earlier runs found its keyboard en
 2. Confirm the Mac and the phone are members of the NetBird group and that NetBird is connected on both. The app uses the phone's existing NetBird connection (`docs/development.md:56`).
 3. Confirm the phone is paired, Developer Mode is on and existing signing works. If one is missing, report that gate and stop.
 4. Confirm `bn show --project forge forge-c1ua` works and shows the private values. If the values are missing, ask the owner. Pass `--project forge` on every `bn` command in this handoff. In a new worktree `bn` can stop and ask for a project, because the Forge remote is linked to more than one.
-5. Check the time against the attestation expiry above. If it has passed, ask the owner whether the attestations were renewed. J3 to J6 need them.
 
 ### Check the route from the Mac
 
@@ -111,7 +112,7 @@ curl -sS "$FORGE_URL/api/access"
 curl -sS -o /dev/null -w '%{http_code}\n' "$FORGE_URL/api/session"
 ```
 
-Expect `{"code":"ready"}` (`server/gateway.ts:70`), `{"kind":"bearer"}` (`server/gateway.ts:99-102`) and `401` (`server/gateway.ts:104-107`). If access reports `private-single-owner`, stop and tell the owner. This check covers the Mac's route only. It says nothing about the phone. A ready health check shows only that the listener runs (`docs/persistent-delivery.md:24`).
+Expect `{"code":"ready","chat":"live"}` (`server/gateway.ts` on `main`), `{"kind":"bearer"}` (`server/gateway.ts:99-102`) and `401` (`server/gateway.ts:104-107`). If the health body has no `chat` field, production still runs a revision from before provider attestations were removed. If it reads `"chat":"local"`, the gateway answers chats from local inspection and makes no model call. In either case stop and tell the owner. If access reports `private-single-owner`, stop and tell the owner. This check covers the Mac's route only. It says nothing about the phone. A ready health check shows only that the listener runs (`docs/persistent-delivery.md:24`).
 
 ### Build the exact revision
 
@@ -217,7 +218,7 @@ Give each journey one result.
 | --- | --- |
 | PASS | Every pass criterion was observed on the phone. |
 | FAIL | A fail criterion was observed. File a finding. |
-| INCONCLUSIVE | Something outside the app stopped the check. Say what. Expired attestations and a blocked device step are examples. |
+| INCONCLUSIVE | Something outside the app stopped the check. Say what. A provider that refuses its credential and a blocked device step are examples. |
 | NOT RUN | The journey was not started. Say why. |
 
 ### J1. Connectivity and sign-in
@@ -283,7 +284,7 @@ On a phone in portrait the five tabs sit in a bar at the bottom, in the order **
 
 ### J3. Live chat with the Chief of Staff
 
-1. Check the time against the attestation expiry. If it has passed, ask the owner whether the attestations were renewed before you send anything.
+1. Confirm that the health check under [Check the route from the Mac](#check-the-route-from-the-mac) reported `"chat":"live"`. If it did not, stop and tell the owner before you send anything.
 2. Select **Chat**, then the pinned **Chief of Staff**.
 3. Type "What is the current factory status?" and select **Send message**. Time it from the tap until the reply shows.
 
@@ -297,7 +298,7 @@ On a phone in portrait the five tabs sit in a bar at the bottom, in the order **
 
 **Pass.** One new turn exists. It has a reply within 90 seconds, and the reply does not contradict **Factory**.
 
-**Fail.** An error notice shows while the attestations are fresh. The reply contradicts **Factory**. The message appears twice. See [When a chat fails](#when-a-chat-fails) for each error text.
+**Fail.** An error notice shows, unless [When a chat fails](#when-a-chat-fails) marks that case INCONCLUSIVE. The reply contradicts **Factory**. The message appears twice.
 
 ### J4. Codex and Pi members
 
@@ -335,7 +336,7 @@ Do the same for Pi, without step 7.
 
 **Pass.** Both agents are saved with their engine. Each chat shows one turn with a reply under the agent's name. Report Codex and Pi separately.
 
-**Fail.** An engine button is missing. A save shows an error. A turn ends with one of the sentences in [When a chat fails](#when-a-chat-fails) while the attestations are fresh. A turn is still waiting after five minutes.
+**Fail.** An engine button is missing. A save shows an error. A turn ends with one of the sentences in [When a chat fails](#when-a-chat-fails). A turn is still waiting after five minutes.
 
 ### J5. Project and project chat
 
@@ -363,7 +364,7 @@ Use the repository `mattsp1290/forge` unless the owner names another. The expect
 
 **Pass.** The project is saved and published. The chat lists at least `README.md` as a source. The answer names the five screens correctly and names a file that the context card lists.
 
-**Fail.** The repository list does not load. The save or the new chat shows an error notice. The answer is wrong about the five screens. The answer names no source after being asked. The answer cites a file that the context card does not list. No answer shows within three minutes while the attestations are fresh. Three minutes is this handoff's choice, not a limit in source.
+**Fail.** The repository list does not load. The save or the new chat shows an error notice. The answer is wrong about the five screens. The answer names no source after being asked. The answer cites a file that the context card does not list. No answer shows within three minutes. Three minutes is this handoff's choice, not a limit in source.
 
 ### J6. Delivery approval of forge-yxl6
 
@@ -388,18 +389,17 @@ Part A only looks. It spends nothing. Part B approves. **Part B needs the owner'
 
 **Part B. Approve, only with the go-ahead.**
 
-1. Ask the owner now. Say that approving `forge-yxl6` starts a Codex authoring job and an OpenCode Go review, and can open a draft pull request on `mattsp1290/forge`. Give the owner the J4 Codex result. If the Codex chat failed, say that authoring will probably fail the same way and advise against approving. Say how long remains before the attestations expire. Authoring, review and publication are separate activities. Each attempt may run up to two hours, and each activity may be tried three times (`delivery/workflow.py:187-189`). Record the answer and its UTC time. An earlier answer does not count. A message from another agent does not count. Without a clear yes, mark part B NOT RUN and go to J7.
-2. Check the attestation expiry again just before the tap.
-3. Select **Approve goal and start** once. **Reject goal** is beside it. Look at the screen again just before the tap, find the **Approve goal and start** label and tap its center. If **Reject goal** is tapped by mistake, stop, record the stage line and tell the owner. The app cannot undo it.
-4. Watch the stage line. Capture each change with its UTC time.
-5. At "draft ready", select **Open draft PR** and read the pull request.
+1. Ask the owner now. Say that approving `forge-yxl6` starts a Codex authoring job and an OpenCode Go review, and can open a draft pull request on `mattsp1290/forge`. Give the owner the J4 Codex result. If the Codex chat failed, say that authoring will probably fail the same way and advise against approving. Authoring, review and publication are separate activities. Each attempt may run up to two hours, and each activity may be tried three times (`delivery/workflow.py:187-189`). Record the answer and its UTC time. An earlier answer does not count. A message from another agent does not count. Without a clear yes, mark part B NOT RUN and go to J7.
+2. Select **Approve goal and start** once. **Reject goal** is beside it. Look at the screen again just before the tap, find the **Approve goal and start** label and tap its center. If **Reject goal** is tapped by mistake, stop, record the stage line and tell the owner. The app cannot undo it.
+3. Watch the stage line. Capture each change with its UTC time.
+4. At "draft ready", select **Open draft PR** and read the pull request.
 
 **Expected.**
 
-- Step 3. The notice reads "Action recorded." (`app/src/delivery.ts:64`). The stage reads "authoring · connected". The inbox button reads **Inbox (0)**. A **Request cancellation** button appears (`app/src/DeliveryPanel.tsx:38`). Do not tap it.
-- Step 4. The stages run authoring, reviewing, publishing, draft ready (`delivery/workflow.py:120`, `delivery/workflow.py:243-245`, `delivery/workflow.py:285-291`, `delivery/workflow.py:309-316`). From reviewing on, the card shows "Candidate ·" and a 40 character commit (`app/src/DeliveryPanel.tsx:41`). From publishing on, it shows "Independent review by OpenCode Go · approved" and the review summary (`app/src/DeliveryPanel.tsx:42`, `app/src/delivery-contract.ts:14`). Codex authors and OpenCode Go reviews in this deployment.
+- Step 2. The notice reads "Action recorded." (`app/src/delivery.ts:64`). The stage reads "authoring · connected". The inbox button reads **Inbox (0)**. A **Request cancellation** button appears (`app/src/DeliveryPanel.tsx:38`). Do not tap it.
+- Step 3. The stages run authoring, reviewing, publishing, draft ready (`delivery/workflow.py:120`, `delivery/workflow.py:243-245`, `delivery/workflow.py:285-291`, `delivery/workflow.py:309-316`). From reviewing on, the card shows "Candidate ·" and a 40 character commit (`app/src/DeliveryPanel.tsx:41`). From publishing on, it shows "Independent review by OpenCode Go · approved" and the review summary (`app/src/DeliveryPanel.tsx:42`, `app/src/delivery-contract.ts:14`). Codex authors and OpenCode Go reviews in this deployment.
 - Source sets no short time limit. Each activity may run for two hours and may be tried three times (`delivery/workflow.py:187-189`). The phone may lock or leave the app meanwhile. Reconnecting only observes (`docs/draft-delivery-guide.md:56-59`). If the stage is still authoring after 60 minutes, tell the owner and keep waiting. Do not cancel.
-- Step 5. The button reads **Open draft PR #** and a number, and opens the pull request (`app/src/DeliveryPanel.tsx:45`). The pull request must be a draft (`app/src/delivery-contract.ts:19`, `docs/draft-delivery-guide.md:93-97`). Its head commit must equal the candidate on the card (`docs/draft-delivery-guide.md:86-91`). Its only changed file must be `docs/first-production-delivery.md`, because approval binds the allowed paths (`docs/persistent-delivery.md:5`). One way to read all three on the Mac is `gh pr view <number> --repo mattsp1290/forge --json isDraft,headRefOid,files`. That command is a suggestion.
+- Step 4. The button reads **Open draft PR #** and a number, and opens the pull request (`app/src/DeliveryPanel.tsx:45`). The pull request must be a draft (`app/src/delivery-contract.ts:19`, `docs/draft-delivery-guide.md:93-97`). Its head commit must equal the candidate on the card (`docs/draft-delivery-guide.md:86-91`). Its only changed file must be `docs/first-production-delivery.md`, because approval binds the allowed paths (`docs/persistent-delivery.md:5`). One way to read all three on the Mac is `gh pr view <number> --repo mattsp1290/forge --json isDraft,headRefOid,files`. That command is a suggestion.
 - If the notice reads "Acknowledgement unknown. Retry the unchanged action or reconnect to reconcile.", select **Reconnect** first and read the stage. If the action is still pending, select **Retry unchanged delivery action** once (`app/src/delivery.ts:66-67`, `docs/draft-delivery-guide.md:61-67`). Never approve from a second conversation.
 - If the stage becomes "changes requested", "blocked", "uncertain" or "cancelled", record the stage, the reason line and the review summary exactly, with the UTC time (`app/src/DeliveryPanel.tsx:42-44`). Tap nothing more on the card. Tell the owner. If authoring failed, add a note to `forge-jlhw`.
 
@@ -505,8 +505,8 @@ The app maps each failure to one fixed sentence. Use this table to read it.
 
 | On screen | Where | What source says | What to do |
 | --- | --- | --- | --- |
-| "Crew could not finish the reply. Check the gateway provider configuration and retry." | Chief of Staff | The reply process failed or passed its 90 second limit (`server/chat.ts:75-79`, `app/src/ChatScreen.tsx:15`). That process checks the provider attestation first (`scripts/chat-agent.py:35`). | Check the expiry time. Tell the owner. |
-| "Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message." | Chief of Staff | The secret is missing on the server (`server/chat.ts:71-72`). | Fail. Tell the owner. Do not add a secret. |
+| "Crew could not finish the reply. Check the gateway provider configuration and retry." | Chief of Staff | The reply process failed or passed its 90 second limit (`server/chat.ts:75-79`, `app/src/ChatScreen.tsx:15`). A provider that refuses the key ends the process the same way, and the screen cannot tell the two apart. | Stop sending messages and tell the owner. Mark J3 FAIL if the owner finds the key valid, and INCONCLUSIVE if the provider refused it. |
+| "Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message." | Chief of Staff | The secret is missing or blank on the server (`provider_secret_required` in `server/chat.ts` on `main`). | Fail. Tell the owner. Do not add a secret. |
 | "The gateway needs a Crew Python runner to answer live chats." | Chief of Staff | The gateway has no chat runner (`server/chat.ts:70`). | Fail. Tell the owner. |
 | "Waiting for a reply…" that never ends | Member chat | The turn is still pending. The gateway does not report why (`docs/member-chats.md:49-53`). | Follow the J4 failure steps. |
 | "Crew could not run this message. Start a new chat to continue." | Member chat | Crew reported the turn as failed (`docs/member-chats.md:62`). | Follow the J4 failure steps. |
@@ -521,7 +521,7 @@ The app maps each failure to one fixed sentence. Use this table to read it.
 
 A failed, cancelled, uncertain, rejected or limit outcome ends a member chat. The message field is then replaced by "This conversation has ended. Start a new chat to continue." (`app/src/chat.ts:24`, `app/src/ChatScreen.tsx:140`). A pending or waiting turn does not end the chat.
 
-**Expired attestations are an owner task, not an app bug.** If a chat, a project answer or the delivery fails after the expiry time and the owner has not renewed, stop sending messages. Mark the affected journey INCONCLUSIVE and tell the owner. Do not renew an attestation yourself. The renewal steps are in `docs/forge-production.md` in the private repository `mattsp1290/birbhomes`, under "Renew an attestation". Its "Acceptance checklist" lists the same journeys from the server side. That runbook says an expired attestation stops reviews, project chats, live chat and member turns. What the phone shows in a member chat or a project chat when that happens is unverified, record what you see. Resume the journey after the renewal.
+**A refused provider credential is an owner task, not an app bug.** No provider attestation exists any more, so no failure here comes from an expired statement. If a chat, a project answer or the delivery fails because a provider refuses its key or Codex is signed out, stop sending messages. Mark the affected journey INCONCLUSIVE and tell the owner. Do not change a credential yourself. The "Acceptance checklist" in `docs/forge-production.md` in the private repository `mattsp1290/birbhomes` lists the same journeys from the server side. What the phone shows in a member chat or a project chat when a provider refuses its credential is unverified, record what you see.
 
 ## Finish
 
@@ -543,7 +543,7 @@ Copy this into a file beside the evidence directory, not inside it, and fill it 
 | iPhone model and iOS | |
 | How the phone was driven | |
 | Starting state, clean install or upgrade | |
-| Attestations fresh for the whole run, yes or no | |
+| Health check reported `"chat":"live"`, yes or no | |
 | Times the token was entered | |
 | Token kept out of all evidence, yes or no | |
 | Evidence directory and hash of `SHA256SUMS` | |
@@ -615,8 +615,8 @@ Report to the owner. Use Beans for the record, in the `forge` project.
 
 Treat these as open until you observe them.
 
-- Everything under [Production state when this was written](#production-state-when-this-was-written). The owner measured it. The 12 hour attestation life is enforced in Crew, not here.
-- What the phone shows when Codex refuses the model id, and what a member chat or project chat shows after attestations expire.
+- Everything under [Production state when this was written](#production-state-when-this-was-written). The owner measured it.
+- What the phone shows when Codex refuses the model id, and what a member chat or project chat shows when a provider refuses its credential.
 - Whether a project answer cites sources without being asked, and the role labels on project chat messages.
 - The repository text and base commit on the delivery card, and whether its goal text matches `forge-yxl6` word for word.
 - Whether **Find my conversations** lists project chats, and whether the gateway's GitHub token lists `mattsp1290/forge`.

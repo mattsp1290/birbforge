@@ -14,6 +14,8 @@ from birbcrew.proof import Proof, wait_for
 repo = Path(sys.argv[1]).resolve()
 if (repo / '.local/session.json').exists():
     raise RuntimeError('A session file already exists. Stop the existing launcher before starting another.')
+# The pinned development Crew's Proof still reads args.attestation. Test mode never uses it, and Crew without
+# provider attestations ignores it.
 proof = Proof(argparse.Namespace(mode='test', attestation=None))
 
 def stop(*_):
@@ -33,7 +35,7 @@ try:
     proof.start_worker()
     proof.start_gateway()
     environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'BIRBFORGE_CLIENT_CONFIG': str(proof.root / 'clients.json'), 'TSX_TSCONFIG_PATH': str(repo / 'tsconfig.node.json')}
-    environment.update(BIRBFORGE_BEANS_HUB=str(proof.root / 'beans' / 'hub'), BIRBFORGE_CHAT_PYTHON=sys.executable)
+    environment.update(BIRBFORGE_BEANS_HUB=str(proof.root / 'beans' / 'hub'), BIRBFORGE_CHAT_PYTHON=sys.executable, BIRBFORGE_CHAT_MODE='local')
     environment.update({'DD_INJECTION_ENABLED': 'false', 'DD_TRACE_ENABLED': 'false', 'DD_INSTRUMENTATION_TELEMETRY_ENABLED': 'false'})
     ready_file = proof.root / 'birbforge-ready.json'
     environment['BIRBFORGE_READY_FILE'] = str(ready_file)

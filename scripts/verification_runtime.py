@@ -24,6 +24,7 @@ class VerificationRuntime:
         self.producer = Path(setup['exports']['birbverify'])
         self.producer_revision = setup['revisions']['birbverify']
         self.python = self.producer / '.venv/bin/python'
+        # The pinned development Crew's Proof still reads args.attestation. Test mode never uses it.
         self.crew = Proof(argparse.Namespace(mode='test', attestation=None))
         self.root = Path(tempfile.mkdtemp(prefix='q-', dir=os.environ.get('BIRBFORGE_FIXTURE_ROOT')))
         self.installation = self.root / 'target'
@@ -80,7 +81,7 @@ class VerificationRuntime:
         environment = {
             'BIRBFORGE_CLIENT_CONFIG': str(self.root / 'clients.json'),
             'BIRBFORGE_BEANS_HUB': str(self.crew.root / 'beans' / 'hub'),
-            'BIRBFORGE_CHAT_PYTHON': sys.executable,
+            'BIRBFORGE_CHAT_PYTHON': sys.executable, 'BIRBFORGE_CHAT_MODE': 'local',
             'BIRBFORGE_PORT': str(self.port), 'TSX_TSCONFIG_PATH': str(self.repo / 'tsconfig.node.json'),
             'BIRBFORGE_READY_FILE': str(ready_file),
         }

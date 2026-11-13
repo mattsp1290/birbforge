@@ -1,13 +1,13 @@
 import type {IncomingMessage} from 'node:http';
 import {CatalogError, CatalogService} from './catalog';
-import {ChatError, createChatService} from './chat';
+import {ChatError, createChatService, type ChatMode} from './chat';
 import {SecretCommand, SecretStore, SecretStoreError} from './secrets';
 import {inspectFactory} from './factory';
 import type {MembersConfig} from './members';
 import {Engine} from '../app/src/catalog';
 
 type Config = Parameters<typeof inspectFactory>[0] & {members?: MembersConfig};
-type Options = {directory: string; ownerPrincipal?: string; hub?: string; python?: string; attestation?: string};
+type Options = {directory: string; chatMode: ChatMode; ownerPrincipal?: string; hub?: string; python?: string};
 
 export function workspace(config: Config, options: Options) {
   const ownerPrincipal = config.projects?.owner_principal ?? options.ownerPrincipal ?? 'owner';
@@ -15,9 +15,9 @@ export function workspace(config: Config, options: Options) {
   const catalog = new CatalogService({...options, managedBeans: config.projects?.beans, engines});
   const inspect = () => inspectFactory(config, ownerPrincipal);
   const secrets = new SecretStore(options.directory);
-  const chat = createChatService({...options, members: config.members, catalog: () => catalog.snapshot(), inspect,
+  const chat = createChatService({...options, mode: options.chatMode, members: config.members, catalog: () => catalog.snapshot(), inspect,
     providerKey: async () => (await secrets.get('OPENCODE_GO_API_KEY')) ?? undefined});
-  return {catalog, chat, inspect, secrets, ownerPrincipal};
+  return {catalog, chat, chatMode: options.chatMode, inspect, secrets, ownerPrincipal};
 }
 export type Workspace = ReturnType<typeof workspace>;
 

@@ -29,7 +29,7 @@ async function setup(t: TestContext) {
   ]};
   const members = {url: crew.url, token_file: tokenFile, profiles: {pi: 'fixture.v1', codex: 'fixture.v1'}};
   const options = {
-    directory: join(root, 'workspace'), members, memberTiming: {retry: 5, maxRetry: 20, timeout: 300},
+    directory: join(root, 'workspace'), mode: 'local' as const, members, memberTiming: {retry: 5, maxRetry: 20, timeout: 300},
     catalog: async () => catalog, inspect: async () => {throw new Error('Member chats never inspect the factory');},
   };
   const services: Service[] = [];
@@ -315,7 +315,7 @@ test('the gateway offers only configured engines and validates the members block
   const base = {url: 'http://127.0.0.1:1', tokens: {owner: randomBytes(32).toString('hex')}};
   const members = {...options.members, profiles: {pi: 'fixture.v1'}};
   const config = GatewayConfig.parse({...base, members});
-  const services = workspace(config, {directory: join(root, 'gateway')});
+  const services = workspace(config, {directory: join(root, 'gateway'), chatMode: 'local'});
   t.after(() => services.chat.stop());
   assert.deepEqual((await services.catalog.snapshot()).engines, ['pi']);
   const saved = await services.catalog.apply({kind: 'saveAgent', previous: null, agent});

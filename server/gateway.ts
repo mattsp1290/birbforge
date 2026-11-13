@@ -67,7 +67,12 @@ export function gatewayHandler(config: z.infer<typeof GatewayConfig>, policy: Li
     }
     if (!request.url?.startsWith('/') || request.url.startsWith('//')) return send(400, 'invalid_path');
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
-    if (url.pathname === '/healthz' && request.method === 'GET' && !url.search) return send(200, 'ready');
+    if (url.pathname === '/healthz' && request.method === 'GET' && !url.search) {
+      // The chat mode is public here so a deployment can require live mode before it sends traffic.
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({code: 'ready', ...(services && {chat: services.chatMode})}));
+      return;
+    }
     if (!url.pathname.startsWith('/api/')) {
       if (!webRoot || request.method !== 'GET') return send(404, 'not_found');
       const root = resolve(webRoot);
