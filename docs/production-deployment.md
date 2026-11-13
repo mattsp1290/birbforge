@@ -24,7 +24,7 @@ The gateway also starts short-lived children in its own container: `bn` and `git
 | --- | --- | --- |
 | `NODE_IMAGE` | `node:22.23.3-bookworm-slim@sha256:3ed98443660ff48413b5af19ecefce3b9d50845a901a43420d47cc63a9fddbe9` | `Dockerfile:16` |
 | `RUST_IMAGE` | `rust:1.98.1-slim-bookworm@sha256:ff521445a372125ed4f76e1453a1f8098f2d05332d1601d30db1c1f62757e730`. Its toolchain must match the Beans `rust-toolchain.toml`. Auto-install is off, so a mismatch fails the build. | `Dockerfile:4`, `Dockerfile:11-14` |
-| `CREW_IMAGE` | A Crew image built from Crew's root `Dockerfile`, digest-pinned. Production needs a Crew revision whose `ReviewReceipt.reviewer` accepts `opencode-go` (Crew PR 45 or later). | `Dockerfile:25` |
+| `CREW_IMAGE` | A Crew image built from Crew's root `Dockerfile`, digest-pinned. Production needs a Crew revision whose `ReviewReceipt.reviewer` accepts `opencode-go` (Crew PR 45 or later). To run without provider attestations, every Crew image in the deployment must also contain Crew PR 56, which is Crew `main` at or after `217724ba59e2a3c4a8a235e9c675bb30a0f4b13a`. The chat runner in this image works on older Crew too, but an older Crew still refuses project chats, member turns and reviews without a current attestation. | `Dockerfile:25` |
 | `BEANS_COMMIT` | `bb55b2aa253a63cb18d8e4357ca8958d3fd5ad0b`, the commit tagged Beans `v0.4.0`. The build pins the SHA rather than the tag and fails unless the fetched `HEAD` equals it. `bn --version` prints `v0.4.0+<sha>`. | `Dockerfile:6-13` |
 | `BEANS_REPOSITORY` | `https://github.com/mattsp1290/beans.git` | `Dockerfile:5` |
 
