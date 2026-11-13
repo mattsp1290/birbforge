@@ -3,7 +3,6 @@
 import asyncio
 import json
 import sys
-from pathlib import Path
 
 from birbcrew import provider
 from birbcrew.domain import Coworker
@@ -16,6 +15,8 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.usage import UsageLimits
 
+USAGE = "usage: chat-agent.py --live|--local"
+
 
 def local_inspection(messages, info):
     for part in messages[-1].parts:
@@ -24,18 +25,26 @@ def local_inspection(messages, info):
     return ModelResponse(parts=[ToolCallPart("inspect_factory", {})])
 
 
+def select_model(mode, chat):
+    """The gateway names the mode. Anything else is an error, never the local model."""
+    if mode == "--local":
+        return FunctionModel(local_inspection, model_name="birbforge-inspection")
+    if mode != "--live":
+        raise SystemExit(USAGE)
+    key = chat.pop("providerKey", None)
+    if not isinstance(key, str) or not key.strip():
+        raise SystemExit("Live chat requires the provider credential.")
+    return OpenAIChatModel(
+        provider.MODEL, provider=OpenAIProvider(base_url=provider.ENDPOINT, api_key=key)
+    )
+
+
 async def main():
+    if len(sys.argv) != 2:
+        raise SystemExit(USAGE)
     chat = json.load(sys.stdin)
     profile = chat["agent"]
-    local = sys.argv[1] == "--local"
-    if local:
-        model = FunctionModel(local_inspection, model_name="birbforge-inspection")
-    else:
-        key = chat.pop("providerKey")
-        provider.check_evidence(Path(sys.argv[1]))
-        model = OpenAIChatModel(
-            provider.MODEL, provider=OpenAIProvider(base_url=provider.ENDPOINT, api_key=key)
-        )
+    model = select_model(sys.argv[1], chat)
     coworker = Coworker(
         id=profile["id"],
         instructions=profile["instructions"],

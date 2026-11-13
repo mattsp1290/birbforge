@@ -47,8 +47,8 @@ Set these variables for the gateway process. Choose durable paths outside the ch
 | `BIRBFORGE_CLIENT_CONFIG` | Path to the private gateway configuration file. |
 | `BIRBFORGE_WORKSPACE_DIR` | Directory for the crew roster, chat database, and named secrets. Defaults to a directory named `workspace` beside the private configuration file. Protect its backups like the credentials themselves. |
 | `BIRBFORGE_BEANS_HUB` | Standalone mode only. Absolute path to the Beans hub clone you want to manage. A gateway with a `projects` configuration uses its managed Beans and GitHub integration instead. The gateway runs the installed `bn` executable and commits project changes locally. Sync the clone using your normal Beans workflow. |
-| `BIRBFORGE_CHAT_PYTHON` | Path to the Python interpreter with the pinned Crew runtime installed. The disposable launcher sets this for local inspection. |
-| `BIRBFORGE_CHAT_ATTESTATION` | Optional path to the current Crew provider attestation for live model calls. Set it together with the Python interpreter. Configure `OPENCODE_GO_API_KEY` in **Settings → Machine secrets**. |
+| `BIRBFORGE_CHAT_MODE` | Required. `live` or `local`, with no default: the gateway refuses to start without it or with any other value. `local` answers workspace chats on this machine and makes no model call. `live` sends every workspace chat to the provider and never falls back to a local answer. |
+| `BIRBFORGE_CHAT_PYTHON` | Path to the Python interpreter with the pinned Crew runtime installed. `live` requires it to be an absolute path to an executable, checked at startup. The disposable launcher sets it with `local` for local inspection. |
 | `BIRBFORGE_PROXY_CONFIG` | Optional private proxy configuration for the HTTPS origin your mobile devices can reach. |
 
 Start the gateway from the repository root with `scripts/npm run gateway`. Use one gateway process per workspace directory. Both its loopback and private proxy listeners share the same workspace. A persistent path retains chats, crew, and secrets when you restart the process. The disposable `scripts/dev` launcher creates a fresh workspace and hub on each run.
@@ -56,6 +56,8 @@ Start the gateway from the repository root with `scripts/npm run gateway`. Use o
 On the phone, join the server's network and enter its HTTPS origin in **Settings**. The app uses the device's existing NetBird connection. For an explicitly configured local build, supply `EXPO_PUBLIC_BIRBFORGE_URL` when launching Expo. Expo embeds this value in the client bundle. Leave the variable unset for a public build. In a browser, sign in at the gateway's own origin.
 
 **Machine secrets** lists names. Owners can set, replace, and remove a value. The gateway keeps values in owner-only files on the server. Chat passes the provider credential to the live provider adapter. Other saved names are available for server-side integration.
+
+Live chat needs two things: `BIRBFORGE_CHAT_MODE=live` with the Python interpreter, and the `OPENCODE_GO_API_KEY` machine secret. The gateway reads the secret on every message, so you can add it under **Settings → Machine secrets** after startup. Until it is there, a live message fails with "Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message." No provider attestation is involved. Earlier revisions selected live mode with `BIRBFORGE_CHAT_ATTESTATION`, the path of a dated owner statement that expired after 12 hours. That variable is no longer read, and an old, expired or missing statement has no effect.
 
 ## Exercise the checks
 

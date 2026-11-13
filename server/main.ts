@@ -1,5 +1,6 @@
 import {dirname, resolve} from 'node:path';
 import {workspace} from './workspace';
+import {ChatConfigurationError, chatRuntime} from './chat';
 import { linkSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { type Server } from 'node:http';
 import { GatewayConfig, gateway, privateGateway } from './gateway';
@@ -12,11 +13,11 @@ async function main() {
   const port = Number(process.env.BIRBFORGE_PORT ?? 8787);
   if (!Number.isSafeInteger(port) || port < 1 || port > 65535) throw new Error('Invalid port');
   const proxy = process.env.BIRBFORGE_PROXY_CONFIG ? loadProxyConfig(process.env.BIRBFORGE_PROXY_CONFIG) : null;
+  const chat = chatRuntime(process.env);
   const services = workspace(config, {
     ownerPrincipal: config.projects?.owner_principal ?? (proxy?.authentication?.kind === 'private-single-owner' ? proxy.authentication.principal : 'owner'),
     directory: resolve(process.env.BIRBFORGE_WORKSPACE_DIR ?? resolve(dirname(path), 'workspace')),
-    hub: process.env.BIRBFORGE_BEANS_HUB, python: process.env.BIRBFORGE_CHAT_PYTHON,
-    attestation: process.env.BIRBFORGE_CHAT_ATTESTATION,
+    hub: process.env.BIRBFORGE_BEANS_HUB, python: chat.python, chatMode: chat.mode,
   });
   const listeners: {server: Server; address: string; port: number}[] = [
     {server: gateway(config, 'dist', services), address: '127.0.0.1', port},
@@ -57,7 +58,8 @@ async function main() {
     if (proxy) process.stdout.write('Loopback proxy backend ready with exact HTTPS authority checks.\n');
   } catch (error) { shutdown(); throw error; }
 }
-void main().catch(() => {
-  process.stderr.write('Forge startup failed. Check private configuration or listener availability.\n');
+void main().catch(error => {
+  process.stderr.write(error instanceof ChatConfigurationError ? `Forge startup failed. ${error.message}\n`
+    : 'Forge startup failed. Check private configuration or listener availability.\n');
   process.exitCode = 1;
 });

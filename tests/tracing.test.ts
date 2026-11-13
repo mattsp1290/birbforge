@@ -79,7 +79,7 @@ test('traced gateway exports spans without credentials, cookies, query strings, 
   mkdirSync(join(root, hub));
   const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', '--tsconfig', 'tsconfig.node.json', '--import', './server/tracing.mjs', 'server/main.ts'], {
     env: {NODE_ENV: 'test', PATH: '/usr/bin:/bin', BIRBFORGE_CLIENT_CONFIG: config, BIRBFORGE_PORT: String(port),
-      BIRBFORGE_WORKSPACE_DIR: join(root, 'workspace'), BIRBFORGE_BEANS_HUB: join(root, hub), DD_TRACE_ENABLED: 'true',
+      BIRBFORGE_WORKSPACE_DIR: join(root, 'workspace'), BIRBFORGE_BEANS_HUB: join(root, hub), BIRBFORGE_CHAT_MODE: 'local', DD_TRACE_ENABLED: 'true',
       DD_TRACE_AGENT_URL: `http://127.0.0.1:${agentPort}`, DD_DOGSTATSD_PORT: '9', DD_RUNTIME_METRICS_ENABLED: 'false', DD_TRACE_FLUSH_INTERVAL: '100',
       DD_ENV: 'test', DD_VERSION: 'test', ...hostile},
     stdio: ['ignore', 'pipe', 'pipe'],

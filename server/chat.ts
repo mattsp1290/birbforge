@@ -1,6 +1,6 @@
 import {execFile} from 'node:child_process';
-import {chmodSync, mkdirSync} from 'node:fs';
-import {join, resolve} from 'node:path';
+import {accessSync, chmodSync, constants, mkdirSync} from 'node:fs';
+import {isAbsolute, join, resolve} from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 import {z} from 'zod/v4';
 import {Chat, MemberStatus, NewChat, NewMessage, Thread, Turn, chiefId, chiefName, ended} from '../app/src/chat';
@@ -12,12 +12,40 @@ export class ChatError extends Error {
   constructor(readonly status: number, code: string) {super(code);}
 }
 
+/** Who answers workspace chats. `live` is the provider and nothing else; `local` is this machine and never the provider. */
+export const ChatMode = z.enum(['live', 'local']);
+export type ChatMode = z.infer<typeof ChatMode>;
+
+/** A startup setting the operator must correct. The message names variables, never their values. */
+export class ChatConfigurationError extends Error {}
+
+/**
+ * Reads the chat runtime from the environment. BIRBFORGE_CHAT_MODE is required and nothing implies it:
+ * an absent or unknown value stops the gateway instead of answering from local inspection.
+ */
+export function chatRuntime(env: Readonly<Record<string, string | undefined>>): {mode: ChatMode; python?: string} {
+  const mode = ChatMode.safeParse(env.BIRBFORGE_CHAT_MODE);
+  if (!mode.success) {
+    throw new ChatConfigurationError(env.BIRBFORGE_CHAT_MODE === undefined
+      ? 'Set BIRBFORGE_CHAT_MODE to live or local. No chat mode is assumed, and BIRBFORGE_CHAT_ATTESTATION is no longer read.'
+      : 'BIRBFORGE_CHAT_MODE must be exactly live or local.');
+  }
+  const python = env.BIRBFORGE_CHAT_PYTHON || undefined;
+  if (mode.data === 'live') {
+    let runnable = python !== undefined && isAbsolute(python);
+    try { if (runnable) accessSync(python!, constants.X_OK); } catch { runnable = false; }
+    if (!runnable) throw new ChatConfigurationError('BIRBFORGE_CHAT_MODE=live requires BIRBFORGE_CHAT_PYTHON to be the absolute path of an executable Crew Python.');
+  }
+  return {mode: mode.data, python};
+}
+
 type ChatOptions = {
   directory: string;
   catalog: () => Promise<Catalog>;
   inspect: () => Promise<FactoryStatus>;
+  /** Required. There is no default, so no caller gets local replies without asking for them. */
+  mode: ChatMode;
   python?: string;
-  attestation?: string;
   providerKey?: () => Promise<string | undefined>;
   members?: MembersConfig;
   memberTiming?: {retry: number; maxRetry: number; timeout: number};
@@ -66,13 +94,14 @@ function preface(agent: Agent, catalog: Catalog, text: string) {
 }
 
 async function agentReply(options: ChatOptions, chat: Chat, agent: Agent, inspection: string): Promise<string> {
-  const {python, attestation} = options;
+  const {python} = options;
+  const live = options.mode === 'live';
   if (!python) throw new ChatError(503, 'birbcrew_runner_unconfigured');
-  const providerKey = attestation ? await options.providerKey?.() : undefined;
-  if (attestation && !providerKey) throw new ChatError(503, 'provider_secret_required');
+  const providerKey = live ? await options.providerKey?.() : undefined;
+  if (live && !providerKey) throw new ChatError(503, 'provider_secret_required');
   const payload = JSON.stringify({id: chat.id, agent, turns: chat.turns, inspection, providerKey});
   return new Promise((accept, reject) => {
-    const child = execFile(python, ['-I', resolve('scripts/chat-agent.py'), attestation ?? '--local'],
+    const child = execFile(python, ['-I', resolve('scripts/chat-agent.py'), live ? '--live' : '--local'],
       {encoding: 'utf8', timeout: 90_000, maxBuffer: 256_000}, (error, stdout) => {
         if (error) return reject(new ChatError(503, 'birbcrew_reply_unavailable'));
         try { accept(z.string().min(1).parse(JSON.parse(stdout))); }
@@ -89,6 +118,9 @@ const PendingTurn = z.object({
 });
 
 export function createChatService(options: ChatOptions) {
+  // Checked again here because not every caller is type-checked. Live mode needs both the runner and a credential source.
+  const live = ChatMode.parse(options.mode) === 'live';
+  if (live && (!options.python || !options.providerKey)) throw new ChatConfigurationError('Live chat requires the Crew Python runner and a provider credential source.');
   let database: DatabaseSync | undefined;
   const replying = new Map<string, Promise<Chat>>();
   const timing = options.memberTiming ?? {retry: 1000, maxRetry: 15_000, timeout: 30_000};
@@ -242,7 +274,8 @@ export function createChatService(options: ChatOptions) {
     const reply = (async () => {
       const factory = id === chiefId ? await options.inspect().catch(() => null) : null;
       const inspection = report(agent, current, factory);
-      const answer = (options.python || options.attestation) ? await agentReply(options, chat, agent, inspection) : inspection;
+      // A live reply always comes from the runner. Only local mode without a runner answers with the inspection text.
+      const answer = (live || options.python) ? await agentReply(options, chat, agent, inspection) : inspection;
       db().prepare('UPDATE turns SET answer=? WHERE thread=? AND id=? AND answer IS NULL').run(answer, id, input.id);
       db().prepare('UPDATE threads SET updated=? WHERE id=?').run(Date.now(), id);
       return read(id);
@@ -263,7 +296,7 @@ export function createChatService(options: ChatOptions) {
           const current = await catalog();
           const rows = db().prepare('SELECT t.*,m.engine FROM threads t LEFT JOIN member_threads m ON m.thread=t.id ORDER BY (t.id=?) DESC,t.updated DESC,t.rowid DESC').all(chiefId);
           return {threads: rows.map(threadOf), agents: (current?.agents ?? []).map(({id, name, engine}) => engine ? {id, name, engine} : {id, name}),
-            mode: options.attestation ? 'live' : 'local', catalogAvailable: current !== null};
+            mode: options.mode, catalogAvailable: current !== null};
         }
         if (method !== 'POST') throw new ChatError(405, 'method_not_allowed');
         const parsed = NewChat.safeParse(payload);

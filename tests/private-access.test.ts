@@ -220,7 +220,7 @@ test('launcher starts both policies only after validated private configuration',
   const child = spawn(process.execPath,['--import','tsx','server/main.ts'], {
     env:{NODE_ENV:'test', DD_INJECTION_ENABLED:'false', DD_TRACE_ENABLED:'false', DD_INSTRUMENTATION_TELEMETRY_ENABLED:'false', PATH:process.env.PATH ?? '/usr/bin:/bin', TSX_TSCONFIG_PATH:'tsconfig.node.json',
       BIRBFORGE_CLIENT_CONFIG:join(session.fixture_root,'clients.json'), BIRBFORGE_PORT:String(loopbackPort),
-      BIRBFORGE_PROXY_CONFIG:path,BIRBFORGE_READY_FILE:ready}, stdio:'ignore',
+      BIRBFORGE_PROXY_CONFIG:path,BIRBFORGE_READY_FILE:ready,BIRBFORGE_CHAT_MODE:'local'}, stdio:'ignore',
   });
   const exited = new Promise<void>(resolve => child.once('exit', () => resolve()));
   try {
@@ -238,7 +238,7 @@ test('launcher starts both policies only after validated private configuration',
   chmodSync(path,0o644);
   const rejected = spawn(process.execPath,['--import','tsx','server/main.ts'], {
     env:{NODE_ENV:'test', DD_INJECTION_ENABLED:'false', DD_TRACE_ENABLED:'false', DD_INSTRUMENTATION_TELEMETRY_ENABLED:'false', PATH:process.env.PATH ?? '/usr/bin:/bin',TSX_TSCONFIG_PATH:'tsconfig.node.json',
-      BIRBFORGE_CLIENT_CONFIG:join(session.fixture_root,'clients.json'),BIRBFORGE_PORT:String(loopbackPort),BIRBFORGE_PROXY_CONFIG:path}, stdio:'ignore',
+      BIRBFORGE_CLIENT_CONFIG:join(session.fixture_root,'clients.json'),BIRBFORGE_PORT:String(loopbackPort),BIRBFORGE_PROXY_CONFIG:path,BIRBFORGE_CHAT_MODE:'local'}, stdio:'ignore',
   });
   const code = await new Promise<number | null>(resolve => rejected.once('exit',resolve));
   assert.equal(code,1);

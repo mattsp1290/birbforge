@@ -12,7 +12,7 @@ import {SecretNames} from '../app/src/secrets';
 const token = randomBytes(32).toString('hex');
 const directory = await mkdtemp(join(tmpdir(), 'birbforge-settings-'));
 const config = {url: 'http://127.0.0.1:1', tokens: {owner: token, stranger: randomBytes(32).toString('hex')}};
-const server = gateway(config, resolve(process.argv[2] ?? 'dist'), workspace(config, {directory}));
+const server = gateway(config, resolve(process.argv[2] ?? 'dist'), workspace(config, {directory, chatMode: 'local'}));
 await new Promise<void>(done => server.listen(0, '127.0.0.1', done));
 const address = server.address();
 assert.ok(address && typeof address === 'object');

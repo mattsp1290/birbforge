@@ -111,20 +111,13 @@ async def main(args):
     owner_token, service_token = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
     forge_port = free_port()
     forge_url = f"http://127.0.0.1:{forge_port}"
-    attestation = args.attestation.resolve() if args.attestation else None
     if args.live:
         from birbcrew import provider
 
-        preflight = provider.preflight_account(attestation)
+        # Checks the real credential against the provider's model list. It makes no model call.
+        preflight = provider.preflight_account()
         report["account_preflight"] = {
-            key: preflight[key]
-            for key in (
-                "model",
-                "models_http_status",
-                "selected_model_listed",
-                "extra_usage_disabled",
-                "eligible_coding_use",
-            )
+            key: preflight[key] for key in ("model", "models_http_status", "selected_model_listed")
         }
     managed_home, hub, remote = run / "beans-home", run / "hub", run / "remote.git"
     managed_home.mkdir(mode=0o700)
@@ -145,6 +138,8 @@ async def main(args):
             **os.environ,
             "BIRBFORGE_CLIENT_CONFIG": str(configuration),
             "BIRBFORGE_PORT": str(forge_port),
+            # The journey exercises project chats. Workspace chat stays on local inspection.
+            "BIRBFORGE_CHAT_MODE": "local",
         }
         log = (run / f"forge-{len(processes)}.log").open("w")
         process = subprocess.Popen(
@@ -231,7 +226,6 @@ async def main(args):
                         },
                         "evidence_dir": str(run),
                         "mode": "project-live" if args.live else "project-test",
-                        "live_attestation": str(attestation) if args.live else None,
                         "project_service_token_sha256": hashlib.sha256(
                             service_token.encode()
                         ).hexdigest(),
@@ -683,20 +677,5 @@ if __name__ == "__main__":
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--hold-seconds", type=int, default=0)
     parser.add_argument("--turns", type=int, choices=range(1, 7), default=1)
-    parser.add_argument("--attestation", type=Path)
     args = parser.parse_args()
-    if args.live:
-        if args.attestation is None:
-            parser.error("--live requires an explicit current owner-only --attestation file")
-        try:
-            metadata = args.attestation.stat()
-            if (
-                args.attestation.is_symlink()
-                or not args.attestation.is_file()
-                or metadata.st_uid != os.getuid()
-                or metadata.st_mode & 0o077
-            ):
-                parser.error("--attestation must be an owner-only regular file owned by this user")
-        except OSError:
-            parser.error("--attestation must identify an existing owner-only evidence file")
     asyncio.run(main(args))

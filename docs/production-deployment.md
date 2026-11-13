@@ -11,12 +11,12 @@ This page is for whoever writes the Kubernetes chart. It lists what the Forge im
 | Forge gateway | image default `CMD` under `tini` | Same pod as the Crew API, the Crew member gateway when member chats are on, and the TLS edge | `Dockerfile:40-41` |
 | Crew API | `python -m uvicorn birbcrew.api:app --host 127.0.0.1 --port 8000` with `BIRBCREW_CONFIG` | Same pod as the gateway. Forge accepts only an `http://127.0.0.1` producer URL. | `server/gateway.ts:19-22`; Crew `docs/persistent-pilot.md:15-19` |
 | Crew member gateway | Crew `npm run gateway -- <config>` | Same pod as the gateway when `members` is set. Forge accepts only `http://127.0.0.1:<port>`. | `server/members.ts:9`; Crew `docs/member-gateway.md:5-17` |
-| TLS edge (nginx) | outside this repository | Same pod. The private listener drops any connection whose source is not `127.0.0.1`. | `server/gateway.ts:238-241`, `server/gateway.ts:61-64` |
+| TLS edge (nginx) | outside this repository | Same pod. The private listener drops any connection whose source is not `127.0.0.1`. | `server/gateway.ts:243-246`, `server/gateway.ts:61-64` |
 | Crew project worker | `python -m birbcrew.project_worker` | Any pod that reaches Temporal and PostgreSQL. Needed for project chats. | `docs/project-chats.md`; Crew `docs/project-chats.md:23` |
 | Forge delivery worker | `python -m delivery worker /config/delivery.json` | Any pod that reaches Temporal. Runs from this image because `delivery/` lives here. | `delivery/__main__.py:70-74`, `Dockerfile:33` |
 | Crew execution worker | `python -m birbcrew.execution.worker` | Separate pod or host. It authors, reviews and publishes. | Crew `docs/persistent-pilot.md:21-27`, Crew `docs/in-cluster-executor.md` |
 
-The gateway also starts short-lived children in its own container: `bn` and `git` for Projects mode (`server/beans-projects.ts:13`, `:53`) and for the standalone catalog (`server/catalog.ts:38`, `:97-105`), `python -m delivery.adapter` per delivery command (`server/delivery.ts:31`), and `python -I scripts/chat-agent.py` for each workspace chat reply whenever `BIRBFORGE_CHAT_PYTHON` is set, live or local (`server/chat.ts:75`, `server/chat.ts:245`). The image therefore runs under `tini` (`Dockerfile:40`). If the chart sets `command:` it replaces `tini`; set `args:` instead.
+The gateway also starts short-lived children in its own container: `bn` and `git` for Projects mode (`server/beans-projects.ts:13`, `:53`) and for the standalone catalog (`server/catalog.ts:38`, `:97-105`), `python -m delivery.adapter` per delivery command (`server/delivery.ts:31`), and `python -I scripts/chat-agent.py` for each workspace chat reply whenever `BIRBFORGE_CHAT_PYTHON` is set, live or local (`server/chat.ts:104`, `server/chat.ts:278`). The image therefore runs under `tini` (`Dockerfile:40`). If the chart sets `command:` it replaces `tini`; set `args:` instead.
 
 ## Image
 
@@ -39,7 +39,7 @@ The final image adds `git`, `ca-certificates`, `tini` and `libstdc++6` from Debi
 | `runAsUser` / `runAsGroup` | `10001`. Owner-only files below must be owned by this UID. | `Dockerfile:38`, `server/members.ts:55`, `server/secrets.ts:22`, `server/access.ts:34` |
 | `readOnlyRootFilesystem` | Supported with a writable `/tmp`. tsx caches compiled modules in the OS temp directory, and standalone catalog mode creates temporary checkouts there (`server/catalog.ts:94`). | verified, see below |
 | `capabilities.drop: [ALL]`, `allowPrivilegeEscalation: false` | Supported. Nothing runs as root at runtime. | verified, see below |
-| `workingDir` | Leave the image default `/app/birbforge`. The gateway serves `dist` and runs `scripts/chat-agent.py` relative to it. | `server/main.ts:22`, `server/chat.ts:75` |
+| `workingDir` | Leave the image default `/app/birbforge`. The gateway serves `dist` and runs `scripts/chat-agent.py` relative to it. | `server/main.ts:23`, `server/chat.ts:104` |
 | `fsGroup` | The gateway needs write access to the volume root to create its directories. Either the provisioner creates writable directories (k3s `local-path` does), or set `fsGroup: 10001` with `fsGroupChangePolicy: OnRootMismatch` on an empty volume. With the default `Always` policy, Kubernetes re-adds group permissions on every mount and the owner-only checks then fail. Inferred from Kubernetes behavior, not tested. | `server/secrets.ts:20-22`, `server/members.ts:55`, `server/chat.ts:99` |
 
 Kubernetes Secret and ConfigMap volumes present files as symbolic links owned by root. The proxy configuration and the members token are opened with `O_NOFOLLOW` and must be regular files owned by UID 10001 with no group or other permission bits (`server/access.ts:31-36`, `server/members.ts:52-55`). Copy them into an `emptyDir` with an init container running as UID 10001 and `chmod 0600`. The other credential files are read without those checks; keep them readable by UID 10001 only anyway.
@@ -48,14 +48,14 @@ Kubernetes Secret and ConfigMap volumes present files as symbolic links owned by
 
 | Variable | Required | Meaning | Source |
 | --- | --- | --- | --- |
-| `BIRBFORGE_CLIENT_CONFIG` | yes | Absolute path to the gateway JSON configuration below. Startup fails without it. | `server/main.ts:9-11` |
-| `BIRBFORGE_PORT` | no | Loopback listener port, default `8787`. | `server/main.ts:12-13` |
-| `BIRBFORGE_PROXY_CONFIG` | for the TLS edge | Path to the private listener configuration. | `server/main.ts:14`, `server/access.ts:11-38` |
-| `BIRBFORGE_WORKSPACE_DIR` | set it | Durable workspace directory. The default is a `workspace` directory next to the client configuration, which is wrong for a read-only mounted configuration. | `server/main.ts:17` |
-| `BIRBFORGE_CHAT_PYTHON` | for chats with a Crew coworker | Absolute Python with Crew installed. In this image, `/venv/bin/python`. Without it, workspace chats answer with the local inspection text. | `server/main.ts:18`, `server/chat.ts:70`, `server/chat.ts:245` |
-| `BIRBFORGE_CHAT_ATTESTATION` | for live chat | Path to Crew's provider attestation. Chat then reports `live` and requires the `OPENCODE_GO_API_KEY` machine secret. | `server/main.ts:19`, `server/chat.ts:71-72`, `server/chat.ts:266`, `server/workspace.ts:19` |
-| `BIRBFORGE_BEANS_HUB` | no | Standalone catalog hub. Ignored for projects when `projects` is configured. | `server/main.ts:18`, `server/catalog.ts:45-53` |
-| `BIRBFORGE_READY_FILE` | no | Writes a ready marker after both listeners bind. Not needed in Kubernetes. | `server/main.ts:49-55` |
+| `BIRBFORGE_CLIENT_CONFIG` | yes | Absolute path to the gateway JSON configuration below. Startup fails without it. | `server/main.ts:10-12` |
+| `BIRBFORGE_PORT` | no | Loopback listener port, default `8787`. | `server/main.ts:13-14` |
+| `BIRBFORGE_PROXY_CONFIG` | for the TLS edge | Path to the private listener configuration. | `server/main.ts:15`, `server/access.ts:11-38` |
+| `BIRBFORGE_WORKSPACE_DIR` | set it | Durable workspace directory. The default is a `workspace` directory next to the client configuration, which is wrong for a read-only mounted configuration. | `server/main.ts:19` |
+| `BIRBFORGE_CHAT_MODE` | yes | `live` or `local`. There is no default: startup fails when it is unset or has any other value. `live` sends every workspace chat to the provider, reports `live`, and requires `BIRBFORGE_CHAT_PYTHON` and the `OPENCODE_GO_API_KEY` machine secret. It never answers from local inspection. `local` makes no model call. | `server/main.ts:16`, `server/chat.ts:26-39`, `server/chat.ts:99-104`, `server/chat.ts:278`, `server/chat.ts:299` |
+| `BIRBFORGE_CHAT_PYTHON` | with `live`; optional with `local` | Absolute Python with Crew installed. In this image, `/venv/bin/python`. With `live`, startup fails unless it is an absolute path to an executable. With `local` and without it, workspace chats answer with the local inspection text. | `server/main.ts:20`, `server/chat.ts:33-37`, `server/chat.ts:99`, `server/chat.ts:278` |
+| `BIRBFORGE_BEANS_HUB` | no | Standalone catalog hub. Ignored for projects when `projects` is configured. | `server/main.ts:20`, `server/catalog.ts:45-53` |
+| `BIRBFORGE_READY_FILE` | no | Writes a ready marker after both listeners bind. Not needed in Kubernetes. | `server/main.ts:50-56` |
 | `PATH` | keep the image value | Standalone catalog mode runs `bn` from `PATH`; Projects mode passes `PATH` to `bn` and `git`. | `server/catalog.ts:30`, `server/beans-projects.ts:14` |
 | `DD_*` | no | Datadog tracing, see [Datadog](#datadog). | `server/tracing.mjs` |
 
@@ -106,7 +106,7 @@ Outbound HTTPS to `api.github.com` and to the hub remote is required. `bn` calls
 | Path (example) | Mode | Contents | Source |
 | --- | --- | --- | --- |
 | `/tmp` | `emptyDir` | tsx compile cache and temporary checkouts | `server/catalog.ts:94` |
-| `BIRBFORGE_WORKSPACE_DIR`, e.g. `/var/lib/forge/workspace` | durable, created `0700` by the gateway | `workspace-chats.sqlite` (`0600`), `crew.json`, `secrets/` (`0700`, files `0600`, owner checked) | `server/chat.ts:99-102`, `server/catalog.ts:124-128`, `server/secrets.ts:17-24` |
+| `BIRBFORGE_WORKSPACE_DIR`, e.g. `/var/lib/forge/workspace` | durable, created `0700` by the gateway | `workspace-chats.sqlite` (`0600`), `crew.json`, `secrets/` (`0700`, files `0600`, owner checked) | `server/chat.ts:131-134`, `server/catalog.ts:124-128`, `server/secrets.ts:17-24` |
 | `projects.intent_directory` | durable | operation intents | `server/project-intents.ts:26-38` |
 | `projects.beans.hub` and `projects.beans.home` | durable, owned by 10001 | Beans hub clone and service home | `server/beans-projects.ts:13-14` |
 | configuration and credential files | read-only, copied to `emptyDir` where owner checks apply | client config, proxy config, tokens, delivery config and its mTLS files | see tables above |
@@ -117,13 +117,13 @@ Mount the durable volume one level above the workspace (for example `/var/lib/fo
 
 | Port | Bind | Purpose | Source |
 | --- | --- | --- | --- |
-| `8787` (`BIRBFORGE_PORT`) | `127.0.0.1` | Loopback listener. Requires `Host: 127.0.0.1[:port]`. | `server/main.ts:12`, `server/main.ts:22`, `server/gateway.ts:65-67` |
-| proxy `port` (pilot `8788`) | `127.0.0.1` | Private listener for the TLS edge | `server/main.ts:24-27`, `server/access.ts:12`, `docs/private-single-owner.md:9` |
+| `8787` (`BIRBFORGE_PORT`) | `127.0.0.1` | Loopback listener. Requires `Host: 127.0.0.1[:port]`. | `server/main.ts:13`, `server/main.ts:23`, `server/gateway.ts:65-67` |
+| proxy `port` (pilot `8788`) | `127.0.0.1` | Private listener for the TLS edge | `server/main.ts:25-28`, `server/access.ts:12`, `docs/private-single-owner.md:9` |
 | `8000` | `127.0.0.1` | Crew API | Crew `docs/persistent-pilot.md:18` |
 
-Both gateway listeners bind loopback only, so a kubelet `httpGet` probe to the pod IP cannot reach them. Use an `exec` probe, for example `["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/healthz', timeout=2)"]`, or probe through the edge with the external `Host`. `GET /healthz` without a query string returns `200 {"code":"ready"}` once the listener runs (`server/gateway.ts:70`). It does not check Crew, Temporal, GitHub or storage (`docs/persistent-delivery.md`). The gateway prints `Forge loopback gateway ready.` after binding, and exits with status 1 after printing a generic error when startup fails (`server/main.ts:56-62`).
+Both gateway listeners bind loopback only, so a kubelet `httpGet` probe to the pod IP cannot reach them. Use an `exec` probe, for example `["node", "-e", "fetch('http://127.0.0.1:8787/healthz').then(r=>r.json()).then(b=>process.exit(b.chat==='live'?0:1)).catch(()=>process.exit(1))"]`, or probe through the edge with the external `Host`. `GET /healthz` without a query string returns `200 {"code":"ready","chat":"live"}` once the listener runs, with `chat` set to the configured `BIRBFORGE_CHAT_MODE` (`server/gateway.ts:70-75`). A production probe should require `"chat":"live"`. An image from before `BIRBFORGE_CHAT_MODE` existed sends no `chat` field and would answer chats locally when given no attestation path, so that probe keeps such an image out of service. The check does not cover Crew, Temporal, GitHub or storage (`docs/persistent-delivery.md`). The gateway prints `Forge loopback gateway ready.` after binding. When startup fails it exits with status 1 after printing a generic error, or the chat setting to correct when that is the cause (`server/main.ts:57-64`).
 
-On `SIGTERM` the gateway closes both listeners and stops the member reconciler (`server/main.ts:28-30`). Under `tini`, the signal reaches the tsx launcher, which relays it to the gateway process.
+On `SIGTERM` the gateway closes both listeners and stops the member reconciler (`server/main.ts:29-31`). Under `tini`, the signal reaches the tsx launcher, which relays it to the gateway process.
 
 ## Delivery worker
 
