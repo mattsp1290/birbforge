@@ -112,15 +112,8 @@ async def main(args):
     forge_port = free_port()
     forge_url = f"http://127.0.0.1:{forge_port}"
     if args.live:
-        import inspect
-
         from birbcrew import provider
 
-        if inspect.signature(provider.preflight_account).parameters:
-            raise SystemExit(
-                "The sibling Crew checkout still requires a provider attestation. "
-                "Use Crew at or after the removal of provider attestations."
-            )
         # Checks the real credential against the provider's model list. It makes no model call.
         preflight = provider.preflight_account()
         report["account_preflight"] = {
@@ -685,4 +678,20 @@ if __name__ == "__main__":
     parser.add_argument("--hold-seconds", type=int, default=0)
     parser.add_argument("--turns", type=int, choices=range(1, 7), default=1)
     args = parser.parse_args()
+    if args.live:
+        import inspect
+
+        from birbcrew import provider
+
+        # Refuse before anything is written: Crew from before the removal needs a statement path here.
+        required = [
+            parameter
+            for parameter in inspect.signature(provider.preflight_account).parameters.values()
+            if parameter.default is inspect.Parameter.empty
+        ]
+        if required:
+            parser.error(
+                "the sibling Crew checkout still requires a provider attestation; "
+                "use Crew at or after the removal of provider attestations"
+            )
     asyncio.run(main(args))

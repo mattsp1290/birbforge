@@ -298,7 +298,7 @@ On a phone in portrait the five tabs sit in a bar at the bottom, in the order **
 
 **Pass.** One new turn exists. It has a reply within 90 seconds, and the reply does not contradict **Factory**.
 
-**Fail.** An error notice shows. The reply contradicts **Factory**. The message appears twice. See [When a chat fails](#when-a-chat-fails) for each error text.
+**Fail.** An error notice shows, unless [When a chat fails](#when-a-chat-fails) marks that case INCONCLUSIVE. The reply contradicts **Factory**. The message appears twice.
 
 ### J4. Codex and Pi members
 
