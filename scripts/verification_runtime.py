@@ -24,6 +24,7 @@ class VerificationRuntime:
         self.producer = Path(setup['exports']['birbverify'])
         self.producer_revision = setup['revisions']['birbverify']
         self.python = self.producer / '.venv/bin/python'
+        # The pinned development Crew's Proof still reads args.attestation. Test mode never uses it.
         self.crew = Proof(argparse.Namespace(mode='test', attestation=None))
         self.root = Path(tempfile.mkdtemp(prefix='q-', dir=os.environ.get('BIRBFORGE_FIXTURE_ROOT')))
         self.installation = self.root / 'target'

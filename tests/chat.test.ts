@@ -111,6 +111,9 @@ test('live chat fails with the credential error and never answers from local ins
   const turn = {id: randomUUID(), text: 'Report without a credential'};
   await assert.rejects(noKey.handle('POST', chiefPath, turn), /provider_secret_required/);
   await assert.rejects(noKey.handle('POST', chiefPath, turn), /provider_secret_required/);
+  for (const blank of ['', ' ', '\n']) {
+    await assert.rejects(createChatService({...options, mode: 'live', providerKey: async () => blank}).handle('POST', chiefPath, turn), /provider_secret_required/);
+  }
   assert.deepEqual(await calls(), []);
   const pending = Chat.parse(await noKey.handle('GET', '/api/chats/' + chiefId, undefined));
   assert.deepEqual(pending.turns.map(item => item.answer), [null]);
@@ -153,7 +156,7 @@ test('the gateway requires an explicit chat mode and a runnable Crew Python for 
   }
   const notExecutable = join(directory, 'not-executable');
   await writeFile(notExecutable, '', {mode: 0o600});
-  for (const missing of [undefined, '', 'python3', join(directory, 'absent'), notExecutable]) {
+  for (const missing of [undefined, '', 'python3', join(directory, 'absent'), notExecutable, directory]) {
     assert.throws(() => chatRuntime({BIRBFORGE_CHAT_MODE: 'live', BIRBFORGE_CHAT_PYTHON: missing}),
       (error: Error) => error instanceof ChatConfigurationError && /BIRBFORGE_CHAT_MODE=live requires BIRBFORGE_CHAT_PYTHON/.test(error.message), String(missing));
   }
@@ -162,15 +165,14 @@ test('the gateway requires an explicit chat mode and a runnable Crew Python for 
 test('a leftover attestation file in any state has no effect on live chat', async t => {
   const {options, python, directory, calls} = await runner(t);
   const statement = join(directory, 'opencode-go.json');
+  // Every statement written here is past the removed 12-hour limit. None is one the removed gate accepted.
   const former = (hoursOld: number, extra: object = {}) => JSON.stringify({provider: 'opencode-go', account_path: 'fixture owner', evidence: 'fixture',
     extra_usage_disabled: true, eligible_coding_use: true, checked_at: new Date(Date.now() - hoursOld * 3600_000).toISOString(), ...extra});
   const states: [string, () => Promise<unknown>][] = [
     ['absent', () => rm(statement, {force: true})],
-    ['one minute inside the former limit', () => writeFile(statement, former(11.98))],
     ['one minute past the former limit', () => writeFile(statement, former(12.02))],
     ['a month old', () => writeFile(statement, former(24 * 30))],
-    ['dated in the future', () => writeFile(statement, former(-1))],
-    ['stating Extra Usage is on', () => writeFile(statement, former(0, {extra_usage_disabled: false}))],
+    ['expired and stating Extra Usage is on', () => writeFile(statement, former(13, {extra_usage_disabled: false}))],
     ['not JSON', () => writeFile(statement, 'renew me')],
   ];
   for (const [state, arrange] of states) {

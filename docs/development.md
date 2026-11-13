@@ -67,6 +67,7 @@ With `scripts/dev` running, run the following commands in another shell.
 scripts/npm exec expo install -- --check
 scripts/npm run check
 scripts/npm test
+(repo=$PWD && cd "$(cat .local/dependency-path)" && uv run --locked python -I -m pytest -q -p no:cacheprovider "$repo/tests/test_chat_agent.py")
 BIRBFORGE_CHROMIUM=/path/to/existing/chrome .local/bin/node scripts/browser-check.mjs
 scripts/npm run export:native
 scripts/npm run export:web

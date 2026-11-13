@@ -14,6 +14,8 @@ from birbcrew.proof import Proof, wait_for
 repo = Path(sys.argv[1]).resolve()
 if (repo / '.local/session.json').exists():
     raise RuntimeError('A session file already exists. Stop the existing launcher before starting another.')
+# The pinned development Crew's Proof still reads args.attestation. Test mode never uses it, and Crew without
+# provider attestations ignores it.
 proof = Proof(argparse.Namespace(mode='test', attestation=None))
 
 def stop(*_):

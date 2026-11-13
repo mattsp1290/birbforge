@@ -57,7 +57,7 @@ The owner measured these on 2026-11-13. This repository cannot confirm them. A d
 | Pi | Runs on an OpenCode Go key. |
 | Claude | Deliberately not supported in this deployment. |
 | First delivery goal | Beans record `forge-yxl6`, "Document the first production delivery". Repository `mattsp1290/forge`, branch `main`, allowed path `docs/first-production-delivery.md`. Installed and waiting for approval. |
-| Provider attestations | Removed. On the measured day, live model calls needed a dated owner statement that expired after 12 hours. Forge and Crew no longer read one, and nothing in this handoff expires. Valid provider credentials are enough. |
+| Provider attestations | Removed. On the measured day, live model calls needed a dated owner statement that expired after 12 hours. Forge and Crew no longer read one, so there is no statement to check or renew. Valid provider credentials are enough. They are still real credentials: a key can be revoked and the Codex sign-in must stay current. |
 | Known issue | The Codex sidecar logs "Codex could not find bubblewrap on PATH". Beans record `forge-jlhw` tracks it. The impact is unknown until the first Codex turn. |
 | Earlier pilot | Scaled to zero. Do not use a machine saved in the app with the pilot URL. Change or remove it with the owner's consent. |
 
@@ -505,8 +505,8 @@ The app maps each failure to one fixed sentence. Use this table to read it.
 
 | On screen | Where | What source says | What to do |
 | --- | --- | --- | --- |
-| "Crew could not finish the reply. Check the gateway provider configuration and retry." | Chief of Staff | The reply process failed or passed its 90 second limit (`server/chat.ts:75-79`, `app/src/ChatScreen.tsx:15`). A provider that refuses the key ends the process the same way. | Fail. Tell the owner. |
-| "Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message." | Chief of Staff | The secret is missing on the server (`server/chat.ts:71-72`). | Fail. Tell the owner. Do not add a secret. |
+| "Crew could not finish the reply. Check the gateway provider configuration and retry." | Chief of Staff | The reply process failed or passed its 90 second limit (`server/chat.ts:75-79`, `app/src/ChatScreen.tsx:15`). A provider that refuses the key ends the process the same way, and the screen cannot tell the two apart. | Stop sending messages and tell the owner. Mark J3 FAIL if the owner finds the key valid, and INCONCLUSIVE if the provider refused it. |
+| "Add OPENCODE_GO_API_KEY under Machine secrets in Settings, then retry this message." | Chief of Staff | The secret is missing or blank on the server (`provider_secret_required` in `server/chat.ts` on `main`). | Fail. Tell the owner. Do not add a secret. |
 | "The gateway needs a Crew Python runner to answer live chats." | Chief of Staff | The gateway has no chat runner (`server/chat.ts:70`). | Fail. Tell the owner. |
 | "Waiting for a reply…" that never ends | Member chat | The turn is still pending. The gateway does not report why (`docs/member-chats.md:49-53`). | Follow the J4 failure steps. |
 | "Crew could not run this message. Start a new chat to continue." | Member chat | Crew reported the turn as failed (`docs/member-chats.md:62`). | Follow the J4 failure steps. |
@@ -521,7 +521,7 @@ The app maps each failure to one fixed sentence. Use this table to read it.
 
 A failed, cancelled, uncertain, rejected or limit outcome ends a member chat. The message field is then replaced by "This conversation has ended. Start a new chat to continue." (`app/src/chat.ts:24`, `app/src/ChatScreen.tsx:140`). A pending or waiting turn does not end the chat.
 
-**A refused provider credential is an owner task, not an app bug.** No provider attestation exists any more, so no failure here comes from an expired statement and nothing needs renewing. If a chat, a project answer or the delivery fails because a provider refuses its key or Codex is signed out, stop sending messages. Mark the affected journey INCONCLUSIVE and tell the owner. Do not change a credential yourself. The "Acceptance checklist" in `docs/forge-production.md` in the private repository `mattsp1290/birbhomes` lists the same journeys from the server side. What the phone shows in a member chat or a project chat when a provider refuses its credential is unverified, record what you see.
+**A refused provider credential is an owner task, not an app bug.** No provider attestation exists any more, so no failure here comes from an expired statement. If a chat, a project answer or the delivery fails because a provider refuses its key or Codex is signed out, stop sending messages. Mark the affected journey INCONCLUSIVE and tell the owner. Do not change a credential yourself. The "Acceptance checklist" in `docs/forge-production.md` in the private repository `mattsp1290/birbhomes` lists the same journeys from the server side. What the phone shows in a member chat or a project chat when a provider refuses its credential is unverified, record what you see.
 
 ## Finish
 

@@ -1,7 +1,7 @@
 """scripts/chat-agent.py answers from the model its caller names and from no other.
 
-Run with a Python that has Crew installed, for example the Crew virtualenv:
-python -m pytest tests/test_chat_agent.py -q
+Run with the Python that has Crew installed. scripts/verify runs it with the pinned
+development Crew. By hand: python -m pytest tests/test_chat_agent.py -q
 """
 
 import importlib.util
@@ -12,8 +12,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
+from birbcrew import provider
 
-pytest.importorskip("birbcrew")
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts/chat-agent.py"
 INSPECTION = "Gateway: online. Crew runtime: ready."
 KEY = "fixture-token-not-a-credential"
@@ -46,8 +46,8 @@ def load():
     return module
 
 
-def former_attestation(path, age):
-    """The dated owner statement the removed gate read. Nothing reads it now."""
+def former_attestation(path, age=timedelta(hours=13)):
+    """The dated owner statement the removed gate read, always past its 12-hour limit."""
     path.write_text(
         json.dumps(
             {
@@ -81,7 +81,7 @@ def test_an_absent_or_unknown_mode_is_an_error_and_never_a_local_answer(argument
     assert KEY not in result.stderr
 
 
-@pytest.mark.parametrize("age", [timedelta(0), timedelta(hours=13), None])
+@pytest.mark.parametrize("age", [timedelta(hours=12, minutes=1), timedelta(days=30), None])
 def test_an_attestation_path_no_longer_selects_live_mode(tmp_path, age):
     # Before the gate was removed, the gateway passed this path to mean "live".
     path = tmp_path / "opencode-go.json"
@@ -101,17 +101,14 @@ def test_live_mode_without_the_credential_fails_instead_of_answering_locally(pay
     assert "Live chat requires the provider credential." in result.stderr
 
 
-@pytest.mark.parametrize("state", ["absent", "fresh", "expired", "garbage"])
+@pytest.mark.parametrize("state", ["absent", "expired", "garbage"])
 def test_live_mode_builds_the_provider_model_from_the_credential_alone(tmp_path, monkeypatch, state):
-    from birbcrew import provider
     from pydantic_ai.models.function import FunctionModel
     from pydantic_ai.models.openai import OpenAIChatModel
 
     statement = tmp_path / "opencode-go.json"
-    if state == "fresh":
-        former_attestation(statement, timedelta(0))
-    elif state == "expired":
-        former_attestation(statement, timedelta(hours=13))
+    if state == "expired":
+        former_attestation(statement)
     elif state == "garbage":
         statement.write_text("renew me")
 

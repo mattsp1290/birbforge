@@ -1,5 +1,5 @@
 import {execFile} from 'node:child_process';
-import {accessSync, chmodSync, constants, mkdirSync} from 'node:fs';
+import {accessSync, chmodSync, constants, mkdirSync, statSync} from 'node:fs';
 import {isAbsolute, join, resolve} from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 import {z} from 'zod/v4';
@@ -33,7 +33,7 @@ export function chatRuntime(env: Readonly<Record<string, string | undefined>>): 
   const python = env.BIRBFORGE_CHAT_PYTHON || undefined;
   if (mode.data === 'live') {
     let runnable = python !== undefined && isAbsolute(python);
-    try { if (runnable) accessSync(python!, constants.X_OK); } catch { runnable = false; }
+    try { if (runnable) { accessSync(python!, constants.X_OK); runnable = statSync(python!).isFile(); } } catch { runnable = false; }
     if (!runnable) throw new ChatConfigurationError('BIRBFORGE_CHAT_MODE=live requires BIRBFORGE_CHAT_PYTHON to be the absolute path of an executable Crew Python.');
   }
   return {mode: mode.data, python};
@@ -98,7 +98,7 @@ async function agentReply(options: ChatOptions, chat: Chat, agent: Agent, inspec
   const live = options.mode === 'live';
   if (!python) throw new ChatError(503, 'birbcrew_runner_unconfigured');
   const providerKey = live ? await options.providerKey?.() : undefined;
-  if (live && !providerKey) throw new ChatError(503, 'provider_secret_required');
+  if (live && !providerKey?.trim()) throw new ChatError(503, 'provider_secret_required');
   const payload = JSON.stringify({id: chat.id, agent, turns: chat.turns, inspection, providerKey});
   return new Promise((accept, reject) => {
     const child = execFile(python, ['-I', resolve('scripts/chat-agent.py'), live ? '--live' : '--local'],
