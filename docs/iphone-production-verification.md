@@ -8,7 +8,7 @@ This handoff authorizes no merge, deployment or account change. It changes no ne
 
 ## Private values
 
-This repository is public. Private destinations and device identifiers stay out of Git, as in earlier handoffs (`docs/mac-iphone-verification.md:161-162`, `docs/mac-iphone-verification.md:295-297`, `docs/evidence/acceptance.md:36-38`). The owner supplies the values below in the private notes on `forge-c1ua`. Read them with `bn show forge-c1ua`, or ask the owner. Do not copy them into Git, a pull request or a public report.
+This repository is public. Private destinations and device identifiers stay out of Git, as in earlier handoffs (`docs/mac-iphone-verification.md:161-162`, `docs/mac-iphone-verification.md:295-297`, `docs/evidence/acceptance.md:36-38`). The owner supplies the values below in the private notes on `forge-c1ua`. Read them with `bn show --project forge forge-c1ua`, or ask the owner. Do not copy them into Git, a pull request or a public report.
 
 | Name on this page | What it is |
 | --- | --- |
@@ -98,7 +98,7 @@ iPhone Mirroring has limits that matter here. Earlier runs found its keyboard en
 1. Record the macOS, Xcode, Node and npm versions, the phone model and its iOS version. Keep the device identifier private.
 2. Confirm the Mac and the phone are members of the NetBird group and that NetBird is connected on both. The app uses the phone's existing NetBird connection (`docs/development.md:56`).
 3. Confirm the phone is paired, Developer Mode is on and existing signing works. If one is missing, report that gate and stop.
-4. Confirm `bn show forge-c1ua` works and shows the private values. Add `--project forge` when you are outside a Forge checkout. If the values are missing, ask the owner.
+4. Confirm `bn show --project forge forge-c1ua` works and shows the private values. If the values are missing, ask the owner. Pass `--project forge` on every `bn` command in this handoff. In a new worktree `bn` can stop and ask for a project, because the Forge remote is linked to more than one.
 5. Check the time against the attestation expiry above. If it has passed, ask the owner whether the attestations were renewed. J3 to J6 need them.
 
 ### Check the route from the Mac
@@ -375,7 +375,7 @@ Part A only looks. It spends nothing. Part B approves. **Part B needs the owner'
 2. Select **Find my conversations**. Compare the eight characters on each button with the identity you recorded in J5. Select the first conversation that is not your J5 project chat. If there is none, select **New conversation** once. Whether this list includes project chats is unverified, record what you see. A conversation headed "BIRBFORGE / PROJECT CHAT" is the wrong one, so leave it.
 3. Record the **Conversation identity**.
 4. Read the delivery card. Select **Inbox (1)** and read it again.
-5. On the Mac run `bn show forge-yxl6` and compare its text with the goal text on the card.
+5. On the Mac run `bn show --project forge forge-yxl6` and compare its text with the goal text on the card.
 
 **Expected.**
 
@@ -589,10 +589,10 @@ Report to the owner. Use Beans for the record, in the `forge` project.
    - A gateway that is not in bearer mode.
    - A Codex turn that fails.
    - A delivery stage other than the expected ones.
-2. File each finding as its own issue with the label `production`. Add `--project forge` when you are outside a Forge checkout.
+2. File each finding as its own issue with the label `production`.
 
    ```sh
-   bn create "Short title" -t bug -p 2 -l production -d "details" --silent
+   bn create --project forge "Short title" -t bug -p 2 -l production -d "details" --silent
    ```
 
    Use priority 1 when the finding failed a journey, 2 for a defect that did not, and 3 for a cosmetic one. Give no token and no private value. Put these in the details.
@@ -603,7 +603,7 @@ Report to the owner. Use Beans for the record, in the `forge` project.
    - The commit built, the phone model and the iOS version.
    - The evidence file names.
 3. Do not file what is already tracked. Add a note instead. `forge-n8sw` covers pasting the token after every cold start. `forge-jlhw` covers the bubblewrap message, and it gets a note with the result of the first Codex turn either way.
-4. Put the results on `forge-c1ua` with `bn note forge-c1ua "text"`. Leave `forge-c1ua` open for the owner to close. Give these.
+4. Put the results on `forge-c1ua` with `bn note --project forge forge-c1ua "text"`. Leave `forge-c1ua` open for the owner to close. Give these.
    - The commit built, the phone model and the iOS version.
    - One result for each line of the template.
    - The ids of the findings.
